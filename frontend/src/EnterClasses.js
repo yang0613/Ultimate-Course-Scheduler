@@ -1,4 +1,4 @@
-// Task 1
+// Task 1 and 3
 
 // Sources:
 // https://reactjs.org/tutorial/tutorial.html
@@ -89,7 +89,7 @@ class EnterClasses extends React.Component {
 
       this.setState({requiredList: requiredList, missingList: missingList, fulfilledList: fulfilledList});
 
-      event.preventDefault();  // Just for now
+      event.preventDefault();  // Just for now. Actually want to submit once able to connect to backend
     }
   
     render() {
