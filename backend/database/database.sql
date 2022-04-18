@@ -18,9 +18,8 @@ DROP TABLE IF EXISTS Requirements;
 CREATE TABLE Requirements(
     classID VARCHAR(10),
     preReq VARCHAR(50),
-    isMajorReq BOOLEAN,
-    isGradReq BOOLEAN,
     majorReq VARCHAR(50),
+    GradReq VARCHAR(50),
     majorElective VARCHAR(50),
     PRIMARY KEY (classID),
     FOREIGN KEY (classID) REFERENCES Classes

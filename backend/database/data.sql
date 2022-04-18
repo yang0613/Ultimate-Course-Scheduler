@@ -6,7 +6,7 @@ VALUES (
     '{The Staff, Tracy Larrabee, Darrell Long, Jose Renau Ardevol, Matthew Guthaus, Max Dunne, Sagnik Nath}'
 );
 DELETE FROM Requirements;
-INSERT INTO Requirements(classID, preReq, isMajorReq, isGradReq, majorReq, majorElective) 
+INSERT INTO Requirements(classID, preReq, majorReq, gradReq, majorElective) 
 VALUES (
-    'CSE 12', '{CSE 5J,CSE 20,CSE 30,BME 160,}', 't', 't', '{Computer Science B.S.}', '{}'
+    'CSE 12', '{CSE 5J,CSE 20,CSE 30,BME 160}', '{Computer Science B.S.}', '{Computer Science B.S.}', '{}'
 );
