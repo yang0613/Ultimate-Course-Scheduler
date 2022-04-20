@@ -9,6 +9,7 @@ flask-sqlalchemy = "*"
 psycopg2 = "*"
 psycopg2-binary = "*"
 selenium = "*"
+boolean = "*"
 
 [dev-packages]
 
