@@ -5,11 +5,14 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import EnterClasses from './EnterClasses';  // Task 1 and 3
+import ShowAcadPlanTbl from './ShowAcadPlanTbl';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <EnterClasses />
+    <ShowAcadPlanTbl />
   </React.StrictMode>
 );
 
