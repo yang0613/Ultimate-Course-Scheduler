@@ -13,6 +13,8 @@ class ShowAcadPlanTbl extends React.Component {
       //   Since we don't want to recommend them 3 upper-div courses unless they specify that their okay with it
       dummyAcadPlanJSON: '[{"quarter": "Fall 2022", "classes":["CSE 130", "CSE 103", "5-unit GE"]}, {"quarter": "Winter 2023", "classes": ["CSE 102", "CSE 115A", "CSE 116"]}]',
       acadPlanTblHTML: "", // Academic plan table as an HTML (contains different lists)
+
+      // '[{"quarter": "Fall 2022", "classes":["CSE 130", "CSE 103", "CSE 180"]}, {"quarter": "Winter 2023", "classes": ["CSE 102", "CSE 115A", "CSE 116"]}]'
     };
 
     //this.handleChange = this.handleChange.bind(this);
