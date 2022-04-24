@@ -21,9 +21,9 @@ def dict_list_append(src: dict[str, list], dict: dict[str, list]):
 
 class constraint:
     """
-    A data structure that allows programmers to validate any
-    schedule from a set of constraints like  like conflicting
-    time slots, non-fulfilled prequisites, etc. 
+    A data structure that allows programmers to validate any schedule
+    from a set of constraints like conflicting time slots, non-fulfilled 
+    prequisites, etc. 
 
     Because each constraint is a self-contained function, programmers
     can more easily work on the fundamental nature of each constraint,
@@ -49,13 +49,24 @@ class constraint:
             the constraint has been fulfilled. 
 
             For example, a constraint function that checks for 
-            prereqs and conflicting time slots per quarter will return:
+            prereqs and conflicting timeslots for this quarter 
+            will return:
             {
-                "CSE-102": ["Missing a preqreusite CSE-101"]
-                "MATH-19A": ["Has a timeconflict with PHYS-6A"]
-                "PHYS-6A": ["Has a timeconflict with MATH-19A", 
-                            "Missing concurrent enrollment with PHYS-6L"]
+                "CSE-102": ["Missing a preqreusite CSE-101"],
+                "MATH-19A": ["Has a timeconflict with CSE-102"]
             }
+
+            Another constraint function that checks for only concurrent
+            enrollment will return:
+            {
+                "PHYS-6A": ["Missing conccurent enrollment "PHYS-6L"]
+            }
+        
+            A constriant function that complains if any classes start
+            with the letter "Z", and since no classes in the schedule
+            starts with "Z", the schedule is fulfilled for this
+            constraint and will return:
+            True
         """
         self.constraints.append(constraint)
 
