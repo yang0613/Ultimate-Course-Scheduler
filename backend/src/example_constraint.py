@@ -5,38 +5,75 @@ algebra = boolean.BooleanAlgebra()
 """NOTE: THIS FILE IS WORK IN PROGRESS
 """
 
-def prereqsuites(schedule, classObj):
-    """Given an valid schedule, check to see if the prerequsites of
-    this class is fulfilled. 
+
+def geneerate_prereq_func():
+    """To check for prerequisites, the function should remember
+    what previous classes were in the schedule. This generation creates
+    a function that stores their own schedule data as it is being 
+    called.
+    No two functions point to the same schedule.
 
     Returns:
-        (str or boolean): The missing prerequisites if they are not 
-        fulfilled, otherwise return True.
+        (function): A function that checks for prerequisites
     """
-    classes =  dict.fromkeys([algebra.Symbol(c)
-                    for c in schedule.keys()], algebra.TRUE)
+    classes = {}
+    def prerequsites(quarter):
+        """Given an existing schedule, check to see if the 
+        prerequisies of all the classes in the quarter has been 
+        fulfilled.
 
-    prereqs = algebra.parse(classObj['prereqs']).subs(classes).simplify()
+        Returns:
+            (dict or boolean): a dictionary of class keys K whose values
+            are a list of missing prerequisites for class K. If no such 
+            missing prerequisites exist for any classes in this quarter,
+            return True.
+        """
+        missing_prereqs = {}
+        subs = {}
+        for class_ in quarter:
+            has_prereqs = algebra.parse(class_['prereqs']).subs(classes).simplify()
+            if has_prereqs != algebra.TRUE:
+                missing_prereqs[class_] = str(has_prereqs)
+            subs[class_] = algebra.TRUE
 
-    if prereqs == algebra.TRUE:
+        classes.update(subs)            
+        if missing_prereqs:
+            return missing_prereqs
         return True
-    return str(prereqs)
+    return prerequsites
 
-def time_conflict(schedule, classObj):
-    """Given an valid schedule, check to see if there any time conflicts
-    with this class.
+
+def time_conflict(quarter):
+    """Given a quarter of classes, check to see if any of these
+    classe have a time conflict with one another. 
 
     Returns:
-        (str or boolean): The class that is in conflict if there is a
-        time conflict, otherwise return True.
+        (dict or boolean): A dictionary of class keys K whose values
+        are a list of conclicts for class K. If no conflicts arise
+        between classes of this quarter, return True.
     """
 
     def is_conflict(c_1, c_2):
-        return c_1['start'] < c_2['end'] and c_1['end'] > c_2['start']
-    for class_ in schedule:
-        if is_conflict(class_['timeslot'], classObj['timeslot']):
-            return "{c1} is in conflict with {c2}".format(c1 = class_, c2=classObj)
+        if c_1['start'] < c_2['end'] and c_1['end'] > c_2['start']:
+            return "{c1} is in conflict with {c2}".format(c1 = c_1, c2=c_2)
+        return False
+
+    conflicts = {}
+    #Optimized Naive implementation for time conflicts: n^2 complexity
+    classes_left = quarter.copy()
+    while classes_left:
+        class_ = classes_left.pop()
+        for other in classes_left:
+            conflict = is_conflict(class_, other)
+            if conflict:
+                if class_ in conflicts:
+                    conflicts[class_].append(conflict)
+                else:
+                    conflicts[class_] = [conflict]
+    if conflicts:
+        return conflicts
     return True
+
     
     
 
