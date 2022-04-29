@@ -7,7 +7,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>CourseScheduler - Home Page</title>
+  <title>CourseScheduler - Login</title>
   <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
@@ -22,20 +22,38 @@
   <section class="hero is-link is-fullheight is-fullheight-with-navbar">
     <div class="hero-body">
       <div class="container has-text-centered">
-        <figure class="image is-inline-block ">
-          <img src="slugLogo.png" alt="Placeholder image">
-        </figure> <br><br>
+        
+        <h1 class="title">Welcome Back</h1>
 
-        <button text-align="center" class="button is-info is-rounded">
-          <span class="icon">
-            <i class="fas fa-home"></i>
-          </span>
-          <a href="login.html">Login to Account</a>
-        </button>
-        <button class="button is-rounded is-info">
-          <a href="register.html">Create Account</a>
-        </button> <br><br>
-        <button class="button is-rounded is-info">Continue as Guest</button>
+        <div class="field">
+          <p class="control has-icons-left has-icons-right">
+            <input class="input" type="email" placeholder="Email">
+            <span class="icon is-small is-left">
+              <i class="fas fa-envelope"></i>
+            </span>
+            <span class="icon is-small is-right">
+              <i class="fas fa-check"></i>
+            </span>
+          </p>
+        </div>
+        <div class="field">
+          <p class="control has-icons-left">
+            <input class="input" type="password" placeholder="Password">
+            <span class="icon is-small is-left">
+              <i class="fas fa-lock"></i>
+            </span>
+          </p>
+        </div>
+        <div class="field">
+          <p class="control">
+            <button class="button is-info is-success is-rounded ">
+              Login
+            </button> 
+          </p>
+        </div>
+
+        <br><br>
+
       </div>
     </div>
   </section>
