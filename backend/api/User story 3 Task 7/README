@@ -1,0 +1,12 @@
+################################################################################################################################
+#Author: Ziqi Fang
+#Email: zfang37@ucsc.edu
+#Note: This document is for checking available functionalities of API. Please refer the actual paths in the code file when using.
+################################################################################################################################
+app_main.py is used and tested within postman and has not corporated with database yet. app_main.py supports following functionalities:
+1. Retrieve default message from root path
+2. Retrieve all user data or posts
+3. Check and retrieve data with exact identifier if applicable
+4. Allow user or frontend to create post if the entry fits the defined schema
+5. Allow user or frontend to update post if the entry fits the defined schema
+6. Define the class or schema for user post and user log in entry
