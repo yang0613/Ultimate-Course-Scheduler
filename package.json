@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "gridjs": "^5.0.2",
+    "gridjs-react": "^5.0.2"
+  }
+}

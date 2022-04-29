@@ -7,6 +7,8 @@
 // https://www.pluralsight.com/guides/display-multidimensional-array-data-in-react
 // https://stackoverflow.com/questions/42238556/accessing-multidimensional-array-with-react-js
 
+// NOTE: Research proper way to update array values in React
+
 import React from 'react';
 
 class EnterClasses extends React.Component {
