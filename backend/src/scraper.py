@@ -36,6 +36,7 @@ chrome_options.binary_location = "/Applications/Brave Browser.app/Contents/MacOS
 
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
+
 #Get to Indivdual Degree
 def individualDegree(degree):
     # Starting website
@@ -55,7 +56,7 @@ def individualDegree(degree):
     for i in courseLinks:
         i.click()
 
-    time.sleep(10)
+    time.sleep(8)
 
     main = WebDriverWait(driver, 200).until(
         lambda d: d.find_elements(By.CSS_SELECTOR, 'div[role*="dialog"] div#main'))
@@ -126,11 +127,13 @@ def individualDegree(degree):
         reqList.append(reqtuple)
     # print(reqList)
 
-    driver.quit()
-
     return courseList, reqList
-
-degree = ['Agroecology B.A.',
+#edge case: 
+# 'Anthropology B.A.', 'Earth Sciences B.S.', Environmental Studies B.A., 
+# Film and Digital Media B.A., History B.A., 'History of Art and Visual Culture B.A.', 
+# Mathematics B.A., Music B.A., Psychology B.A.
+degree = [
+'Agroecology B.A.',
 'Anthropology B.A.',
 'Applied Linguistics and Multilingualism B.A.',
 'Applied Mathematics B.S.',
@@ -199,7 +202,8 @@ degree = ['Agroecology B.A.',
 'Sociology B.A.',
 'Spanish Studies B.A.',
 'Technology and Information Management B.S.',
-'Theater Arts B.A.']
+'Theater Arts B.A.'
+]
 
 
 
@@ -207,23 +211,29 @@ def dataToSQL(courses, reqs):
     # print(courses)
     # print(reqs)
 
-    f = open('../database/data.sql', 'w')
-    f.write('DELETE FROM Classes; INSERT INTO Classes(classID, className, subject, credit, quarters, instructor) VALUES \n')
+    #rewrite
+    # f = open('../database/data.sql', 'w')
+    #append
+    f = open('../database/data.sql', 'a')
+    f.write("\n\nINSERT INTO Classes (classID, className, subject, credit, quarters, instructor) VALUES ")
     for i in courses:
-        f.write(str(i) + ',\n')
-    f.write(';\n')
-    f.write('DELETE FROM Requirements; INSERT INTO Requirements(classID, preReq, gradReq) VALUES \n')
+        f.write("\n" + str(i) + ",")
+    f.write("\nON CONFLICT (classID)\nDO NOTHING;\n")
+    
     for i in reqs:
-        f.write(str(i) + ',\n')
-    f.write(';\n')
+        f.write(" \nINSERT INTO Requirements VALUES ")
+        f.write("\n" + str(i))
+        f.write("\nON CONFLICT (classID) DO UPDATE SET gradReq = Requirements.gradReq || ', ' ||EXCLUDED.gradReq WHERE Requirements.gradReq NOT LIKE '%' || EXCLUDED.gradReq || '%';")
     f.close()
 
 
-courses, reqs = individualDegree('Agroecology B.A.')
-dataToSQL(courses, reqs)
+# courses, reqs = individualDegree('Agroecology B.A.')
+# dataToSQL(courses, reqs)
 
-# for i in degree:
-#     individualDegree(i)
+for i in degree:
+    courses, reqs = individualDegree(i)
+    dataToSQL(courses, reqs)
 
+driver.quit()
 # dataToSQL()
 
