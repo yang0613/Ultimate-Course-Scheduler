@@ -17,27 +17,38 @@ def connectToDB():
     conn = psycopg2.connect('dbname=postgres user=postgres host=localhost', options='-c search_path=Majors')
     return conn.cursor()
 
+#Show all prereq of electives and required classes for this degree
 def majorPrereq(degree):
     cur = connectToDB()
-    value = degree
     query = "SELECT classID, preReq FROM Requirements WHERE gradReq LIKE '%%' || %s || '%%'"
-    cur.execute(query, (value,))
-
+    cur.execute(query, (degree,))
     return cur.fetchall()
 
+#Subject Example: CSE, MATH
+def allClassesInMajor(major):
+    cur = connectToDB()
+    query = "SELECT * FROM Classes WHERE classID LIKE '%%' || %s || '%%'"
+    cur.execute(query, (major,))
+    return cur.fetchall()
+
+# all attributes for single class
 def singleClass(className):
     cur = connectToDB()
-    value = className
     query = "SELECT * FROM Classes WHERE classID = %s"
-    cur.execute(query, (value,))
-
+    cur.execute(query, (className,))
     return cur.fetchall()
-
-def allClassesInSubject(subject):
+# credit
+def singleClassCredit(classID):
     cur = connectToDB()
-    value = subject
-    query = "SELECT * FROM Classes WHERE subject LIKE '%%' || %s || '%%'"
-    cur.execute(query, (value,))
-
+    query = "SELECT credit FROM Classes WHERE classID = %s"
+    cur.execute(query, (classID,))
     return cur.fetchall()
-print(majorPrereq('Computer Science B.S'))
+
+# quarters
+def singleClassQuarters(classID):
+    cur = connectToDB()
+    query = "SELECT quarters FROM Classes WHERE classID = %s"
+    cur.execute(query, (classID,))
+    return cur.fetchall()
+
+print(allClassesInMajor('CSE'))
