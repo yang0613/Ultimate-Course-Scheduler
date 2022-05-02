@@ -55,7 +55,7 @@ def singleClassQuarters(classID):
 # all classes with attribute classname, subject, credit, quarter
 def allClassesByClassName(className, degree):
     cur = connectToDB()
-    query = "SELECT DISTINCT className, subject, credit, quarters FROM Classes, Requirements WHERE className LIKE '%%' || %s || '%%' AND Classes.classID = Requirements.classID AND gradReq LIKE '%%' || %s || '%%'"
+    query = "SELECT className, subject, credit, quarters FROM Classes, Requirements WHERE className LIKE '%%' || %s || '%%' AND Classes.classID = Requirements.classID AND gradReq LIKE '%%' || %s || '%%'"
     cur.execute(query, (className, degree,))
     return cur.fetchall()
 
