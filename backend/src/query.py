@@ -34,7 +34,7 @@ def allClassesInMajor(major):
 # all attributes for single class
 def singleClass(className):
     cur = connectToDB()
-    query = "SELECT * FROM Classes WHERE classID = %s"
+    query = "SELECT * FROM Requirements WHERE classID = %s"
     cur.execute(query, (className,))
     return cur.fetchall()
 # credit
@@ -51,4 +51,12 @@ def singleClassQuarters(classID):
     cur.execute(query, (classID,))
     return cur.fetchall()
 
-print(allClassesInMajor('CSE'))
+# for frontend search bar
+# all classes with attribute classname, subject, credit, quarter
+def allClassesByClassName(className, degree):
+    cur = connectToDB()
+    query = "SELECT DISTINCT className, subject, credit, quarters FROM Classes, Requirements WHERE className LIKE '%%' || %s || '%%' AND Classes.classID = Requirements.classID AND gradReq LIKE '%%' || %s || '%%'"
+    cur.execute(query, (className, degree,))
+    return cur.fetchall()
+
+print(allClassesByClassName('MATH', 'Computer Science B.S'))
