@@ -1,5 +1,3 @@
-// Task 1 and 3
-
 // Sources:
 // https://reactjs.org/tutorial/tutorial.html
 // https://reactjs.org/docs/forms.html
@@ -10,25 +8,54 @@
 // NOTE: Research proper way to update array values in React
 
 import React from 'react';
+import { Grid } from 'gridjs-react';
+import "gridjs/dist/theme/mermaid.css";
 
 class EnterClasses extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        quarter: "", // Current quarter in which to add classes to
+        year: 1, // Current year in which to add classes to (Initially 1)
+        quarter: "Fall", // Current quarter in which to add classes to (Initially Fall)
         value: "",  // Current value of input form for classes
-        classes: Array(0).fill(""),  // Array of entered classes
-        classesPerQtr: Array(6).fill(0).map(row => new Array(0).fill("")),
-        //classList: "",  // List of entered classes as an HTML unordered list
-        classList: Array(6).fill(""),
+
+        classes: Array(0).fill(""),  // Array of all entered classes. Purpose is to make dealing with some parts easier.
+
+        // Object containing list of classes for each quarter for each year
+        //acadPlanObj: {"Year 1": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 2": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 3": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 4": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}},
+        acadPlanObj: {"1": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "2": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "3": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "4": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}},
+
+        //rowsY1: Array(4).fill(0).map(row => new Array(5).fill("")),  // 4 rows for each (3 for the classes, 1 for the "year row"), 5 columns each(4 for the quarters, 1 for "year column")
+        //rowsY2: Array(4).fill(0).map(row => new Array(5).fill("")),
+        // ...
+        // NOTE: Use the 3D array below
+
+        // A 3D array containing the "rows" for each year
+        //   Explanation: Each year has a set of rows contained within it
+        //      First 4 is the number of years.  (Can add more years if needed...DO LATER)
+        //      Second 4 is the number of rows for that year (Can add more rows. Ex. Adding more classes)
+        //      The 5 is the number of columns for that year (Same for each year. Cannot be changed)
+        rowsForEachYear: Array(4).fill(0).map(rowsForOneYear => Array(4).fill(0).map(row => new Array(5).fill(""))),
+        rows: Array(1).fill(0).map(row => new Array(5).fill("")),  // Build this with each of the "rows" for each year above
+
+        // Number of rows filled for each year. Initially 1 for each (for the "year row")
+        rowsFilled: Array(4).fill(0),  // Needed to keep track of "highest" row occupied for each year
+
+        // Update by +1 before each use (So on first use, 0 -> 1)
+        // https://stackoverflow.com/questions/50807131/how-do-i-use-array-fill-for-creating-an-array-of-objects
+        //rowsFilledForQtr: Array(4).fill({"Fall": 0, "Winter": 0, "Spring": 0, "Summer": 0}),  // Needed to keep track of current row occupied for each quarter for each year
+        rowsFilledForQtr: Array(4).fill(0).map(() => ({"Fall": 0, "Winter": 0, "Spring": 0, "Summer": 0})),
+
         dummyReqsJSON: '["CSE 101", "CSE 102", "CSE 103", "CSE 120", "CSE 130", "CSE 116", "STAT 131"]',
-        requiredList: "", // Keep only for testing? Or do I leave it?
-        missingList: "",  // Missing requirements as an HTML unordered list
-        fulfilledList: "", // Fulfilled requirements as an HTML unordered list
+        requiredList: "", // Requirements list as a string
+        missingList: "",  // Missing requirements as a string
+        fulfilledList: "", // Fulfilled requirements as a string
       };
 
       this.handleChange1 = this.handleChange1.bind(this);
       this.handleChange2 = this.handleChange2.bind(this);
+      this.handleChange3 = this.handleChange3.bind(this);
+      //this.handleLoad1 = this.handleLoad1.bind(this);
       this.handleSubmit1 = this.handleSubmit1.bind(this);
       this.handleSubmit2 = this.handleSubmit2.bind(this);
     }
@@ -37,61 +64,141 @@ class EnterClasses extends React.Component {
       this.setState({value: event.target.value});
     }
 
-    handleChange2(event) {  // https://reactjs.org/docs/forms.html had this
+    handleChange2(event) {
       this.setState({quarter: event.target.value});
     }
 
+    handleChange3(event) {
+      this.setState({year: event.target.value});
+    }
+
+    /*
+    handleLoad1(event) {  // During initial loading (Just to inialize year rows)
+      let rows = this.state.rows;
+      rows[0][0] = "1";
+      rows[4][0] = "2";
+      rows[8][0] = "3";
+      rows[12][0] = "4";
+
+      this.setState({rows: rows});
+    }
+    */
+
+    /*  Format for acadPlanObj
+    {
+      "Year 1": {
+        "Fall": {
+          ["CSE-130", "CSE-103", "CSE-183"]
+        },
+        "Winter": {
+          ["CSE-115A", "CSE-102", "CSE-110A"]
+        },
+        "Spring": {
+          same format as above
+        },
+        "Summer": {
+          same
+        }
+      },
+      "Year 2": {
+        "Fall": {
+          same
+        },
+        "Winter": {
+          same
+        }
+        ...Then the remaining quarters
+      }
+      ... Then the remaining years
+    }
+    */
+
     handleSubmit1(event) {  // Handles entering classes
-      let quarter = this.state.quarter;
+      let yr = this.state.year;
+      let yrNum = Number(yr);
+      let qtr = this.state.quarter;
       let value = this.state.value;
       if (value === "") {
-        alert("Please enter a value before submitting.");
-      }
-      else {
-        let qtr = 0; // Number to indicate which quarter to enter class
-        switch(quarter) {
-          case "Fall 2021":
-            qtr = 0;
+        alert("Please enter a class before submitting.");
+      } else {
+        const classes = this.state.classes.slice();
+        classes.push(value);  // Add this class to list of all classes
+
+        // ============================================ PART 1 ====================================================
+        // This first part handles adding the class name to the object (This part is only needed for when passing to backend)
+
+        const acadPlanObj = this.state.acadPlanObj;
+        acadPlanObj[yr][qtr].push(value);
+        //this.setState({acadPlanObj: acadPlanObj});
+
+        // ============================================ PART 2 ====================================================
+        // This second part handles updating the row in which the class is to be added
+        let yrIndex = yrNum - 1;  // yr - 1: Ex. Year 1, yrNum = 1, so correct index would be 0
+
+        let column = 1;  // Which column of current row to add the class in
+        switch(qtr) {
+          case "Fall":
+            column = 1;
             break;
-          case "Winter 2022":
-            qtr = 1;
+          case "Winter":
+            column = 2;
             break;
-          case "Spring 2022":
-            qtr = 2;
+          case "Spring":
+            column = 3;
             break;
-          case "Fall 2022":
-            qtr = 3;
-            break;
-          case "Winter 2023":
-            qtr = 4;
-            break;
-          case "Spring 2023":
-            qtr = 5;
+          case "Summer":
+            column = 4;
             break;
           default:
-            qtr = 0;
+            column = 1;
             break;
         }
-        const classes = this.state.classes.slice();
-        const classesPerQtr = this.state.classesPerQtr.slice();
-        classes.push(value);
-        classesPerQtr[qtr].push(value);
 
-        /*
-        const classList = classes.map((string) =>
-          <li>{string}</li>
-        );
-        */
+        //  Explanation: Each year has a set of rows contained within it
+        //    First 4 is the number of years.  (Can add more years if needed...DO LATER)
+        //    Second 4 is the number of rows for that year (Can add more rows. Ex. Adding more classes)
+        //    The 5 is the number of columns for that year (Same for each year. Cannot be changed)
+        //rowsForEachYear: Array(4).fill(0).map(rowsForOneYear => Array(4).fill(0).map(row => new Array(5).fill("")))
+        //rowsFilled: Array(4).fill(0),  // Update by +1 before each use (So on first use, 0 -> 1)
+        //rowsFilledForQtr: Array(4).fill({"Fall": 0, "Winter": 0, "Spring": 0, "Summer": 0})
+        let rowsForEachYear = this.state.rowsForEachYear.slice();
+        let rowsFilled = this.state.rowsFilled.slice();
+        let rowsFilledForQtr = this.state.rowsFilledForQtr.slice();
 
-        const classList = classesPerQtr.map((classesForQtr) =>
-          classesForQtr.map((a_class) =>
-            <li>{a_class}</li>
-          )  // NOTE: Notice the lack of a semicolon, which gives an error when put in
-        );
+        // Need to keep track of "highest" row occupied for each year (curRow)
+        // Also need to keep track of current row occupied for each quarter for each year
+
+        rowsFilledForQtr[yrIndex][qtr] += 1; // As mentioned above, increment before each use
+        let curRowForQtr = rowsFilledForQtr[yrIndex][qtr];
+        if (curRowForQtr > rowsFilled[yrIndex]) {
+          rowsFilled[yrIndex] += 1;
+        }
+        let curRow = rowsFilled[yrIndex];
+        if (curRow >= rowsForEachYear[yrIndex].length) {
+          rowsForEachYear[yrIndex].push(["","","","",""]); // Add a row with 5 columns
+        }
+        // [year][row][column]
+        rowsForEachYear[yrIndex][curRowForQtr][column] = value;  // Add the class to the current row for the quarter
+
+        //this.setState({rowsFilled: rowsFilled, rowsForEachYear: rowsForEachYear});
+
+        // ============================================ PART 3 ====================================================
+        // This third part handles rebuilding the entire table
+
+        //let rows = Array(1).fill(0).map(row => new Array(5).fill(""));
+        let rows = Array(0).fill(0);
+        for(let i = 0; i < rowsForEachYear.length; i++) {  // Go through each year
+          let year = i + 1;
+          rowsForEachYear[i][0][0] = "Year " + year;  // Build the year row (Just build it every time, even if already there)
+          for(let j = 0; j < rowsForEachYear[i].length; j++) {  // Go through each row for this year
+            rows.push(rowsForEachYear[i][j]);  // Here, i is for year and j is for row. Push each row in the the complete array of rows
+          }
+        }
 
         value = "";  // For next input
 
-        this.setState({value: value, classesPerQtr: classesPerQtr, classes: classes, classList: classList});
+        //this.setState({value: value, classes: classes, rows: rows});
+        this.setState({value: value, classes: classes, acadPlanObj:acadPlanObj, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr ,rowsForEachYear: rowsForEachYear, rows: rows});
       }
 
       event.preventDefault();
@@ -104,6 +211,10 @@ class EnterClasses extends React.Component {
       const missing = [];
       const fulfilled = [];
       let classVal = "";
+
+      // ================================================================================================
+      // NOTE: This enclosed part is only here temporarily.
+      // Later, the backend should return which classes are missing and which ones have been fulfilled.
 
       for(let i = 0; i < classes.length; i++) {  // Check which requirements have been fulfilled
         classVal = classes[i];
@@ -120,19 +231,25 @@ class EnterClasses extends React.Component {
           missing.push(classVal);
         }
       }
+      // ================================================================================================
 
-      // Remove this one later?
-      const requiredList = dummyReqsArr.map((string) =>
-        <li>{string}</li>
-      );
+      let requiredList = "";
+      for (let i = 0; i < dummyReqsArr.length; i ++) {
+        requiredList += dummyReqsArr[i] + ", ";
+      }
+      requiredList = requiredList.slice(0, -2);
 
-      const missingList = missing.map((string) =>
-        <li>{string}</li>
-      );
+      let missingList = "";
+      for (let i = 0; i < missing.length; i ++) {
+        missingList += missing[i] + ", ";
+      }
+      missingList = missingList.slice(0, -2);
 
-      const fulfilledList = fulfilled.map((string) =>
-        <li>{string}</li>
-      );
+      let fulfilledList = "";
+      for (let i = 0; i < fulfilled.length; i ++) {
+        fulfilledList += fulfilled[i] + ", ";
+      }
+      fulfilledList = fulfilledList.slice(0, -2);
 
       this.setState({requiredList: requiredList, missingList: missingList, fulfilledList: fulfilledList});
 
@@ -143,43 +260,36 @@ class EnterClasses extends React.Component {
       // Dummy json to check if missing requirements handler works
       //   CSE 12, CSE 16, CSE 20, CSE 30, CSE 13S, MATH 19A, MATH 19B, MATH 21, MATH 23A, ECE 30
       //   CSE 101, CSE 102, CSE 103, CSE 120, CSE 130, CSE 116, STAT 131, CSE 115A, CSE 183
-      // This should probably be a state? So that it changes depending on major
-      //let dummyReqsJSON = '["CSE 101", "CSE 102", "CSE 103", "CSE 120", "CSE 130", "CSE 116", "STAT 131"]';
-
-      // <ul>{this.state.classList}</ul>   Old way to display classList
-
-      // NOTE: Notice the part that displays classList. It doesn't give a semicolon after map.
-      //   Adding it in gives an error
 
       return (
         <div className="container1">
           <form onSubmit={this.handleSubmit1}>
-            <label>
-              Select quarter:
-            </label>
-            <select className="quarter" onChange={this.handleChange2}>
-              <option value="Fall 2021">Fall 2021</option>
-              <option value="Winter 2022">Winter 2022</option>
-              <option value="Spring 2022">Spring 2022</option>
-              <option value="Fall 2022">Fall 2022</option>
-              <option value="Winter 2023">Winter 2023</option>
-              <option value="Spring 2023">Spring 2023</option>
-            </select>
-            <label>
-              Enter a class:
-            </label>
-            <input type="text" value={this.state.value} onChange={this.handleChange1} />
-            <input type="submit" value="Add" />
+          <label>Enter a class:&nbsp;</label>
+          <input type="text" value={this.state.value} onChange={this.handleChange1} />
+          <input type="submit" value="Add" />
+          &emsp;
+          <label>Year:&nbsp;</label>
+          <select className="quarter" onChange={this.handleChange3}>
+              <option value="1">Year 1</option>
+              <option value="2">Year 2</option>
+              <option value="3">Year 3</option>
+              <option value="4">Year 4</option>
+          </select>
+          &emsp;
+          <label>Quarter:&nbsp;</label>
+          <select className="quarter" onChange={this.handleChange2}>
+            <option value="Fall">Fall</option>
+            <option value="Winter">Winter</option>
+            <option value="Spring">Spring</option>
+            <option value="Summer">Summer</option>
+          </select>
           </form>
 
-          <ul>
-            {this.state.classList.map((classListForQtr) =>
-              <div>
-                <h4>Quarter(fix this)</h4>
-                <ul>{classListForQtr}</ul>
-              </div>
-            ) }
-          </ul>
+          <Grid
+            data={this.state.rows}
+            columns={["Year", "Fall", "Winter", "Spring", "Summer"]}
+            width="50%"
+          />
 
           <form onSubmit={this.handleSubmit2}>
             <input type="submit" value="Submit" />
@@ -187,12 +297,9 @@ class EnterClasses extends React.Component {
 
           <h2>Results:</h2>
 
-          <h4>Required:</h4>
-          <ul>{this.state.requiredList}</ul>
-          <h4>Missing:</h4>
-          <ul>{this.state.missingList}</ul>
-          <h4>Fulfilled:</h4>
-          <ul>{this.state.fulfilledList}</ul>
+          <p><b>Requirements: </b>{this.state.requiredList}</p>
+          <p><b>Missing: </b>{this.state.missingList}</p>
+          <p><b>Fulfilled:</b>{this.state.fulfilledList}</p>
         </div>
       );
     }

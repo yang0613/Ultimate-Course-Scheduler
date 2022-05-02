@@ -15,7 +15,7 @@ class ShowAcadPlanTbl extends React.Component {
           ...
         }
       */
-      // NOTE: Quarters could be missing for a year, but "{Quarter} {Year}" values must be ordered by year
+      // NOTE: Quarters could be missing for a year, but "{Quarter} {Year}" values must be ordered
       acadPlanJSON1: '{"Fall 2022":{"CSE-130": 5, "CSE-103": 5, "CSE-111": 5, "CSE-118": 5}, "Winter 2023":{"CSE-115A": 5, "CSE-102": 5, "CSE-183": 5}, "Spring 2023":{"CSE-115B": 5, "CSE-114A": 5, "CSE-110A": 5}, "Summer 2023":{"CSE-144": 5}, "Fall 2023":{"CSE-115C": 5, "CSE-120": 5}, "Winter 2024":{"CSE-115A": 5, "CSE-138": 5}}',
       acadPlanJSON2: '{"Fall 2022":{"CSE-130": 5, "CSE-103": 5}, "Winter 2023":{"CSE-115A": 5, "CSE-102": 5}, "Spring 2023":{"CSE-115B": 5, "CSE-114A": 5}}',
       acadPlanJSON3: '{"Fall 2022":{"CSE-130": 5, "CSE-103": 5, "CSE-111": 5, "CSE-118": 5}, "Winter 2023":{"CSE-115A": 5, "CSE-102": 5, "CSE-183": 5}, "Spring 2023":{"CSE-115B": 5, "CSE-114A": 5, "CSE-110A": 5}, "Summer 2023":{"CSE-144": 5}, "Fall 2023":{"CSE-115C": 5, "CSE-120": 5}, "Winter 2024":{"CSE-115A": 5, "CSE-138": 5, "CSE-181": 5}, "Fall 2024":{"CSE-145": 5, "CSE-150": 5, "CSE-150L": 2}}',
@@ -25,14 +25,24 @@ class ShowAcadPlanTbl extends React.Component {
       //   Can add more rows whenever needed
       //   UPDATE: Just start off with 1 row for the year row
       rows: Array(1).fill(0).map(row => new Array(5).fill("")),
+
+      // DO LATER: See handleSubmit1
+      //columns: Array(0).fill(),
+      //gridHTML: ""
     };
 
     this.handleSubmit1 = this.handleSubmit1.bind(this);
   }
 
   handleSubmit1(event) {  // Handles generating an academic plan (Clicking generate)
-    const acadPlanJSON = this.state.acadPlanJSON4; // Can change the number at the end to 1, 2, 3, or 4 for testing
+    const acadPlanJSON = this.state.acadPlanJSON3; // Can change the number at the end to 1, 2, 3, or 4 for testing
     const acadPlanObj1 = JSON.parse(acadPlanJSON);
+
+    // DO LATER: Only show a table after generate has been clicked.
+    //const columns = ["Year", "Fall", "Winter", "Spring", "Summer"];
+    //this.setState({columns: columns});
+    //let gridHTML = <Grid data={this.state.rows} columns={this.state.columns} width='50%' />;
+    //this.setState({gridHTML: gridHTML});
 
     // A.) Create an object with years as keys.
     // B.) Its values will be the list of classes for each quarter as objects, with each list being an object.
@@ -64,6 +74,8 @@ class ShowAcadPlanTbl extends React.Component {
       // When this loop finishes, each acadPlanObj2[year] should be in the same format as acadPlanObj1
       //   With the only difference that instead of having "Fall 2022", it will have "Fall"
     }
+
+    console.log(JSON.stringify(acadPlanObj2));  // FOR TESTING
 
     let rows = this.state.rows.slice();
 

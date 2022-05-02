@@ -4,7 +4,7 @@ import './index.css';
 import App from './App'; 
 import reportWebVitals from './reportWebVitals';
 
-import EnterClasses from './EnterClasses';  // Task 1 and 3
+import EnterClasses from './EnterClasses';
 import ShowAcadPlanTbl from './ShowAcadPlanTbl';
 
 
