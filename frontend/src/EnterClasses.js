@@ -4,6 +4,7 @@
 // https://reactjs.org/docs/lists-and-keys.html
 // https://www.pluralsight.com/guides/display-multidimensional-array-data-in-react
 // https://stackoverflow.com/questions/42238556/accessing-multidimensional-array-with-react-js
+// https://dev.to/antdp425/populate-dropdown-options-in-react-1nk0  For the dropdown
 
 // NOTE: Research proper way to update array values in React
 
@@ -18,10 +19,13 @@ class EnterClasses extends React.Component {
         year: 1, // Current year in which to add classes to (Initially 1)
         quarter: "Fall", // Current quarter in which to add classes to (Initially Fall)
         value: "",  // Current value of input form for classes
+        toRemove: "",
+        classCount: 0,
 
         classes: Array(0).fill(""),  // Array of all entered classes. Purpose is to make dealing with some parts easier.
 
         // Object containing list of classes for each quarter for each year
+        // IMPORTANT: Might be better to build this from rows(see below) since class removal would be complicated
         //acadPlanObj: {"Year 1": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 2": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 3": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 4": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}},
         acadPlanObj: {"1": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "2": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "3": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "4": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}},
 
@@ -55,9 +59,11 @@ class EnterClasses extends React.Component {
       this.handleChange1 = this.handleChange1.bind(this);
       this.handleChange2 = this.handleChange2.bind(this);
       this.handleChange3 = this.handleChange3.bind(this);
+      this.handleChange4 = this.handleChange4.bind(this);
       //this.handleLoad1 = this.handleLoad1.bind(this);
       this.handleSubmit1 = this.handleSubmit1.bind(this);
       this.handleSubmit2 = this.handleSubmit2.bind(this);
+      this.handleSubmit3 = this.handleSubmit3.bind(this);
     }
 
     handleChange1(event) {  // https://reactjs.org/docs/forms.html had this
@@ -70,6 +76,11 @@ class EnterClasses extends React.Component {
 
     handleChange3(event) {
       this.setState({year: event.target.value});
+    }
+
+    handleChange4(event) {
+      console.log("toRemove:" + event.target.value);
+      this.setState({toRemove: event.target.value});
     }
 
     /*
@@ -124,9 +135,15 @@ class EnterClasses extends React.Component {
         const classes = this.state.classes.slice();
         classes.push(value);  // Add this class to list of all classes
 
+        let classCount = this.state.classCount;
+        console.log("classCount(before add):" + String(classCount));
+        classCount++;  // Increase class entered count (Used as a safety check when removing classes)
+        console.log("classCount(after add):" + String(classCount));
+
         // ============================================ PART 1 ====================================================
         // This first part handles adding the class name to the object (This part is only needed for when passing to backend)
 
+        // IMPORTANT: Might be better to build this from rows(see below) since class removal would be complicated
         const acadPlanObj = this.state.acadPlanObj;
         acadPlanObj[yr][qtr].push(value);
         //this.setState({acadPlanObj: acadPlanObj});
@@ -198,10 +215,10 @@ class EnterClasses extends React.Component {
         value = "";  // For next input
 
         //this.setState({value: value, classes: classes, rows: rows});
-        this.setState({value: value, classes: classes, acadPlanObj:acadPlanObj, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr ,rowsForEachYear: rowsForEachYear, rows: rows});
+        this.setState({value: value, classes: classes, classCount: classCount, acadPlanObj:acadPlanObj, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr ,rowsForEachYear: rowsForEachYear, rows: rows});
       }
 
-      event.preventDefault();
+      event.preventDefault();  // Important
     }
 
     handleSubmit2(event) {  // Handles submitting the list of classes
@@ -256,6 +273,60 @@ class EnterClasses extends React.Component {
       event.preventDefault();  // Just for now. Actually want to submit once able to connect to backend
     }
 
+    handleSubmit3(event) {  // For class removal.  NOTE: This removes all instances of a class
+      let classCount = this.state.classCount;
+      if (classCount >= 1) {  // If there's a class to be removed in the first place
+        console.log("classCount(before decrement): " + String(classCount));
+        classCount--;
+        console.log("classCount(after decrement): " + String(classCount));
+
+        let toRemove = this.state.toRemove;
+        console.log("toRemove: " + toRemove);
+        let classes = this.state.classes.slice();
+        let rows = this.state.rows.slice();
+
+        // i for rows, j for columns
+        // Go through each column of each row to remove instance of the class to be removed
+        for (let i = 0; i < rows.length; i++) {
+          for (let j = 0; j < rows[i].length; j++) {
+            if (rows[i][j] === toRemove) {
+              console.log("i: " + String(i) + "    j: " + String(j) + "    rows[i][j]: " + rows[i][j]);
+              rows[i][j] = ""; // Remove by making it an empty string
+            }
+          }
+        }
+
+        // Also need to remove it in  rowsForEachYear
+        //   Complicated. Will need to update current table index
+
+        console.log("classes(before remove): " + classes.toString());
+        /*
+        for (let i = 0; i < classes.length; i++) {
+          if (classes[i] === toRemove) {
+            classes.splice(i, 1);
+          }
+        }    
+        */
+        let x = 0;
+        while (x < classes.length) {
+          if (classes[x] === toRemove) {
+            classes.splice(x, 1);
+          } else {
+            x++;
+          }
+        }
+        console.log("classes(after remove): " + classes.toString());
+
+        toRemove = "";
+
+        this.setState({classes: classes, classCount: classCount, toRemove: toRemove, rows: rows});
+      }
+
+      // Don't do anything if there are no classes in the first place
+
+      event.preventDefault(); // Important
+    }
+
     render() {
       // Dummy json to check if missing requirements handler works
       //   CSE 12, CSE 16, CSE 20, CSE 30, CSE 13S, MATH 19A, MATH 19B, MATH 21, MATH 23A, ECE 30
@@ -264,25 +335,36 @@ class EnterClasses extends React.Component {
       return (
         <div className="container1">
           <form onSubmit={this.handleSubmit1}>
-          <label>Enter a class:&nbsp;</label>
-          <input type="text" value={this.state.value} onChange={this.handleChange1} />
-          <input type="submit" value="Add" />
-          &emsp;
-          <label>Year:&nbsp;</label>
-          <select className="quarter" onChange={this.handleChange3}>
-              <option value="1">Year 1</option>
-              <option value="2">Year 2</option>
-              <option value="3">Year 3</option>
-              <option value="4">Year 4</option>
-          </select>
-          &emsp;
-          <label>Quarter:&nbsp;</label>
-          <select className="quarter" onChange={this.handleChange2}>
-            <option value="Fall">Fall</option>
-            <option value="Winter">Winter</option>
-            <option value="Spring">Spring</option>
-            <option value="Summer">Summer</option>
-          </select>
+            <label>Enter a class:&nbsp;</label>
+            <input type="text" value={this.state.value} onChange={this.handleChange1} />
+            &nbsp;
+            <input type="submit" value="Add" />
+            &emsp;
+            <label>Year:&nbsp;</label>
+            <select className="quarter" onChange={this.handleChange3}>
+                <option value="1">Year 1</option>
+                <option value="2">Year 2</option>
+                <option value="3">Year 3</option>
+                <option value="4">Year 4</option>
+            </select>
+            &emsp;
+            <label>Quarter:&nbsp;</label>
+            <select className="quarter" onChange={this.handleChange2}>
+              <option value="Fall">Fall</option>
+              <option value="Winter">Winter</option>
+              <option value="Spring">Spring</option>
+              <option value="Summer">Summer</option>
+            </select>
+          </form>
+
+          <form onSubmit={this.handleSubmit3}>
+            <label>Remove a class:&nbsp;</label>
+            <select className="toRemove" onChange={this.handleChange4}>
+              <option value="">Select</option>
+              {this.state.classes.map((theClass) => <option value={theClass.value}>{theClass}</option>)}
+            </select>
+            &nbsp;
+            <input type="submit" value="Remove" />
           </form>
 
           <Grid
@@ -306,3 +388,4 @@ class EnterClasses extends React.Component {
 }
 
 export default EnterClasses;
+
