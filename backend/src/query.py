@@ -1,6 +1,4 @@
 import psycopg2
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 #psql postgres
 #\c to check `CURRENT_USER`
 #Create username with: CREATE USER postgres;

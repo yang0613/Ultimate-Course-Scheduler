@@ -4,6 +4,7 @@ from fastapi import Body, FastAPI, Response, status,HTTPException
 from pydantic import BaseModel
 from random import randrange
 app = FastAPI()
+import ../../src/query.py
 
 #Schema for user input: User must type in input within corresponding schema, or error will be raised
 class Post(BaseModel):
@@ -34,7 +35,8 @@ def find_index_post(id):
             return i
 #retrieve data using get: start with the root directory
 @app.get("/") 
-def root(): 
+def root():
+
     return {"message": "Welcome to Slug Scheduler API!"} # In `return`, it shows the info back to the user
 
 #retrieve all posts
@@ -47,6 +49,7 @@ def get_posts():
 @app.get("/posts/{id}")
 def get_post(id:int):
     post = find_post(id)
+    
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id: {id} was not found")
     return {"post_detail":post}
