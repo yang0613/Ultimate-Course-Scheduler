@@ -10,6 +10,7 @@ psycopg2 = "*"
 psycopg2-binary = "*"
 selenium = "*"
 boolean = "*"
+fastapi = "*"
 
 [dev-packages]
 
