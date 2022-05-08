@@ -37,6 +37,7 @@ class EnterClasses extends React.Component {
         //      The 5 is the number of columns for that year (Same for each year. Cannot be changed)
         rowsForEachYear: Array(4).fill(0).map(rowsForOneYear => Array(4).fill(0).map(row => new Array(5).fill(""))),
         rows: Array(1).fill(0).map(row => new Array(5).fill("")),  // Build this with each of the "rows" for each year above
+        //rows: Array(16).fill(0).map(row => new Array(5).fill("")),
 
         // Number of rows filled for each year. Initially 1 for each (for the "year row")
         //   Just ppdate by +1 at the appropriate time before using (So on first use, 0 -> 1)
@@ -62,6 +63,17 @@ class EnterClasses extends React.Component {
       this.handleSubmit1 = this.handleSubmit1.bind(this);  // Handles clicking "Add" when entering a class
       this.handleSubmit2 = this.handleSubmit2.bind(this);  // Handles clicking "Submit" when submitting all classes to be taken
       this.handleSubmit3 = this.handleSubmit3.bind(this);  // Handles clicking "Remove" when removing a class
+    }
+
+    // https://stackoverflow.com/questions/65014512/how-to-initialize-data-before-rendering-in-react-js
+    componentDidMount() {
+      const rows = Array(16).fill(0).map(row => new Array(5).fill(""));
+      // Build the "year rows"
+      rows[0][0] = "Year 1";  // First row, first column  
+      rows[4][0] = "Year 2";  // Fifth row, first column
+      rows[8][0] = "Year 3";  // Ninth row, first column
+      rows[12][0] = "Year 4";  // Thirteenth row, first column
+      this.setState({rows: rows});
     }
 
     handleChange1(event) {  // https://reactjs.org/docs/forms.html had this
