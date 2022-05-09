@@ -1,4 +1,4 @@
-#!/usr/bin/python3.9
+
 from re import compile
 
 

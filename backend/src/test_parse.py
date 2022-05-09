@@ -1,4 +1,4 @@
-#!/usr/bin/python3.9
+
 import parse
 from parse import TOKEN_NAME 
 from parse import TOKEN_LIST
