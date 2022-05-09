@@ -11,6 +11,7 @@ psycopg2-binary = "*"
 selenium = "*"
 boolean = "*"
 fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
 
 [dev-packages]
 

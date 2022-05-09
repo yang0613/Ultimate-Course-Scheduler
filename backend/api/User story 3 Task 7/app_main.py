@@ -3,8 +3,9 @@ from typing import Optional
 from fastapi import Body, FastAPI, Response, status,HTTPException
 from pydantic import BaseModel
 from random import randrange
+import backend.src.query
+
 app = FastAPI()
-import ../../src/query.py
 
 #Schema for user input: User must type in input within corresponding schema, or error will be raised
 class Post(BaseModel):
