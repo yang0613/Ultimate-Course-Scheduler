@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7cb3b8cceca1c14268b422bfeeb7334b2bf06c8b1ed7ddb12729d1c6ac8b12b8"
+            "sha256": "381969a054f6c4baad0326e5a279233b9d895c2fc36a7362f029d50b67e24958"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -334,13 +334,6 @@
             "index": "pypi",
             "version": "==1.1.0"
         },
-        "pipfile": {
-            "hashes": [
-                "sha256:f7d9f15de8b660986557eb3cc5391aa1a16207ac41bc378d03f414762d36c984"
-            ],
-            "index": "pypi",
-            "version": "==0.0.2"
-        },
         "psycopg2": {
             "hashes": [
                 "sha256:06f32425949bd5fe8f625c49f17ebb9784e1e4fe928b7cce72edc36fb68e4c0c",
@@ -558,14 +551,6 @@
             ],
             "index": "pypi",
             "version": "==0.18.0"
-        },
-        "toml": {
-            "hashes": [
-                "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b",
-                "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"
-            ],
-            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
-            "version": "==0.10.2"
         },
         "trio": {
             "hashes": [
