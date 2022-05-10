@@ -84,12 +84,12 @@ def course_tokens(course_list: str):
 
 
 def num_from_tokens(num_from_expr: str):
-    """Returns a stream of tokens for some arbitrary number of classes
-    is required from some list.
+    """Returns a stream of dictionary tokens for 
+    some arbitrary number of classes that is required from some list.
 
     Args:
-        reqs_list (str): A string representing a requirements list in
-        the following format:
+        num_from_expr (str): A string representing a num from expression
+        from the following format:
 
         "num from: Course, Course, Course, or ANY LIST [start 
         discounting num2 from: Course, Course, Course, or ANY LIST] 
@@ -123,6 +123,29 @@ def num_from_tokens(num_from_expr: str):
         yield toks
 
 def reqs_list_tokens(reqs_list: str):
+    """Returns a stream of courses that is the list of a "num_from" 
+    expression
+
+    Args:
+        reqs_list (str): A list of courses following what comes after
+        "num from:" 
+
+        Example:
+
+        An "num_from" expression 
+
+        'three from: CSE 101, ECON 104, (MATH 19A and MATH 19B), or
+        PHYS 23 by quarter 6'
+
+        would require the inputs of
+
+        'CSE 101, ECON 104, (MATH 19A and MATH 19B), or PHYS 23'
+
+        for this function.
+    Yields:
+        (Iterable): A stream of courses, either as a course name
+        or an boolean expression of courses
+    """
     for match in seperate_req_list.finditer(reqs_list):
         course_list = match[TOKEN_LIST]
         if course_list:
