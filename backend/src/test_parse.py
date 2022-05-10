@@ -1,4 +1,4 @@
-
+#!/usr/bin/python3.9
 import parse
 from parse import TOKEN_NAME 
 from parse import TOKEN_LIST
@@ -10,6 +10,25 @@ import unittest
 class testParse(unittest.TestCase):
 
     def test_course_tokens(self):
+        """
+        Example: Given an string of 
+        'ENVS 23 or CHEM 1A; ENVS 24 or BIOE 20C; ENVS 25;'
+        where each input of the test would be
+
+        'ENVS 23 or CHEM 1A'
+        'ENVS 24 or BIOE 20C'
+        'ENVS 25'
+
+        Return the tokens of the boolean operands and courses and their
+        starting index poistion in the string
+        'ENVS 23 or CHEM 1A'
+         0123456789...
+
+        'ENVS 23', 0
+        'or', 8
+        'CHEM 1A', 11
+
+        """
         def convertToList(expr):
             return list(parse.course_tokens(expr))
 
@@ -37,9 +56,21 @@ class testParse(unittest.TestCase):
                     convertToList('STAT 7 and STAT 7L, or ECON 113 or OCEA 90'))
 
     def test_num_from_tokens(self):
+        """
+        Given a prerequiste string of
 
+        'one from: "CSE-101" ANTH 2, SOCY 1, SOCY 10, SOCY 15, PHIL 21,
+        or ECON-101'
+
+        Parse the string and return
+
+        'one' -> total required = 1
+        'CSE-101' -> requirement name = "CSE-101"
+        'ANTH 2, SOCY 1, SOCY 10, SOCY 15, PHIL 21,
+        or ECON-101' -> requirement list -> .
+        """
         test = self
-        longMessage = True
+
         def createDummyTokens(total, name, list, type, due_date):
             return {TOKEN_COUNT: total, TOKEN_NAME: name, 
                     TOKEN_LIST: list, TOKEN_TYPE: type,
@@ -58,7 +89,7 @@ class testParse(unittest.TestCase):
                 test.assertNotEqual(self.count, self.length, 
                             msg='Parser most likely gave less matches than expected')
                 if self.count < self.length:
-                    test.assertEqual(first, self.toks[self.count])
+                    test.assertDictEqual(first, self.toks[self.count])
                 self.count = self.count + 1
                 
 
