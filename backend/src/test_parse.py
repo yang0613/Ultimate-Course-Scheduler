@@ -136,12 +136,51 @@ three from: another random string wait until due date by quarter 400')
             list='another random string wait until due date', 
             due_date = 400))
 
+    def test_reqs_list_tokens(self):
+        """
+        Given a string of a comma-delimited list whose elements may be
+        a list:
+
+        "ECON 101, PHYS 23, (ECON 23 and CSE-101), or MATH 19A"
+        returns a result of
+        "ECON 101"
+        "PHYS 23"
+        "(ECON 23 and CSE-101)"
+        "MATH 19A"
+        """
 
 
+        tokens = parse.reqs_list_tokens("ANTH 2, SOCY 1, SOCY 10, \
+SOCY 15, (ECON 23 and CSE 1), PHIL 21, PHIL 22, PHIL 24, PHIL 28, or PHIL 80G")
+
+        self.assertEqual(next(tokens), 'ANTH 2')
+        self.assertEqual(next(tokens), 'SOCY 1')
+        self.assertEqual(next(tokens), 'SOCY 10')
+        self.assertEqual(next(tokens), 'SOCY 15')
+        self.assertEqual(next(tokens), '(ECON 23 and CSE 1)')
+        self.assertEqual(next(tokens), 'PHIL 21')
+        self.assertEqual(next(tokens), 'PHIL 22')
+        self.assertEqual(next(tokens), 'PHIL 24')
+        self.assertEqual(next(tokens), 'PHIL 28')
+        self.assertEqual(next(tokens), 'PHIL 80G')
+
+
+        #Even with additional spaces and not needed ors, it should be
+        #equivalent
+        tokens = parse.reqs_list_tokens("ANTH 2,or  SOCY 1,or SOCY 10, \
+or SOCY 15, (ECON 23 and CSE 1), PHIL 21, PHIL 22,   or  PHIL 24, \
+PHIL 28, or PHIL 80G")
+
+        self.assertEqual(next(tokens), 'ANTH 2')
+        self.assertEqual(next(tokens), 'SOCY 1')
+        self.assertEqual(next(tokens), 'SOCY 10')
+        self.assertEqual(next(tokens), 'SOCY 15')
+        self.assertEqual(next(tokens), '(ECON 23 and CSE 1)')
+        self.assertEqual(next(tokens), 'PHIL 21')
+        self.assertEqual(next(tokens), 'PHIL 22')
+        self.assertEqual(next(tokens), 'PHIL 24')
+        self.assertEqual(next(tokens), 'PHIL 28')
+        self.assertEqual(next(tokens), 'PHIL 80G')
         
-
-
-
-
 if __name__ == "__main__":
     unittest.main()

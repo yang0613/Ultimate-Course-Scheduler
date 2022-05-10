@@ -1,4 +1,4 @@
-
+#!/usr/bin/python3.9
 from re import compile
 
 
@@ -37,6 +37,10 @@ course = f"(?P<{TOKEN_COURSE}>[A-Z]+ *[\d]+[A-Z]?)"
 courses_list = compile(f" *(Completion *of *)?{course},? *{op}? *")
 nums = f"(?P<{TOKEN_COUNT}>one|two|three|four|five|six|seven|eight|nine|ten)"
 req_list_better = f"(?P<{TOKEN_LIST}>(.+?))"
+#Modified regex expression from
+#https://stackoverflow.com/questions/33400570/regex-to-parse-a-comma-separated-list-excluding-content-within-parentheses
+seperate_req_list = compile(
+    f" *(?P<{TOKEN_LIST}>[^,(]*(?:\([^)]*\))*[^,]*)(, *or)? *")
 types = f"(?P<{TOKEN_TYPE}>(?:start *discounting|discounting|by *quarter\
  *(?P<{TOKEN_DUE_DATE}>\d+)|$))"
 num_from_better = compile(
@@ -79,7 +83,7 @@ def course_tokens(course_list: str):
             yield op, op_pos
 
 
-def num_from_tokens(reqs_list: str):
+def num_from_tokens(num_from_expr: str):
     """Returns a stream of tokens for some arbitrary number of classes
     is required from some list.
 
@@ -99,7 +103,7 @@ def num_from_tokens(reqs_list: str):
     'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6,
     'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10 
     }
-    for match in num_from_better.finditer(reqs_list):
+    for match in num_from_better.finditer(num_from_expr):
         toks = {}
         requirements = [TOKEN_COUNT, TOKEN_NAME, TOKEN_LIST, TOKEN_DUE_DATE, TOKEN_TYPE]
         for req in requirements:
@@ -117,4 +121,10 @@ def num_from_tokens(reqs_list: str):
             #Conver the token "6" in "by quarter 6" to an integer value
             toks[TOKEN_DUE_DATE] = int(due_date)
         yield toks
+
+def reqs_list_tokens(reqs_list: str):
+    for match in seperate_req_list.finditer(reqs_list):
+        course_list = match[TOKEN_LIST]
+        if course_list:
+            yield course_list
 
