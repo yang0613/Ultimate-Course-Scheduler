@@ -12,7 +12,7 @@ import psycopg2
 
 # major = Majors.query.all()
 def connectToDB():
-    conn = psycopg2.connect('dbname=postgres user=postgres host=localhost', options='-c search_path=Majors')
+    conn = psycopg2.connect('dbname=postgres user=postgres host=localhost password = 121407', options='-c search_path=Majors')
     return conn.cursor()
 
 #Show all prereq of electives and required classes for this degree
@@ -58,3 +58,4 @@ def allClassesByClassName(className, degree):
     return cur.fetchall()
 
 print(allClassesByClassName('MATH', 'Computer Science B.S'))
+#print(allClassesByClassName('MATH',''))
