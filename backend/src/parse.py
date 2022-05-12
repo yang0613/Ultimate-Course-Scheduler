@@ -47,7 +47,7 @@ num_from_better = compile(
     f" *{nums} *from: *(\"(?P<{TOKEN_NAME}>.*?)\")? *{req_list_better} *{types} *"
 )
 delim = compile(r"(; *and *|\. *|; *(?! *or))")
-
+concurrent_enrollment_full = f"([pP]revious *or)? *[cC]oncurrent *enrollment *in *(?P<course_list>([A-Z]+ *[\d]+[A-Z]?)(,? *(?P<op>(and|or))? *[A-Z]+ *[\d]+[A-Z]?)*)(, *(and|or) *)? *(is *required)? *"
 def get_requirements(expr: str):
     """Given an string of prerequisites, return a structured list
     of strings that represent the prerequisite.
@@ -150,4 +150,17 @@ def reqs_list_tokens(reqs_list: str):
         course_list = match[TOKEN_LIST]
         if course_list:
             yield course_list
+            
+def concurrent_enrollment_tokens(conc_enr: str):
+    """Returns a stirng of classes that requires concurrent/previous enrollment
+    from an concurrent enrollment expression
+    
 
+    Args:
+        conc_enr (str): A set of classes following the format:
+        
+        "[Previous or] [cC]oncurent enrollment in COURSE_LIST is required."
+    Yields:
+        (Iterable): A stream of courses that requires either a single or
+        multiple concurrent enrollments
+    """
