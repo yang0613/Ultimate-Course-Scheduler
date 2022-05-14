@@ -5,6 +5,9 @@ from parse import TOKEN_LIST
 from parse import TOKEN_DUE_DATE
 from parse import TOKEN_COUNT
 from parse import TOKEN_TYPE
+from parse import TOKEN_PREV_CONCURRENT
+from parse import TOKEN_CONCURRENT_LIST
+from parse import TOKEN_OP
 import unittest
 
 class testParse(unittest.TestCase):
@@ -181,6 +184,34 @@ PHIL 28, or PHIL 80G")
         self.assertEqual(next(tokens), 'PHIL 24')
         self.assertEqual(next(tokens), 'PHIL 28')
         self.assertEqual(next(tokens), 'PHIL 80G')
+    
+    def test_concurrent_enrollment_tokens(self):
+        tokens = parse.concurrent_enrollment_tokens('Previous or concurrent \
+enrollment in MATH 3, AM 3, or equivalent, or a mathematics placement score \
+of 300 or higher')
+        def createDummyTokens(course_list, op=None, allowPrevious=False):
+            if op:
+                return {TOKEN_CONCURRENT_LIST: course_list, 
+                        TOKEN_PREV_CONCURRENT: allowPrevious,
+                        TOKEN_OP: op}
+            return {TOKEN_CONCURRENT_LIST: course_list, 
+                        TOKEN_PREV_CONCURRENT: allowPrevious}
+        self.assertDictEqual(next(tokens), createDummyTokens(
+            allowPrevious = True,
+            course_list = "MATH 3, AM 3"))
         
+        tokens = parse.concurrent_enrollment_tokens('concurrent enrollment \
+        in PHYS 5L is required.')
+
+        self.assertDictEqual(next(tokens), 
+        createDummyTokens(allowPrevious=False, course_list='PHYS 5L')
+        )
+
+        tokens = parse.concurrent_enrollment_tokens('MATH 24 or \
+    previous or concurrent enrollment in AM 20')
+
+        self.assertDictEqual(next(tokens), 
+        createDummyTokens(allowPrevious=True, course_list='AM 20'))
+
 if __name__ == "__main__":
     unittest.main()
