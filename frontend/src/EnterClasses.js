@@ -340,7 +340,7 @@ class EnterClasses extends React.Component {
       // OLD, keep for reference
       //this.setState({requiredList: requiredList, missingList: missingList, fulfilledList: fulfilledList});
 
-      alert("Verify was clicked."); // Temporary. REMOVE LATER
+      alert("Use API calls later, then return result."); // Temporary. REMOVE LATER
 
       event.preventDefault(); // Without this, the page re-renders and all states are lost
 
