@@ -3,16 +3,18 @@ import psycopg2
 #\c to check `CURRENT_USER`
 #Create username with: CREATE USER postgres;
 #grant `CURRENT_USER` to postgres;
-#Postgres login: psql -d postgres -U postgres
+#Postgres local login: psql -d postgres -U postgres
+#Heroku remote login: psql --dbname=dckbguanuf8a45 port=5432 --user=uxoitcpyfpqfvq --host=ec2-44-196-223-128.compute-1.amazonaws.com
+#Heroku password: f646a5b031a7b5f570ef097d77f987809613ca53ee77167d1430d246105a0a08
+#switch between local and remote database
+# dev for local testing, prod for production
+ENV = 'prod'
 
-# app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost/5432'
-
-# db = SQLAlchemy(app)
-
-# major = Majors.query.all()
 def connectToDB():
-    conn = psycopg2.connect('dbname=postgres user=postgres host=localhost', options='-c search_path=Majors')
+    if ENV == 'dev':
+        conn = psycopg2.connect('dbname=postgres port=5432 user=postgres host=localhost', options='-c search_path=Majors')
+    else:
+        conn = psycopg2.connect('dbname=dckbguanuf8a45 port=5432 user=uxoitcpyfpqfvq host=ec2-44-196-223-128.compute-1.amazonaws.com password=f646a5b031a7b5f570ef097d77f987809613ca53ee77167d1430d246105a0a08', options='-c search_path=Majors')
     return conn.cursor()
 
 #Show all prereq of electives and required classes for this degree
