@@ -5,7 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import EnterClasses from './EnterClasses';
-import ShowAcadPlanTbl from './ShowAcadPlanTbl';
+//import ShowAcadPlanTbl from './ShowAcadPlanTbl';  // Most likely will remove later
 import LandingPage from './LandingPage';
 
 
@@ -14,7 +14,6 @@ root.render(
   <React.StrictMode>
     <LandingPage />
     <EnterClasses />
-    <ShowAcadPlanTbl />
   </React.StrictMode>
 );
 
