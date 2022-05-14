@@ -50,10 +50,11 @@ class searchClass(BaseModel):
 def root():
     cur = connectToDB()
     return {"message": "Welcome to my api!!!!!!"}
-#Notice: this is the path for functionality No.4: search bar
+#Notice: this is the path for functionality No.3: search bar
 @app.get("/searchclass")
 def get_posts(input:searchClass):
     posts = allClassesByClassName(input.classstr, input.majorstr)
     return{tuple(posts)}
+
 
 

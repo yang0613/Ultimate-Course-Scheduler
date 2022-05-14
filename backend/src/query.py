@@ -20,34 +20,34 @@ def connectToDB():
 #Show all prereq of electives and required classes for this degree
 def majorPrereq(degree):
     cur = connectToDB()
-    query = "SELECT classID, preReq FROM Requirements WHERE gradReq LIKE '%%' || %s || '%%'"
+    query = "SELECT classID, preReq FROM Requirements WHERE UPPER(gradReq) LIKE UPPER('%%' || %s || '%%')"
     cur.execute(query, (degree,))
     return cur.fetchall()
 
 #Subject Example: CSE, MATH
 def allClassesInMajor(major):
     cur = connectToDB()
-    query = "SELECT * FROM Classes WHERE classID LIKE '%%' || %s || '%%'"
+    query = "SELECT * FROM Classes WHERE UPPER(classID) LIKE UPPER('%%' || %s || '%%')"
     cur.execute(query, (major,))
     return cur.fetchall()
 
 # all attributes for single class
 def singleClass(className):
     cur = connectToDB()
-    query = "SELECT * FROM Requirements WHERE classID = %s"
+    query = "SELECT * FROM Requirements WHERE UPPER(classID) = UPPER(%s)"
     cur.execute(query, (className,))
     return cur.fetchall()
 # credit
 def singleClassCredit(classID):
     cur = connectToDB()
-    query = "SELECT credit FROM Classes WHERE classID = %s"
+    query = "SELECT credit FROM Classes WHERE UPPER(classID) = UPPER(%s)"
     cur.execute(query, (classID,))
     return cur.fetchall()
 
 # quarters
 def singleClassQuarters(classID):
     cur = connectToDB()
-    query = "SELECT quarters FROM Classes WHERE classID = %s"
+    query = "SELECT quarters FROM Classes WHERE UPPER(classID) = UPPER(%s)"
     cur.execute(query, (classID,))
     return cur.fetchall()
 
@@ -55,9 +55,8 @@ def singleClassQuarters(classID):
 # all classes with attribute classname, subject, credit, quarter
 def allClassesByClassName(className, degree):
     cur = connectToDB()
-    query = "SELECT className, subject, credit, quarters FROM Classes, Requirements WHERE className LIKE '%%' || '%s' || '%%' AND Classes.classID = Requirements.classID AND gradReq LIKE '%%' || %s || '%%'"
-    cur.execute(query, (className, degree,))
+    query = "SELECT className, subject, credit, quarters FROM Classes, Requirements WHERE UPPER(className) LIKE UPPER('%%' || %s || '%%') AND Classes.classID = Requirements.classID AND UPPER(gradReq) LIKE UPPER('%%' || %s || '%%')"
     return cur.fetchall()
 
-print(allClassesByClassName('MATH', 'Computer Science B.S'))
+print(allClassesByClassName('MATH', 'computer Science B.S'))
 #print(allClassesByClassName('MATH',''))
