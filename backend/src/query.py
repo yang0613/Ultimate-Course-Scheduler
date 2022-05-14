@@ -60,3 +60,4 @@ def allClassesByClassName(className, degree):
     return cur.fetchall()
 
 print(allClassesByClassName('MATH', 'Computer Science B.S'))
+#print(allClassesByClassName('MATH',''))

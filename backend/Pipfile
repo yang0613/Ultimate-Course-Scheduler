@@ -42,6 +42,7 @@ pyOpenSSL = "==22.0.0"
 PySocks = "==1.7.1"
 SQLAlchemy = "==1.4.36"
 Werkzeug = "==2.1.2"
+uvicorn = "*"
 
 [dev-packages]
 

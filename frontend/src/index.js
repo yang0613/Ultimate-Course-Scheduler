@@ -6,11 +6,13 @@ import reportWebVitals from './reportWebVitals';
 
 import EnterClasses from './EnterClasses';
 import ShowAcadPlanTbl from './ShowAcadPlanTbl';
+import LandingPage from './LandingPage';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    <LandingPage />
     <EnterClasses />
     <ShowAcadPlanTbl />
   </React.StrictMode>
