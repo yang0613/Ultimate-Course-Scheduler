@@ -19,8 +19,10 @@ class EnterClasses extends React.Component {
         quarter: "Fall", // Current quarter in which to add classes to (Initially Fall)
         value: "",  // Current value of input form for classes
         toRemove: "Select",  // Value to be removed (Select when nothing selected)
-
         classes: Array(0).fill(""),  // Array of all entered classes. Purpose is to make dealing with some parts easier.
+
+        // INTEGRATION: Currently dummy data. Need data returned by API.
+        availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21"],
 
         // Object containing list of classes for each quarter for each year (Keep the commented version in case it's needed)
         //acadPlanObj: {"Year 1": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 2": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 3": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 4": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}},
@@ -142,70 +144,77 @@ class EnterClasses extends React.Component {
         const classes = this.state.classes.slice();
         // Only add a class if it hasn't been added yet
         if (!classes.includes(value)) {
-       
-          classes.push(value);  // Add this class to list of all classes
+          const availableClasses = this.state.availableClasses.slice();
+          // Only add if included in the given list of available classes
+          if (availableClasses.includes(value)) {
+            classes.push(value);  // Add this class to list of all classes
 
-          // ====================================================================================================
-          // Update rowsForEachYear (Functionality explained in this.state within the constructor above
-          // ====================================================================================================
+            // ====================================================================================================
+            // Update rowsForEachYear (Functionality explained in this.state within the constructor above
+            // ====================================================================================================
 
-          let yrIndex = yrNum - 1;  // yr - 1: Ex. Year 1, yrNum = 1, so correct index would be 0
+            let yrIndex = yrNum - 1;  // yr - 1: Ex. Year 1, yrNum = 1, so correct index would be 0
 
-          let column = 1;  // Which column of current row to add the class in
-          switch(qtr) {
-            case "Fall":
-              column = 1;
-              break;
-            case "Winter":
-              column = 2;
-              break;
-            case "Spring":
-              column = 3;
-              break;
-            case "Summer":
-              column = 4;
-              break;
-            default:
-              column = 1;
-              break;
+            let column = 1;  // Which column of current row to add the class in
+            switch(qtr) {
+              case "Fall":
+                column = 1;
+                break;
+              case "Winter":
+                column = 2;
+                break;
+              case "Spring":
+                column = 3;
+                break;
+              case "Summer":
+                column = 4;
+                break;
+              default:
+                column = 1;
+                break;
+            }
+
+            //  Explanation: Each year has a set of rows it occupies
+            //  The comments below are included to avoid having to look up all the way above for how each state works
+            //    First 4 is the number of years. 
+            //    Second 4 is the number of rows for that year (Can add more rows. Ex. Adding more classes)
+            //    The 5 is the number of columns for that year (Same for each year. Cannot be changed)
+            // rowsForEachYear: Array(4).fill(0).map(rowsForOneYear => Array(4).fill(0).map(row => new Array(5).fill("")))
+            // rowsFilled: Array(4).fill(0)  // Update by +1 before each use (So on first use, 0 -> 1)
+            // rowsFilledForQtr: Array(4).fill(0).map(() => ({"Fall": 0, "Winter": 0, "Spring": 0, "Summer": 0}))
+            let rowsForEachYear = this.state.rowsForEachYear.slice();
+            let rowsFilled = this.state.rowsFilled.slice();
+            let rowsFilledForQtr = this.state.rowsFilledForQtr.slice();
+
+            // Need to keep track of "highest" row occupied for each year (curRow)
+            //   Also need to keep track of current row occupied for each quarter for each year
+            rowsFilledForQtr[yrIndex][qtr] += 1; // As mentioned above, increment before each use
+            let curRowForQtr = rowsFilledForQtr[yrIndex][qtr];  // The row in which to enter the class for the current year and quarter
+            if (curRowForQtr > rowsFilled[yrIndex]) {  // If another row is needed (See below for the add)
+              rowsFilled[yrIndex] += 1;  // As mentioned previously, increment at the appropriate time
+            }
+            let curRow = rowsFilled[yrIndex]; // Current row to be filled for current year
+            if (curRow >= rowsForEachYear[yrIndex].length) { // If another row is needed
+              rowsForEachYear[yrIndex].push(["","","","",""]); // Add a row with 5 columns
+            }
+            // [year][row][column]
+            rowsForEachYear[yrIndex][curRowForQtr][column] = value;  // Add the class to the current row for the selected quarter for the selected year
+
+            // ================================================================================================
+            // Build the academic plan table to be shown
+            // ================================================================================================
+
+            let rows = this.buildRows(rowsForEachYear);
+
+            value = "";  // For next input
+
+            //this.setState({value: value, classes: classes, classCount: classCount, acadPlanObj:acadPlanObj, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr, rowsForEachYear: rowsForEachYear, rows: rows});
+            this.setState({value: value, classes: classes, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr, rowsForEachYear: rowsForEachYear, rows: rows});
+          } else {
+            alert("Please select from the list of given classes.");
+            value = "";  // For next input
+            this.setState({value: value});
           }
-
-          //  Explanation: Each year has a set of rows it occupies
-          //  The comments below are included to avoid having to look up all the way above for how each state works
-          //    First 4 is the number of years. 
-          //    Second 4 is the number of rows for that year (Can add more rows. Ex. Adding more classes)
-          //    The 5 is the number of columns for that year (Same for each year. Cannot be changed)
-          // rowsForEachYear: Array(4).fill(0).map(rowsForOneYear => Array(4).fill(0).map(row => new Array(5).fill("")))
-          // rowsFilled: Array(4).fill(0)  // Update by +1 before each use (So on first use, 0 -> 1)
-          // rowsFilledForQtr: Array(4).fill(0).map(() => ({"Fall": 0, "Winter": 0, "Spring": 0, "Summer": 0}))
-          let rowsForEachYear = this.state.rowsForEachYear.slice();
-          let rowsFilled = this.state.rowsFilled.slice();
-          let rowsFilledForQtr = this.state.rowsFilledForQtr.slice();
-
-          // Need to keep track of "highest" row occupied for each year (curRow)
-          //   Also need to keep track of current row occupied for each quarter for each year
-          rowsFilledForQtr[yrIndex][qtr] += 1; // As mentioned above, increment before each use
-          let curRowForQtr = rowsFilledForQtr[yrIndex][qtr];  // The row in which to enter the class for the current year and quarter
-          if (curRowForQtr > rowsFilled[yrIndex]) {  // If another row is needed (See below for the add)
-            rowsFilled[yrIndex] += 1;  // As mentioned previously, increment at the appropriate time
-          }
-          let curRow = rowsFilled[yrIndex]; // Current row to be filled for current year
-          if (curRow >= rowsForEachYear[yrIndex].length) { // If another row is needed
-            rowsForEachYear[yrIndex].push(["","","","",""]); // Add a row with 5 columns
-          }
-          // [year][row][column]
-          rowsForEachYear[yrIndex][curRowForQtr][column] = value;  // Add the class to the current row for the selected quarter for the selected year
-
-          // ================================================================================================
-          // Build the academic plan table to be shown
-          // ================================================================================================
-
-          let rows = this.buildRows(rowsForEachYear);
-
-          value = "";  // For next input
-
-          //this.setState({value: value, classes: classes, classCount: classCount, acadPlanObj:acadPlanObj, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr, rowsForEachYear: rowsForEachYear, rows: rows});
-          this.setState({value: value, classes: classes, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr, rowsForEachYear: rowsForEachYear, rows: rows});
         } else {
           alert("This class has already been added.");
           value = "";  // For next input
@@ -280,6 +289,10 @@ class EnterClasses extends React.Component {
       //   If #1, easy.
       //   If #2, then I made some "INTEGRATION" comments below on a possible way to approach it
 
+      // INTEGRATION:
+      // For generating, create a seperate handleSubmit
+      // Then just update rowsForEachYear by parsing the data returned by backend
+
       // INTEGRATION: 
       // A:
       //   For verifying, the backend should return a list of missing and fulfilled classes
@@ -327,7 +340,7 @@ class EnterClasses extends React.Component {
       // OLD, keep for reference
       //this.setState({requiredList: requiredList, missingList: missingList, fulfilledList: fulfilledList});
 
-      alert("Verify was clicked."); // Temporary. REMOVE LATER
+      alert("Use API calls later, then return result."); // Temporary. REMOVE LATER
 
       event.preventDefault(); // Without this, the page re-renders and all states are lost
 
@@ -430,9 +443,14 @@ class EnterClasses extends React.Component {
         <div className="container1">
           <form onSubmit={this.handleSubmit1}>
             <label>Enter a class:&nbsp;</label>
-            <input type="text" value={this.state.value} onChange={this.handleChange1} />
+            <input list="availableClasses" name="availableClassesList" value={this.state.value} onChange={this.handleChange1} />
+            <datalist id="availableClasses">
+              <option value=""></option>
+              {this.state.availableClasses.map((theClass) => <option value={theClass.value}>{theClass}</option>)}
+            </datalist>
             &nbsp;
             <input type="submit" value="Add" />
+
             &emsp;
             <label>Quarter:&nbsp;</label>
             <select className="quarter" onChange={this.handleChange2}>
@@ -493,4 +511,3 @@ class EnterClasses extends React.Component {
 }
 
 export default EnterClasses;
-
