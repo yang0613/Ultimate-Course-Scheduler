@@ -280,6 +280,10 @@ class EnterClasses extends React.Component {
       //   If #1, easy.
       //   If #2, then I made some "INTEGRATION" comments below on a possible way to approach it
 
+      // INTEGRATION:
+      // For generating, create a seperate handleSubmit
+      // Then just update rowsForEachYear by parsing the data returned by backend
+
       // INTEGRATION: 
       // A:
       //   For verifying, the backend should return a list of missing and fulfilled classes
