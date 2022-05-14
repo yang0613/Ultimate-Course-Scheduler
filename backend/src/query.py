@@ -8,7 +8,7 @@ import psycopg2
 #Heroku password: f646a5b031a7b5f570ef097d77f987809613ca53ee77167d1430d246105a0a08
 #switch between local and remote database
 # dev for local testing, prod for production
-ENV = 'pro
+ENV = 'prod'
 
 def connectToDB():
     if ENV == 'dev':
@@ -55,7 +55,7 @@ def singleClassQuarters(classID):
 # all classes with attribute classname, subject, credit, quarter
 def allClassesByClassName(className, degree):
     cur = connectToDB()
-    query = "SELECT className, subject, credit, quarters FROM Classes, Requirements WHERE className LIKE '%%' || %s || '%%' AND Classes.classID = Requirements.classID AND gradReq LIKE '%%' || %s || '%%'"
+    query = "SELECT className, subject, credit, quarters FROM Classes, Requirements WHERE className LIKE '%%' || '%s' || '%%' AND Classes.classID = Requirements.classID AND gradReq LIKE '%%' || %s || '%%'"
     cur.execute(query, (className, degree,))
     return cur.fetchall()
 
