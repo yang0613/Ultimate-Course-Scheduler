@@ -8,7 +8,7 @@ import psycopg2
 #Heroku password: f646a5b031a7b5f570ef097d77f987809613ca53ee77167d1430d246105a0a08
 #switch between local and remote database
 # dev for local testing, prod for production
-ENV = 'prod'
+ENV = 'pro
 
 def connectToDB():
     if ENV == 'dev':
