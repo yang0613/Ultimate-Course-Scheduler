@@ -56,7 +56,7 @@ def singleClassQuarters(classID):
 def allClassesByClassName(className, degree):
     cur = connectToDB()
     query = "SELECT className, subject, credit, quarters FROM Classes, Requirements WHERE className LIKE '%%' || %s || '%%' AND Classes.classID = Requirements.classID AND gradReq LIKE '%%' || %s || '%%'"
-    cur.execute(query, (className, degree,))
+    cur.execute(query, (className.upper(), degree,))
     return cur.fetchall()
 
 print(allClassesByClassName('MATH', 'Computer Science B.S'))
