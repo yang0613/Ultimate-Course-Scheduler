@@ -10,6 +10,7 @@
 import React from 'react';
 import { Grid } from 'gridjs-react';
 import "gridjs/dist/theme/mermaid.css";
+import Script from './Script';
 
 class EnterClasses extends React.Component {
     constructor(props) {
@@ -443,7 +444,7 @@ class EnterClasses extends React.Component {
         <div className="container1">
           <form onSubmit={this.handleSubmit1}>
             <label>Enter a class:&nbsp;</label>
-            <input list="availableClasses" name="availableClassesList" value={this.state.value} onChange={this.handleChange1} />
+            <input list="availableClasses" name="classstr" value={this.state.value} onChange={this.handleChange1} />
             <datalist id="availableClasses">
               <option value=""></option>
               {this.state.availableClasses.map((theClass) => <option value={theClass.value}>{theClass}</option>)}
