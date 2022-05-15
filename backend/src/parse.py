@@ -36,10 +36,15 @@ TOKEN_COUNT = 'total'
 TOKEN_TYPE = 'type'
 TOKEN_CONCURRENT = 'concurrent'
 TOKEN_CONCURRENT_LIST = 'concurrent_list'
-TOKEN_PREV_CONCURRENT = 'prevEnrolledAllowed'
+TOKEN_PREV_CONCURRENT = 'prevEnrollAllowed'
 TOKEN_MULTIPLE_CONCURRENT = 'multiple'
 TOKEN_NUM_FROM = 'num_from'
 TOKEN_REQUIREMENT = 'req'
+TOKEN_POS = 'position'
+TOKEN_EXPR = 'expr'
+TOKEN_RECOMMEND = 'rec'
+TOKEN_NO_CREDIT = 'no_credit'
+TOKEN_BLACKLIST = 'bkaclist'
 
 #Regex pattern matches responsible for parsing our prerequisites
 op = f"(?P<{TOKEN_OP}>(and|or))"
@@ -53,7 +58,7 @@ seperate_req_list = compile(
     f" *(?P<{TOKEN_LIST}>[^,(]*(?:\([^)]*\))*[^,]*)(, *or)? *")
 types = f"(?P<{TOKEN_TYPE}>(?:start *discounting|discounting|by *quarter\
  *(?P<{TOKEN_DUE_DATE}>\d+)|$))"
-num_from_better = compile(
+num_from = compile(
     f"(?P<{TOKEN_NUM_FROM}> *{nums} *from: *(\"(?P<{TOKEN_NAME}>.*?)\")? *{req_list_better} *{types} *)"
 )
 delim = compile(r"(; *and *|\. *|; *(?! *or))")
@@ -64,7 +69,7 @@ f"(?P<{TOKEN_CONCURRENT}>(?P<{TOKEN_PREV_CONCURRENT}>[pP]revious *or)? *[cC]oncu
 {concurrent_enrollment_list} *(is *required)? *)"
 )
 
-def get_requirements(expr: str):
+def requirements_list(expr: str):
     """Given an string of prerequisites, return a structured list
     of strings that represent the prerequisite.
 
@@ -92,11 +97,7 @@ def course_tokens(course_list: str):
         (Iterable): A stream of course tokens
     """
     for match in courses_list.finditer(course_list):
-        course, course_pos = match.group(TOKEN_COURSE), match.start(TOKEN_COURSE)
-        op, op_pos = match.group(TOKEN_OP), match.start(TOKEN_OP)
-        yield course, course_pos
-        if op:
-            yield op, op_pos
+        yield {TOKEN_COURSE: match[TOKEN_COURSE]}
 
 
 def num_from_tokens(num_from_expr: str):
@@ -115,25 +116,28 @@ def num_from_tokens(num_from_expr: str):
     Yields:
         (Iterable): A stream of requirement list tokens
     """
-    enumerate = word2int
-    for match in num_from_better.finditer(num_from_expr):
+    for match in num_from.finditer(num_from_expr):
         toks = {}
-        requirements = [TOKEN_COUNT, TOKEN_NAME, TOKEN_LIST, TOKEN_DUE_DATE, TOKEN_TYPE]
-        for req in requirements:
-            valid_result = match.group(req)
+        components = [TOKEN_COUNT, TOKEN_NAME, TOKEN_LIST, TOKEN_DUE_DATE, TOKEN_TYPE]
+        for comp in components:
+            valid_result = match[comp]
             if valid_result:
-                toks[req] = match.group(req)
+                toks[comp] = match[comp]
             else:
-                toks[req] = None
+                toks[comp] = None
 
         count = toks[TOKEN_COUNT]
         due_date = toks[TOKEN_DUE_DATE]
         #Convert the token "one" in "one from:" to an integer value
-        toks[TOKEN_COUNT] = enumerate[count]
+        toks[TOKEN_COUNT] = word2int[count]
         if due_date:
-            #Conver the token "6" in "by quarter 6" to an integer value
+            #Convert the token "6" in "by quarter 6" to an integer value
             toks[TOKEN_DUE_DATE] = int(due_date)
         yield toks
+
+def build_num_from(num_from_expr: str):
+    """Due to the num_from expresison being more complex, there exists"""
+    pass
 
 def reqs_list_tokens(reqs_list: str):
     """Returns a stream of courses that is the list of a "num_from" 
@@ -179,15 +183,14 @@ def concurrent_enrollment_tokens(conc_enr: str):
     """
     for match in concurrent_enrollment.finditer(conc_enr):
         toks = {}
-        allowPrevious = match.group(TOKEN_PREV_CONCURRENT)
+        allowPrevious = match[TOKEN_PREV_CONCURRENT]
         if allowPrevious:
             toks[TOKEN_PREV_CONCURRENT] = True
         else:
             toks[TOKEN_PREV_CONCURRENT] = False
-        course_list = match.group(TOKEN_CONCURRENT_LIST)
+        course_list = match[TOKEN_CONCURRENT_LIST]
         toks[TOKEN_CONCURRENT_LIST] = course_list
         yield toks
-
 
 TOKENS_MATCH_FUNCTIONS = {
     TOKEN_COURSE: course_tokens,
@@ -196,30 +199,73 @@ TOKENS_MATCH_FUNCTIONS = {
 }
 
 TOKENS_MATCH_PATTERNS = {
-    TOKEN_NUM_FROM: num_from_better.pattern,
+    TOKEN_NUM_FROM: num_from.pattern,
     TOKEN_CONCURRENT: concurrent_enrollment.pattern,
     TOKEN_COURSE: course
 }
 
+"""
+Somethings our regex pattern finds a match that partially looks like
+a requirement that is in fact completely irrelevant/optional. We implement
+a list of blacklisted patterns that we specifically instruct our program
+not to consider them as a requirement.
+"""
+BLACKLIST_PATTERNS = {
+    TOKEN_RECOMMEND: r' *recommended *as *prerequisite *to *this *course *',
+    TOKEN_NO_CREDIT: r" *may *not *enroll * in *"
+}
+
 extract_requriements = compile(
-f' *(,? *{op})? *' + f'(?P<{TOKEN_REQUIREMENT}>' + '|'.join(TOKENS_MATCH_PATTERNS.values()) + ')'
+f'(?P<{TOKEN_REQUIREMENT}>' + '|'.join(TOKENS_MATCH_PATTERNS.values()) + ')' +
+f' *(,? *{op})? *'
 )
 
+blacklist_requirements = compile(
+f'(?P<{TOKEN_BLACKLIST}>' + '|'.join(BLACKLIST_PATTERNS.values()) + ')')
+
 def find_req(match):
+    """Given an match, find exactly the tokens of what requirements the match
+    exactly corresponds to"""
     for tok, func in TOKENS_MATCH_FUNCTIONS.items():
-        req = match[tok]
+        req, req_pos = match[tok], match.start(tok)
         if req:
-            return {tok: list(func(req))}
-        
+            args = next(func(req))
+            args[TOKEN_EXPR] = req
+            return token(TOKEN_ID=tok, kwargs=args, 
+                        pos=req_pos, expr=req)
+
+
+def token(TOKEN_ID, kwargs, expr, pos):
+    """Abstraction method that specifies what format a token should be
+    returned as
+
+    Args:
+        TOKEN_ID (str): A token identifier matching the the associated token object
+        kwargs (**kwargs): Standard keyword arguments for the token object
+        expr (str): The token expression
+        pos (int): An integer representing the initial position of the expression
+    """
+    return TOKEN_ID, kwargs, expr, pos
+
 def parse(expr: str):
     """The main tokenizer function that extracts requirements into the
     neccesary bits and pieces to create our Abstract Syntrax Tree
     """
-    reqs = get_requirements(expr)
-    for req in reqs:
-        for match in extract_requriements.finditer(req):
-            op = match[TOKEN_OP]
-            if op:
-                yield {TOKEN_OP: op}
-            yield find_req(match)
+    for match in extract_requriements.finditer(expr):
+        op = match[TOKEN_OP]
+        pos = match.start(TOKEN_OP)
+        yield find_req(match)
+        if op:
+            yield token(TOKEN_ID=TOKEN_OP, kwargs={TOKEN_OP: op}, pos=pos, expr=op)
 
+def requirement_found(expr: str):
+    """If an requirement is found within our expression, return true.
+    Otherwise false.
+
+    Args:
+        expr (str): A requirement expression
+
+    Returns:
+        boolean: A status indicator for whether a requirement was found
+    """
+    return next(parse(expr), None) is not None and blacklist_requirements.search(expr) is None
