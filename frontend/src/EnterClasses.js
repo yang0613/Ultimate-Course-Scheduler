@@ -243,7 +243,7 @@ class EnterClasses extends React.Component {
 
     handleSubmit2(event) {  // Handles submitting the list of classes (Clicking Verify)
 
-      // BEFORE INTEGRATION: Create the object that will be passed to the backend
+      // INTEGRATION: Create the object that will be passed to the backend
       let rowsForEachYear = this.state.rowsForEachYear.slice();
       //let acadPlanObj = {"1": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "2": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "3": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "4": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}};
       let acadPlanObj = {"1": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "2": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "3": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "4": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}};
@@ -281,62 +281,21 @@ class EnterClasses extends React.Component {
       //console.log(acadPlanObj);
       let acadPlanObjJSON = JSON.stringify(acadPlanObj);
       console.log(acadPlanObjJSON);
+  
+      // UPDATE FOR SPRINT 4: need to create another object that contains preferences
+      // Then combine acadPlanObj with this new one
 
       // INTEGRATION: (IMPORTANT):
-      //   How are the error/success messages returned?
-      //   #1 Is it already built? Similar to the error messages that MyUCSC has?
-      //   #2 Or does it have to be built here?
-      //     Like the one I had before?
-      //   If #1, easy.
-      //   If #2, then I made some "INTEGRATION" comments below on a possible way to approach it
+      //   How is data submitted?     See file that Shing showed
+      //   Put this data in resultJSON
 
-      // INTEGRATION:
+      // Get JSON Data returned by backend
+      // let resultJSON = APICall ...
+      //let resultJSON = 
+
+      // INTEGRATION (FOR GENERATING):
       // For generating, create a seperate handleSubmit
       // Then just update rowsForEachYear by parsing the data returned by backend
-
-      // INTEGRATION: 
-      // A:
-      //   For verifying, the backend should return a list of missing and fulfilled classes
-      //   Preferably in key-value pairs (Ex. A dictionary, which is easily convertable into a JSON)
-      //   Where a key-value pair example could be "Missing":["CSE 130"]
-
-      // INTEGRATION: 
-      // B: Can replace below with resultJSON (List of missing/fulfilled classes mentioned in "A" above)
-      //const dummyReqsJSON = this.state.dummyReqsJSON;  // Keep for reference
-      //const dummyReqsArr = JSON.parse(dummyReqsJSON);  // Keep for reference
-      
-      // INTEGRATION: 
-      // C: From "B", fill these with the list of missing/fulfilled classes
-      // Would also need to deal with other error/success messages
-      //const missing = [];
-      //const fulfilled = [];
-      //let classVal = "";
-
-      /*
-      let missingList = "";
-      for (let i = 0; i < missing.length; i ++) {
-        missingList += missing[i] + ", ";
-      }
-      missingList = missingList.slice(0, -2);
-      */
-
-      /*
-      let fulfilledList = "";
-      for (let i = 0; i < fulfilled.length; i ++) {
-        fulfilledList += fulfilled[i] + ", ";
-      }
-      fulfilledList = fulfilledList.slice(0, -2);
-      */
-
-      // ================================================================================================
-      // IMPORTANT: Build the JSON object to be passed into the backend.
-      //   1.) This will contain all the classes, in the agreed upon format.
-      //   2.) And also the preferences from the side bar
-
-      //const acadPlanObj = this.state.acadPlanObj;
-      //acadPlanObj[yr][qtr].push(value);
-
-      // ================================================================================================
 
       // OLD, keep for reference
       //this.setState({requiredList: requiredList, missingList: missingList, fulfilledList: fulfilledList});
@@ -344,7 +303,6 @@ class EnterClasses extends React.Component {
       alert("Use API calls later, then return result."); // Temporary. REMOVE LATER
 
       event.preventDefault(); // Without this, the page re-renders and all states are lost
-
       // INTEGRATION: Maybe keep the event.preventDefault() above and just use the API calls to get the needed data
     }
 
