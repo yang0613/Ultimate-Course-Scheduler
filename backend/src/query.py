@@ -36,13 +36,20 @@ def singleClass(className):
     cur = connectToDB()
     query = "SELECT * FROM Requirements WHERE UPPER(classID) = UPPER(%s)"
     cur.execute(query, (className,))
-    return cur.fetchall()
+    return cur.fetchone()
+
+#Requirement for single class
+def requirement(className):
+    cur = connectToDB()
+    query = "SELECT preReq FROM Requirements WHERE UPPER(classID) = UPPER(%s)"
+    cur.execute(query, (className,))
+    return cur.fetchone()
 # credit
 def singleClassCredit(classID):
     cur = connectToDB()
     query = "SELECT credit FROM Classes WHERE UPPER(classID) = UPPER(%s)"
     cur.execute(query, (classID,))
-    return cur.fetchall()
+    return cur.fetchone()
 
 # quarters
 def singleClassQuarters(classID):
@@ -59,5 +66,5 @@ def allClassesByClassName(className, degree):
     cur.execute(query, (className, degree))
     return cur.fetchall()
 
-print(allClassesByClassName('intro', 'computer Science B.S'))
+print(requirement('CSE 101'))
 #print(allClassesByClassName('MATH',''))
