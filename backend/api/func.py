@@ -55,6 +55,8 @@ def root():
 @app.get("/searchclass")
 def get_posts(input:searchClass):
     posts = allClassesByClassName(input.classstr, input.majorstr)
+    if posts == []:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"course does not exist")
     return{tuple(posts)}
 
 @app.get("/verification")
