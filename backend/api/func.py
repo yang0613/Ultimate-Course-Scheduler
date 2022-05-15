@@ -34,8 +34,8 @@ def connectToDB():
 
 def allClassesByClassName(className, degree):
     cur = connectToDB()
-    query = "SELECT className, subject, credit, quarters FROM Classes, Requirements WHERE className LIKE '%%' || %s || '%%' AND Classes.classID = Requirements.classID AND gradReq LIKE '%%' || %s || '%%'"
-    cur.execute(query, (className, degree,))
+    query = "SELECT Classes.classID, className, subject, credit, quarters FROM Classes, Requirements WHERE UPPER(className) LIKE UPPER('%%' || %s || '%%') AND Classes.classID = Requirements.classID AND UPPER(gradReq) LIKE UPPER('%%' || %s || '%%')"
+    cur.execute(query, (className, degree))
     return cur.fetchall()
 
 class Post(BaseModel):
@@ -45,7 +45,8 @@ class Post(BaseModel):
 class searchClass(BaseModel):
     classstr: Optional[str] = ' '
     majorstr: str
-
+class enteredclasses(BaseModel):
+    classes: list[str]
 @app.get("/")
 def root():
     cur = connectToDB()
@@ -55,6 +56,17 @@ def root():
 def get_posts(input:searchClass):
     posts = allClassesByClassName(input.classstr, input.majorstr)
     return{tuple(posts)}
+
+@app.get("/verification")
+def verification(entered: enteredclasses):
+    print(entered.classes)
+    return(entered.classes)
+
+@app.get("/recommendation")
+def verification(entered: enteredclasses):
+    print(entered.classes)
+    return(entered.classes)
+
 
 
 
