@@ -23,8 +23,8 @@ expr10 = "ENVS 100 and ENVS 100L; Entry Level Writing and Composition requiremen
 expr11 = "Completion of ENVS 100 and ENVS 100L and ENVS 195A."
 expr12 = "ENVS 183A. Students submit petition to course-sponsoring agency. Enrollment is restricted to environmental studies majors and the combined majors with Earth sciences, biology, and economics."
 expr13 = "Completion of ENVS 100 and ENVS 100L, and Entry Level Writing and Composition requirements."
-
-test_expr = expr7
+expr14 = "one from: \"req\" CSE 103, CSE 102, CSE 104, or MATH 19A start discounting two from: CSE 102 or CSE 104 discounting two from: CSE 103 or MATH 19A by quarter 5"
+test_expr = expr14
 print("=====================")
 print("Raw Expression:")
 print(test_expr)
