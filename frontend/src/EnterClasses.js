@@ -24,6 +24,7 @@ class EnterClasses extends React.Component {
 
         // INTEGRATION: Currently dummy data. Need data returned by API.
         availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21"],
+        verificationResults: [],
 
         // Object containing list of classes for each quarter for each year (Keep the commented version in case it's needed)
         //acadPlanObj: {"Year 1": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 2": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 3": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 4": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}},
@@ -108,26 +109,25 @@ class EnterClasses extends React.Component {
     /*  Format for acadPlanObj
     {
       "1": {
-        "Fall": {
+        "Fall": 
           ["CSE-130", "CSE-103", "CSE-183"]
-        },
-        "Winter": {
+        ,
+        "Winter":
           ["CSE-115A", "CSE-102", "CSE-110A"]
-        },
-        "Spring": {
+        ,
+        "Spring":
           same format as above
-        },
-        "Summer": {
+        ,
+        "Summer":
           same
-        }
       },
       "2": {
-        "Fall": {
+        "Fall": 
           same
-        },
-        "Winter": {
+        ,
+        "Winter": 
           same
-        }
+        ,
         ...Then the remaining quarters
       }
       ... Then the remaining years
@@ -224,6 +224,7 @@ class EnterClasses extends React.Component {
       }
 
       // INTEGRATION: Wenhao mentioned that there could be a POST request after entering a class
+
       event.preventDefault();
     }
 
@@ -246,9 +247,28 @@ class EnterClasses extends React.Component {
       // INTEGRATION: Create the object that will be passed to the backend
       let rowsForEachYear = this.state.rowsForEachYear.slice();
       //let acadPlanObj = {"1": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "2": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "3": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "4": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}};
-      let acadPlanObj = {"1": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "2": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "3": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "4": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}};
+      //let acadPlanObj = {"1": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "2": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "3": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "4": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}};
+      let acadPlanObj = {"first": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "second": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "third": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "fourth": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}};
       for (let k = 0; k < rowsForEachYear.length; k++) {  // Iterate through each year
-        let yr = String(k + 1);  // Will be 1 to 4
+        //let yr = String(k + 1);  // Will be 1 to 4
+        let yr = "";
+        switch(k) {
+          case 0:
+            yr = "first";
+            break;
+          case 1:
+            yr = "second";
+            break;
+          case 2:
+            yr = "third";
+            break;
+          case 3:
+            yr = "fourth";
+            break;
+          default:
+            yr = "first";
+        }
+
         for (let i = 0; i < rowsForEachYear[k].length; i++) {  // Iterate through each row for each year
           for (let j = 1; j < rowsForEachYear[k][i].length; j++) {  // Iterate through each column(qtr) for current row
             let toInsert = rowsForEachYear[k][i][j];
@@ -289,18 +309,176 @@ class EnterClasses extends React.Component {
       //   How is data submitted?     See file that Shing showed
       //   Put this data in resultJSON
 
-      // Get JSON Data returned by backend
-      // let resultJSON = APICall ...
-      //let resultJSON = 
+      /*
 
-      // INTEGRATION (FOR GENERATING):
+      {
+      	"1": {
+      		"Fall": {
+      			"CSE 102": ["Missing a prerequisite CSE 101"],
+      			"CSE 130": ["Error 1", "Error 2"]
+      		},
+      		"Winter": {
+      			"CSE 111": ["Error A", "Error B"]
+      		},
+      		"Spring": {
+      			"CSE 114A": ["Error C"],
+      			"CSE 110A": ["Error D"]
+      		},
+      		"Summer": {}
+      	},
+      	"2": {
+      		"Fall": {
+      			"CSE 183": ["Error 1", "Error 2"],
+      			"CSE 130": ["Error A"]
+      		},
+      		"Winter": {
+      			"CSE 111": ["Error B"]
+      		},
+      		"Spring": {
+      			"CSE 114A": ["Error C"],
+      			"CSE 110A": ["Error D"]
+      		},
+      		"Summer": {
+      			"CSE 110B": ["Error E"]
+      		}
+      	},
+      	"3": {
+      		"Fall": {
+      			"CSE 138": ["Error 1", "Error 2"],
+      			"CSE 130": ["Error A"]
+      		},
+      		"Winter": {
+      			"CSE 111": ["Error B"]
+      		},
+      		"Spring": {
+      			"CSE 114A": ["Error C"],
+      			"CSE 110A": ["Error D"]
+      		},
+      		"Summer": {
+      			"CSE 110B": ["Error E"]
+      		}
+      	},
+      	"4": {
+      		"Fall": {},
+      		"Winter": {},
+      		"Spring": {},
+      		"Summer": {}
+      	}
+      }
+
+      */
+
+      // Get JSON Data returned by backend. See format above
+      // let result = APICall ...
+      // https://stackoverflow.com/questions/805107/creating-multiline-strings-in-javascript 
+      let resultJSON = `
+      {
+      	"1": {
+      		"Fall": {
+      			"CSE 102": ["Missing a prerequisite CSE 101"],
+      			"CSE 130": ["Error 1", "Error 2"]
+      		},
+      		"Winter": {
+      			"CSE 111": ["Error A", "Error B"]
+      		},
+      		"Summer": {
+      			"CSE 114A": ["Error C"],
+      			"CSE 110A": ["Error D"]
+      		}
+      	},
+      	"2": {
+      		"Fall": {
+      			"CSE 183": ["Error 1", "Error 2"],
+      			"CSE 130": ["Error A"]
+      		},
+      		"Winter": {
+      			"CSE 111": ["Error B"]
+      		},
+      		"Spring": {
+      			"CSE 114A": ["Error C"],
+      			"CSE 110A": ["Error D"]
+      		},
+      		"Summer": {
+      			"CSE 110B": ["Error E"]
+      		}
+      	},
+      	"4": {
+      		"Fall": {
+      			"CSE 138": ["Error 1", "Error 2"],
+      			"CSE 130": ["Error A"]
+      		},
+      		"Winter": {
+      			"CSE 111": ["Error B"]
+      		},
+      		"Spring": {
+      			"CSE 114A": ["Error C"],
+      			"CSE 110A": ["Error D"]
+      		},
+      		"Summer": {
+      			"CSE 110B": ["Error E"]
+      		}
+      	}
+      }`;
+
+      let errorMessageList = [];
+
+      // Iterate through the resulting object to get the error messages
+      let resultObj = JSON.parse(resultJSON);
+      for (let year of Object.keys(resultObj)) {
+        //if (year) {  // If there's an error message for that year  NOT NEEDED, wouldn't be traversed in the first place
+        let yearObj = resultObj[year];
+        for (let quarter of Object.keys(yearObj)) {
+          let quarterObj = yearObj[quarter];
+          for (let thisClass of Object.keys(quarterObj)) {
+            let classObj = quarterObj[thisClass];
+            let errorMessage = thisClass + ":\xa0\xa0";
+            for (let i = 0; i < classObj.length; i++) {
+              // https://stackoverflow.com/questions/5237989/how-is-a-non-breaking-space-represented-in-a-javascript-string
+              errorMessage += classObj[i] + "\xa0\xa0|\xa0\xa0";  // TEMPORARY
+            }
+            if (classObj.length >= 1) {  // If this class actually has error messages
+              errorMessage = errorMessage.slice(0, -5);
+              errorMessageList.push(errorMessage);
+            }
+          }
+        }
+      }
+
+      console.log(JSON.stringify(errorMessageList));  // TESTING
+      /*  CONSOLE SHOWS
+        ["CSE 102: Missing a prerequisite CSE 101",
+        "CSE 130:  Error 1  |  Error 2",
+        "CSE 111:  Error A  |  Error B",
+        "CSE 114A:  Error C",
+        "CSE 110A:  Error D",
+        "CSE 183:  Error 1  |  Error 2",
+        "CSE 130:  Error A",
+        "CSE 111:  Error B",
+        "CSE 114A:  Error C",
+        "CSE 110A:  Error D",
+        "CSE 110B:  Error E",
+        "CSE 138:  Error 1  |  Error 2",
+        "CSE 130:  Error A",
+        "CSE 111:  Error B",
+        "CSE 114A:  Error C",
+        "CSE 110A:  Error D",
+        "CSE 110B:  Error E"]
+      */
+
+      const verificationResults = errorMessageList.map((string) =>
+        <li>{string}</li>
+      );
+        
+      // INTEGRATION (FOR SPRINT4 GENERATING):
       // For generating, create a seperate handleSubmit
       // Then just update rowsForEachYear by parsing the data returned by backend
 
       // OLD, keep for reference
+      // INTEGRATION: Probably just need a state for the result
       //this.setState({requiredList: requiredList, missingList: missingList, fulfilledList: fulfilledList});
+      this.setState({verificationResults: verificationResults});
 
-      alert("Use API calls later, then return result."); // Temporary. REMOVE LATER
+      alert("Use API calls later, then return result. For now, look at console."); // Temporary. REMOVE LATER
 
       event.preventDefault(); // Without this, the page re-renders and all states are lost
       // INTEGRATION: Maybe keep the event.preventDefault() above and just use the API calls to get the needed data
@@ -461,8 +639,8 @@ class EnterClasses extends React.Component {
           {
             // INTEGRATION: Edit this part later so it takes in data returned by the backend
           }      
-          <h2>Results:</h2>
-          <p>Edit later to show data returned by backend</p>
+          <h2>Verification Results:</h2>
+          <ul>{this.state.verificationResults}</ul>
 
         </div>
       );
