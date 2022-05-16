@@ -42,11 +42,19 @@ class Post(BaseModel):
     title: str
     content: str
     published: bool = True
+# "title": "<content>"
 class searchClass(BaseModel):
     classstr: Optional[str] = ' '
     majorstr: str
+class Quarters(BaseModel):
+    Fall: list[str]
+    Winter: list[str]
+    Spring: list[str]
+    Winter: list[str]
 class enteredclasses(BaseModel):
-    classes: list[str]
+    one: Quarters
+
+
 @app.get("/")
 def root():
     cur = connectToDB()
@@ -61,13 +69,19 @@ def get_posts(input:searchClass):
 
 @app.get("/verification")
 def verification(entered: enteredclasses):
-    print(entered.classes)
-    return(entered.classes)
+    #test = Requirement(); test.validate(schedule)
+    print(entered)
+    return(entered)
 
 @app.get("/recommendation")
 def verification(entered: enteredclasses):
-    print(entered.classes)
-    return(entered.classes)
+    #print(entered.classes)
+    return(entered)
+
+@app.get("/getFall")
+def getFall(entered: Quarters):
+    #print(entered.classes)
+    return(entered.Fall)
 
 
 
