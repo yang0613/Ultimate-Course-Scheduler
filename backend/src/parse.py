@@ -1,6 +1,7 @@
 #!/usr/bin/python3.9
 from re import compile
 from enumerate import word2int
+from req_types import NumFrom
 
 """
 Responsible for parsing a prerequisite string into tokens from the 
@@ -39,6 +40,8 @@ TOKEN_CONCURRENT_LIST = 'concurrent_list'
 TOKEN_PREV_CONCURRENT = 'prevEnrollAllowed'
 TOKEN_MULTIPLE_CONCURRENT = 'multiple'
 TOKEN_NUM_FROM = 'num_from'
+TOKEN_NUM_FROM_EACH = 'each_list'
+
 TOKEN_REQUIREMENT = 'req'
 TOKEN_POS = 'position'
 TOKEN_EXPR = 'expr'
@@ -59,7 +62,7 @@ seperate_req_list = compile(
 types = f"(?P<{TOKEN_TYPE}>(?:start *discounting|discounting|by *quarter\
  *(?P<{TOKEN_DUE_DATE}>\d+)|$))"
 num_from = compile(
-    f"(?P<{TOKEN_NUM_FROM}> *{nums} *from: *(\"(?P<{TOKEN_NAME}>.*?)\")? *{req_list_better} *{types} *)"
+    f"(?P<{TOKEN_NUM_FROM_EACH}> *{nums} *from: *(\"(?P<{TOKEN_NAME}>.*?)\")? *{req_list_better} *{types} *)"
 )
 delim = compile(r"(; *and *|\. *|; *(?! *or))")
 concurrent_enrollment_list = f"(?P<{TOKEN_CONCURRENT_LIST}>([A-Z]+ *[\d]+[A-Z]?)\
@@ -68,7 +71,17 @@ concurrent_enrollment = compile(
 f"(?P<{TOKEN_CONCURRENT}>(?P<{TOKEN_PREV_CONCURRENT}>[pP]revious *or)? *[cC]oncurrent *enrollment *in *\
 {concurrent_enrollment_list} *(is *required)? *)"
 )
+missing_req_list = compile(r"&\s*(?![^()]*\))")
 
+def split(pattern, expr: str):
+    """Split a string by an regex expression, and remove any empty
+    strings and existing elements that still match our expression
+    """
+    list = pattern.split(expr)
+    for elem in list[:]:
+        if elem == '' or pattern.match(expr):
+            list.remove(elem)
+    return list
 def requirements_list(expr: str):
     """Given an string of prerequisites, return a structured list
     of strings that represent the prerequisite.
@@ -76,12 +89,18 @@ def requirements_list(expr: str):
     Args:
         expr (list): A list of requirements 
     """
-    reqs = delim.split(expr)
-    for r in reqs[:]:
-        if r == '' or delim.match(r):
-            reqs.remove(r)
-    return reqs
+    return split(delim, expr)
 
+def missing_requirements(boolean_expr: str):
+    """Given an boolean expression representing a missing prerequisite,
+    return a structured list that represent what is missing"""
+    reqs = []
+    replace_tokens = [("&", " and "), ("|", " or "), ("(", ""), (")", "")]
+    for expr in split(missing_req_list, boolean_expr):
+        for tok, replacement in replace_tokens:
+            expr = expr.replace(tok, replacement)
+        reqs.append(expr)
+    return reqs
 
 def course_tokens(course_list: str):
     """Returns a stream of courses by their names and starting character
@@ -118,7 +137,7 @@ def num_from_tokens(num_from_expr: str):
     """
     for match in num_from.finditer(num_from_expr):
         toks = {}
-        components = [TOKEN_COUNT, TOKEN_NAME, TOKEN_LIST, TOKEN_DUE_DATE, TOKEN_TYPE]
+        components = [TOKEN_COUNT, TOKEN_NAME, TOKEN_DUE_DATE, TOKEN_TYPE]
         for comp in components:
             valid_result = match[comp]
             if valid_result:
@@ -133,11 +152,28 @@ def num_from_tokens(num_from_expr: str):
         if due_date:
             #Convert the token "6" in "by quarter 6" to an integer value
             toks[TOKEN_DUE_DATE] = int(due_date)
+        toks[TOKEN_LIST] = list(reqs_list_tokens(match[TOKEN_LIST]))
+        toks[TOKEN_EXPR] = match[TOKEN_NUM_FROM_EACH]
         yield toks
 
 def build_num_from(num_from_expr: str):
     """Due to the num_from expresison being more complex, there exists"""
-    pass
+    num_from_args = {}
+    num_from_args[TOKEN_DISCOUNTS] = discounts = []
+
+    each_num_from = num_from_tokens(num_from_expr)
+
+    first_num_from = next(each_num_from)
+
+    num_from_args.update(first_num_from)
+
+    for tok in each_num_from:
+        due_date = tok[TOKEN_DUE_DATE]
+        discounts.append(NumFrom(**tok))
+        if due_date:
+            num_from_args[TOKEN_DUE_DATE] = due_date
+    yield num_from_args
+
 
 def reqs_list_tokens(reqs_list: str):
     """Returns a stream of courses that is the list of a "num_from" 
@@ -195,11 +231,11 @@ def concurrent_enrollment_tokens(conc_enr: str):
 TOKENS_MATCH_FUNCTIONS = {
     TOKEN_COURSE: course_tokens,
     TOKEN_CONCURRENT: concurrent_enrollment_tokens,
-    TOKEN_NUM_FROM: num_from_tokens
+    TOKEN_NUM_FROM: build_num_from
 }
 
 TOKENS_MATCH_PATTERNS = {
-    TOKEN_NUM_FROM: num_from.pattern,
+    TOKEN_NUM_FROM: f'(?P<{TOKEN_NUM_FROM}>'+ num_from.pattern +'+)',
     TOKEN_CONCURRENT: concurrent_enrollment.pattern,
     TOKEN_COURSE: course
 }
@@ -214,6 +250,7 @@ BLACKLIST_PATTERNS = {
     TOKEN_RECOMMEND: r' *recommended *as *prerequisite *to *this *course *',
     TOKEN_NO_CREDIT: r" *may *not *enroll * in *"
 }
+
 
 extract_requriements = compile(
 f'(?P<{TOKEN_REQUIREMENT}>' + '|'.join(TOKENS_MATCH_PATTERNS.values()) + ')' +

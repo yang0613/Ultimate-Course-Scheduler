@@ -19,7 +19,7 @@ def dict_list_append(src: dict[str, list], dict: dict[str, list]):
         else:
             src[key] = list
 
-class constraint:
+class Constraint:
     """
     A data structure that allows programmers to validate any schedule
     from a set of constraints like conflicting time slots, non-fulfilled 
@@ -83,30 +83,35 @@ class constraint:
 
             Example:
             {
-                "Fall 2022":
+                "1":
                 {
-                    "CSE-102": ["Missing a preqreusite CSE-101"]
-                    "MATH-19A": ["Has a timeconflict with PHYS-6A"]
-                    "PHYS-6A": ["Has a timeconflict with MATH-19A", 
-                                "Missing concurrent enrollment with PHYS-6L"]
+                    "Fall":,
+                        "CSE-102": ["Missing a preqreusite CSE-101"]
+                        "MATH-19A": ["Has a timeconflict with PHYS-6A"]
+                        "PHYS-6A": ["Has a timeconflict with MATH-19A", 
+                                    "Missing concurrent enrollment with PHYS-6L"]
                 }
-                "Spring 2024":
+                "2":
                 {
-                    "CSE-115A": ["Not avaliable during this quarter"]
+                    "Winter":,
+                        "CSE-115A": ["Not avaliable during this quarter"]
                 }
             }
         """
         schedule_errors = {}
-        for quarter in schedule.keys():
-            error = {}
-            for func in self.constraints:
-                #Applys the constraints to each quarter
-                fulfilled = func(quarter) 
-                #And if the constraint is not satsified, add it to the list of errors
-                if not fulfilled:
-                    dict_list_append(error, fulfilled)
-            if error:
-                schedule_errors[quarter] = error
+        for year in schedule.keys():
+            for quarter, classes in schedule[year].items():
+                error = {}
+                for func in self.constraints:
+                    #Applys the constraints to each quarter
+                    fulfilled = func(classes) 
+                    #And if the constraint is not satsified, add it to the list of errors
+                    if not fulfilled:
+                        dict_list_append(error, fulfilled)
+                if error:
+                    if year not in schedule.keys():
+                        schedule_errors[year] = {}
+                    schedule_errors[year][quarter] = error
         return schedule_errors
         
 
