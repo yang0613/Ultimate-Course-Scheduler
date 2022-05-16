@@ -50,9 +50,12 @@ class Quarters(BaseModel):
     Fall: list[str]
     Winter: list[str]
     Spring: list[str]
-    Winter: list[str]
+    Summer: list[str]
 class enteredclasses(BaseModel):
-    one: Quarters
+    first: Quarters
+    second: Quarters
+    third: Quarters
+    fourth: Quarters
 
 
 @app.get("/")
