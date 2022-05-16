@@ -71,7 +71,17 @@ concurrent_enrollment = compile(
 f"(?P<{TOKEN_CONCURRENT}>(?P<{TOKEN_PREV_CONCURRENT}>[pP]revious *or)? *[cC]oncurrent *enrollment *in *\
 {concurrent_enrollment_list} *(is *required)? *)"
 )
+missing_req_list = compile(r"&\s*(?![^()]*\))")
 
+def split(pattern, expr: str):
+    """Split a string by an regex expression, and remove any empty
+    strings and existing elements that still match our expression
+    """
+    list = pattern.split(expr)
+    for elem in list[:]:
+        if elem == '' or pattern.match(expr):
+            list.remove(elem)
+    return list
 def requirements_list(expr: str):
     """Given an string of prerequisites, return a structured list
     of strings that represent the prerequisite.
@@ -79,12 +89,18 @@ def requirements_list(expr: str):
     Args:
         expr (list): A list of requirements 
     """
-    reqs = delim.split(expr)
-    for r in reqs[:]:
-        if r == '' or delim.match(r):
-            reqs.remove(r)
-    return reqs
+    return split(delim, expr)
 
+def missing_requirements(boolean_expr: str):
+    """Given an boolean expression representing a missing prerequisite,
+    return a structured list that represent what is missing"""
+    reqs = []
+    replace_tokens = [("&", " and "), ("|", " or "), ("(", ""), (")", "")]
+    for expr in split(missing_req_list, boolean_expr):
+        for tok, replacement in replace_tokens:
+            expr = expr.replace(tok, replacement)
+        reqs.append(expr)
+    return reqs
 
 def course_tokens(course_list: str):
     """Returns a stream of courses by their names and starting character
@@ -290,4 +306,3 @@ def requirement_found(expr: str):
         boolean: A status indicator for whether a requirement was found
     """
     return next(parse(expr), None) is not None and blacklist_requirements.search(expr) is None
-

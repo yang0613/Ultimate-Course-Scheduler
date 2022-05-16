@@ -39,7 +39,7 @@ def singleClass(className):
     return cur.fetchone()
 
 #Requirement for single class
-def requirement(className):
+def singleClassRequirement(className):
     cur = connectToDB()
     query = "SELECT preReq FROM Requirements WHERE UPPER(classID) = UPPER(%s)"
     cur.execute(query, (className,))

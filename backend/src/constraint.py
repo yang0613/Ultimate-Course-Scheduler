@@ -100,11 +100,11 @@ class Constraint:
         """
         schedule_errors = {}
         for year in schedule.keys():
-            for quarter in schedule[year]:
+            for quarter, classes in schedule[year].items():
                 error = {}
                 for func in self.constraints:
                     #Applys the constraints to each quarter
-                    fulfilled = func(quarter) 
+                    fulfilled = func(classes) 
                     #And if the constraint is not satsified, add it to the list of errors
                     if not fulfilled:
                         dict_list_append(error, fulfilled)

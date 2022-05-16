@@ -49,7 +49,7 @@ class requirement:
         self.constraint = Constraint([geneerate_prereq_func()])
 
 
-    def validate(self, schedule, pretty=True):
+    def validate(self, schedule):
         """Verfies the schedule to see if it satsifies the requirements
         set by expr. If all the requirements are sastified, return "1" 
         or True. Otherwise, return the missing requirements as a 
@@ -62,16 +62,4 @@ class requirement:
             A subset of our schedule where each class is key limited
             by a list of failed requirements
         """
-
-
-        bool_expr = self.preresolve(schedule)
-
-        done_classes = dict.fromkeys([algebra.Symbol(c)
-                                    for c in schedule.keys()], algebra.TRUE)
-        #Substitute all classes that are completed as "True" "and evaluate
-        bool_expr = algebra.parse(bool_expr).subs(done_classes).simplify()
-        bool_expr = str(bool_expr).replace("_", " ")
-        if pretty:
-            bool_expr = bool_expr.replace("&", " and ")
-            bool_expr = bool_expr.replace("|", " or ")
-        return str(bool_expr)
+        return self.constraint.validate(schedule)

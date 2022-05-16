@@ -1,10 +1,9 @@
 
 import boolean
 from req_types import ConcurrentEnrollment
+from query import singleClassRequirement
 algebra = boolean.BooleanAlgebra()
-"""NOTE: THIS FILE IS WORK IN PROGRESS
-"""
-
+from parse import missing_req_list
 
 def geneerate_prereq_func():
     """To check for prerequisites, the function should remember
@@ -30,15 +29,17 @@ def geneerate_prereq_func():
         """
         missing_prereqs = {}
         subs = {}
-        for class_ in quarter:
-            has_prereqs = algebra.parse(class_['prereqs'])
+        for course in quarter:
+            prereq = singleClassRequirement(course)
+            has_prereqs = algebra.parse(prereq)
             for req_type in has_prereqs.symbols:
                 if req_type.isInstance(ConcurrentEnrollment):
                     req_type.setQuarterClasses(quarter)
             has_prereqs = has_prereqs.subs(classes).simplify()
             if has_prereqs != algebra.TRUE:
-                missing_prereqs[class_] = str(has_prereqs)
-            subs[class_] = algebra.TRUE
+                bool_expr = str(has_prereqs)
+                missing_prereqs[course] = missing_requirements(bool_expr)
+            subs[course] = algebra.TRUE
 
         classes.update(subs)            
         if missing_prereqs:
