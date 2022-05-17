@@ -66,5 +66,5 @@ def allClassesByClassName(className, degree):
     cur.execute(query, (className, degree))
     return cur.fetchall()
 
-print(requirement('CSE 101'))
+#print(requirement('CSE 101'))
 #print(allClassesByClassName('MATH',''))
