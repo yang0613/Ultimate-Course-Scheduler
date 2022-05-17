@@ -13,6 +13,7 @@
 #7. GET, POST, DELETE ---- Only methods we need to use in CRUD framework
 ##################################################### CRUD: post, get, put, delete
 import imp
+import sys
 from typing import Optional
 from fastapi import Body, FastAPI, Response, status,HTTPException
 import fastapi
@@ -22,7 +23,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
 from reqs import requirement
-
+#from test import requirement
 app = FastAPI()
 ENV = 'prod'
 
@@ -77,14 +78,15 @@ def verification(entered: enteredclasses):
     #print(entered)
     #<Shing's Verification functions>
     req = requirement()
-    req.validate(entered)
-    return(entered)
+    result = req.validate(entered.dict())
+    return(result)
 
 @app.get("/recommendation")
 def verification(entered: enteredclasses):
+    print(dict(entered))
     #print(entered.classes)
     #<Shing's Course Recommendation functions>
-    return(entered)
+    return(dict(entered))
 
 @app.get("/getFall")
 def getFall(entered: Quarters):
