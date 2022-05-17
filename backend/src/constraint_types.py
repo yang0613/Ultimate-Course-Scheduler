@@ -1,11 +1,10 @@
-
-import boolean
+from AST import PrereqAlgebra
 from req_types import ConcurrentEnrollment
 from query import singleClassRequirement
-algebra = boolean.BooleanAlgebra()
-from parse import missing_req_list
+algebra = PrereqAlgebra()
+from parse import missing_requirements
 
-def geneerate_prereq_func():
+def generate_prereq_func():
     """To check for prerequisites, the function should remember
     what previous classes were in the schedule. This generation creates
     a function that stores their own schedule data as it is being 
@@ -30,10 +29,11 @@ def geneerate_prereq_func():
         missing_prereqs = {}
         subs = {}
         for course in quarter:
-            prereq = singleClassRequirement(course)
-            has_prereqs = algebra.parse(prereq)
+            prereq = singleClassRequirement(course)[0]
+            print(prereq)
+            has_prereqs = algebra.parse(prereq).simplify()
             for req_type in has_prereqs.symbols:
-                if req_type.isInstance(ConcurrentEnrollment):
+                if isinstance(req_type, ConcurrentEnrollment):
                     req_type.setQuarterClasses(quarter)
             has_prereqs = has_prereqs.subs(classes).simplify()
             if has_prereqs != algebra.TRUE:

@@ -1,7 +1,7 @@
 #!/usr/bin/python3.9
 
 from AST import PrereqAlgebra
-
+from parse import missing_requirements
 """
 This is not a up-to-standard UnitTest. The reason is because
 testing for an AST can be costly as you would need to manually input
@@ -24,7 +24,8 @@ expr11 = "Completion of ENVS 100 and ENVS 100L and ENVS 195A."
 expr12 = "ENVS 183A. Students submit petition to course-sponsoring agency. Enrollment is restricted to environmental studies majors and the combined majors with Earth sciences, biology, and economics."
 expr13 = "Completion of ENVS 100 and ENVS 100L, and Entry Level Writing and Composition requirements."
 expr14 = "one from: \"req\" CSE 103, CSE 102, CSE 104, or MATH 19A start discounting two from: CSE 102 or CSE 104 discounting two from: CSE 103 or MATH 19A by quarter 5"
-test_expr = expr7
+expr15 = 'CSE 15 and CSE 15L; or CSE 13S and CMPM 35; or CSE 13E and CMPM 35; or ECE 13 and CMPM 35; or CSE 101.'
+test_expr = expr15
 print("=====================")
 print("Raw Expression:")
 print(test_expr)
@@ -35,5 +36,5 @@ print(parsed.pretty())
 print("=====================")
 
 print("Boolean string representation")
-print(parsed)
+print(missing_requirements(str(parsed)))
 print("=====================")
