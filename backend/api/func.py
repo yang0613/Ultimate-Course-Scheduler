@@ -73,12 +73,14 @@ def get_posts(input:searchClass):
 @app.get("/verification")
 def verification(entered: enteredclasses):
     #test = Requirement(); test.validate(schedule)
-    print(entered)
+    #print(entered)
+    #<Shing's Verification functions>
     return(entered)
 
 @app.get("/recommendation")
 def verification(entered: enteredclasses):
     #print(entered.classes)
+    #<Shing's Course Recommendation functions>
     return(entered)
 
 @app.get("/getFall")
