@@ -21,6 +21,7 @@ from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
+from reqs import requirement
 
 app = FastAPI()
 ENV = 'prod'
@@ -75,6 +76,8 @@ def verification(entered: enteredclasses):
     #test = Requirement(); test.validate(schedule)
     #print(entered)
     #<Shing's Verification functions>
+    req = requirement()
+    req.validate(entered)
     return(entered)
 
 @app.get("/recommendation")
