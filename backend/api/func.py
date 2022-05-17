@@ -52,10 +52,10 @@ class Quarters(BaseModel):
     Spring: list[str]
     Summer: list[str]
 class enteredclasses(BaseModel):
-    first: Quarters
-    second: Quarters
-    third: Quarters
-    fourth: Quarters
+    First: Quarters
+    Second: Quarters
+    Third: Quarters
+    Fourth: Quarters
 
 
 @app.get("/")
@@ -70,7 +70,7 @@ def get_posts(input:searchClass):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"course does not exist")
     return{tuple(posts)}
 
-@app.get("/verification")
+@app.get("/verification") # verify pre-req quarter-quarter
 def verification(entered: enteredclasses):
     #test = Requirement(); test.validate(schedule)
     #print(entered)
