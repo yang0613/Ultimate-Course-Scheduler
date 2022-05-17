@@ -1,66 +1,66 @@
 //https://gist.github.com/justsml/529d0b1ddc5249095ff4b890aad5e801
 
-function Script() {
-    //console.log("hello Shivika");
+// function Script() {
+//     //console.log("hello Shivika");
 
-    // fetch('http://localhost:3000')
-    //     .then(response => {
-    //     //handle response            
-    //     console.log(response);
-    //     })
-    //     .then(data => {
-    //     //handle data
-    //     console.log(data);
-    //     })
-    //     .catch(error => {
-    //     //handle error
-    //     });
+//     // fetch('http://localhost:3000')
+//     //     .then(response => {
+//     //     //handle response            
+//     //     console.log(response);
+//     //     })
+//     //     .then(data => {
+//     //     //handle data
+//     //     console.log(data);
+//     //     })
+//     //     .catch(error => {
+//     //     //handle error
+//     //     });
     
-    // fetch('http://127.0.0.1:8000/searchclass', {
-    //     Method: 'POST',
-    //     Headers: {
-    //         Accept: 'application.json',
-    //         'Content-Type': 'application/json'
-    //     },
-    //     Body: 'Hi shivika',
-    //     Cache: 'default'
-    //     })
+//     // fetch('http://127.0.0.1:8000/searchclass', {
+//     //     Method: 'POST',
+//     //     Headers: {
+//     //         Accept: 'application.json',
+//     //         'Content-Type': 'application/json'
+//     //     },
+//     //     Body: 'Hi shivika',
+//     //     Cache: 'default'
+//     //     })
 
-    //Integration
-    const [input, setInput] = React.useState({"classstr": "", "majorstr": ""});
+//     //Integration
+//     const [input, setInput] = React.useState({"classstr": "", "majorstr": ""});
 
-    const handleInput = (event) => {
-        const {value, name}= event.target;
-        const i = input;
-        i[name] = value;
-        setInput(i);
-    }
+//     const handleInput = (event) => {
+//         const {value, name}= event.target;
+//         const i = input;
+//         i[name] = value;
+//         setInput(i);
+//     }
 
-    const handleFetch = (event) => {
-    fetch('/searchclass', {
-        Method: 'GET',
-        Headers: {
-            Accept: 'application.json',
-            'Content-Type': 'application/json'
-        },
-        Body: JSON.stringify(input),
-        Cache: 'default'
-        })
-        .then(response => {
-        //handle response            
-        return response.json();
-        })
-        .then((data) => {
-            console.log(JSON.stringify(data));
-          })
-        .catch(error => {
-        //handle error
-            console.log(error);
-            alert(error);
-        });
-    };
-}
-export default Script;
+//     const handleFetch = (event) => {
+//     fetch('/searchclass', {
+//         Method: 'GET',
+//         Headers: {
+//             Accept: 'application.json',
+//             'Content-Type': 'application/json'
+//         },
+//         Body: JSON.stringify(input),
+//         Cache: 'default'
+//         })
+//         .then(response => {
+//         //handle response            
+//         return response.json();
+//         })
+//         .then((data) => {
+//             console.log(JSON.stringify(data));
+//           })
+//         .catch(error => {
+//         //handle error
+//             console.log(error);
+//             alert(error);
+//         });
+//     };
+// }
+// export default Script;
 
 /*
 
