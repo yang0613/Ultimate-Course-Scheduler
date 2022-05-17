@@ -10,7 +10,7 @@
 import React from 'react';
 import { Grid } from 'gridjs-react';
 import "gridjs/dist/theme/mermaid.css";
-import Script from './Script';
+import {post, get} from './Script';
 
 class EnterClasses extends React.Component {
     constructor(props) {
@@ -207,10 +207,20 @@ class EnterClasses extends React.Component {
 
             let rows = this.buildRows(rowsForEachYear);
 
-            value = "";  // For next input
 
+            // ================================================================================================
+            // INTEGRATION 
+            // ================================================================================================
+            //ADDED -- post frontend fetch call
+            const response = post(value); //value is the class being added?!?
+            response.then((res)=>{ //res = response.then -- promise, then
+              console.log(res, "Result value representing the class entered");
+            })
+            // ================================================================================================
+            value = "";  // For next input
             //this.setState({value: value, classes: classes, classCount: classCount, acadPlanObj:acadPlanObj, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr, rowsForEachYear: rowsForEachYear, rows: rows});
             this.setState({value: value, classes: classes, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr, rowsForEachYear: rowsForEachYear, rows: rows});
+            
           } else {
             alert("Please select from the list of given classes.");
             value = "";  // For next input
@@ -224,8 +234,9 @@ class EnterClasses extends React.Component {
       }
 
       // INTEGRATION: Wenhao mentioned that there could be a POST request after entering a class
-
       event.preventDefault();
+
+
     }
 
     // Build the rows for the academic plan table
@@ -473,13 +484,26 @@ class EnterClasses extends React.Component {
       // For generating, create a seperate handleSubmit
       // Then just update rowsForEachYear by parsing the data returned by backend
 
+    
+      // ================================================================================================
+          // INTEGRATION 
+      // ================================================================================================
+      //ADDED -- frontend fetch call - success/error message 
+      const response = post(verificationResults); //changed from get to post, check with group/TA
+      response.then((res)=>{
+        console.log(res, "Hi this was a success!");
+      }).catch((err)=>{
+        console.log(err, "ERROR Verfication Failed");
+      })
+      // ================================================================================================
+
+
       // OLD, keep for reference
       // INTEGRATION: Probably just need a state for the result
       //this.setState({requiredList: requiredList, missingList: missingList, fulfilledList: fulfilledList});
       this.setState({verificationResults: verificationResults});
 
       alert("Use API calls later, then return result. For now, look at console."); // Temporary. REMOVE LATER
-
       event.preventDefault(); // Without this, the page re-renders and all states are lost
       // INTEGRATION: Maybe keep the event.preventDefault() above and just use the API calls to get the needed data
     }
@@ -579,7 +603,7 @@ class EnterClasses extends React.Component {
       return (
         <div className="container1">
           <form onSubmit={this.handleSubmit1}>
-            <label>Enter a class:&nbsp;</label>
+            <label>Enter Course:&nbsp;</label>
             <input list="availableClasses" name="classstr" value={this.state.value} onChange={this.handleChange1} />
             <datalist id="availableClasses">
               <option value=""></option>
@@ -610,8 +634,8 @@ class EnterClasses extends React.Component {
             // For removing a class. "classes" is primarily used for this
             // https://stackoverflow.com/questions/21733847/react-jsx-selecting-selected-on-selected-select-option
           }
-          <form onSubmit={this.handleSubmit3}>
-            <label>Remove a class:&nbsp;</label>
+          <form class = "m-0" onSubmit={this.handleSubmit3}>
+            <label>Remove Course:&nbsp;</label>
             <select className="toRemove" value={this.state.toRemove} onChange={this.handleChange4}>
               <option value="Select">Select</option>
               {this.state.classes.map((theClass) => <option value={theClass.value}>{theClass}</option>)}
@@ -619,6 +643,7 @@ class EnterClasses extends React.Component {
             &nbsp;
             <input type="submit" value="Remove" />
           </form>
+          <br></br>
 
           {
             // The academic plan table
@@ -626,19 +651,21 @@ class EnterClasses extends React.Component {
           <Grid
             data={this.state.rows}
             columns={["Year", "Fall", "Winter", "Spring", "Summer"]}
-            width="50%"
+            width="100%"
           />
 
           {
             // Submit the academic plan table (As a JSON, with each class associated with a quarter and a year)
           }
           <form onSubmit={this.handleSubmit2}>
-            <input type="submit" value="Verify" />
+              <input class="button is-info is-rounded" type="submit" value="Verify" />
           </form>
-
           {
             // INTEGRATION: Edit this part later so it takes in data returned by the backend
+                // check in how to implement this! 
+                // post/get call? not sure! - same implementation as above but for data! 
           }      
+          <br></br>
           <h2>Verification Results:</h2>
           <ul>{this.state.verificationResults}</ul>
 

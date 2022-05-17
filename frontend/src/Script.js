@@ -1,40 +1,59 @@
-//https://gist.github.com/justsml/529d0b1ddc5249095ff4b890aad5e801
+export const post = (data) => {
+    const response = fetch('http://127.0.0.1:8000/searchclass', {
+        method: 'POST',
+        headers: {
+            Accept: 'application.json',
+            'Content-Type': 'application/json'
+        },
+        body: data, //use JSON.stringify if and when needed, but currently string
+    })
+    return response
+}
 
-// function Script() {
-//     //console.log("hello Shivika");
+export const get = (data) => {
+    const response = fetch(`http://127.0.0.1:8000/searchclass?data=${data}`,{
+        method: 'GET',
+        headers: {
+            Accept: 'application.json',
+            'Content-Type': 'application/json'
+        },
+    })
+    return response
+}
 
-//     // fetch('http://localhost:3000')
-//     //     .then(response => {
-//     //     //handle response            
-//     //     console.log(response);
-//     //     })
-//     //     .then(data => {
-//     //     //handle data
-//     //     console.log(data);
-//     //     })
-//     //     .catch(error => {
-//     //     //handle error
-//     //     });
+
+// ================================================================================================
+// Ignore everything below this --- was experimenting with the code structure 
+// while learning how to properly write the fetch calls
+// ================================================================================================
+
+// https://gist.github.com/justsml/529d0b1ddc5249095ff4b890aad5e801
+/*
+function Script() 
+{
+    console.log("hello Shivika");
+
     
-//     // fetch('http://127.0.0.1:8000/searchclass', {
-//     //     Method: 'POST',
-//     //     Headers: {
-//     //         Accept: 'application.json',
-//     //         'Content-Type': 'application/json'
-//     //     },
-//     //     Body: 'Hi shivika',
-//     //     Cache: 'default'
-//     //     })
+    fetch('http://127.0.0.1:8000/searchclass', {
+        Method: 'POST',
+        Headers: {
+            Accept: 'application.json',
+            'Content-Type': 'application/json'
+        },
+        Body: 'Hi shivika',
+        Cache: 'default'
+    })
 
-//     //Integration
-//     const [input, setInput] = React.useState({"classstr": "", "majorstr": ""});
+    //Integration
+    const [input, setInput] = React.useState({"classstr": "", "majorstr": ""});
 
-//     const handleInput = (event) => {
-//         const {value, name}= event.target;
-//         const i = input;
-//         i[name] = value;
-//         setInput(i);
-//     }
+    const handleInput = (event) => {
+        const {value, name}= event.target;
+        const i = input;
+        i[name] = value;
+        setInput(i);
+    }
+}
 
 //     const handleFetch = (event) => {
 //     fetch('/searchclass', {
@@ -183,5 +202,51 @@ const postResult = fetch ('http://localhost:3000', {
     })
     .then(data => console.log(data))
     .catch(error => console.log('ERROR'))
+*/
+/*
+
+function Script() 
+{
+    var jsonData = {
+      "users": [
+          {
+              "name": "alan", 
+              "age": 23,
+              "username": "aturing"
+          },
+          {
+              "name": "john", 
+              "age": 29,
+              "username": "__john__"
+          }
+      ]
+    }
+  
+    function handleClick() {
+      
+      // Send data to the backend via POST
+      fetch('http://------------:8080/', {  // Enter your IP address here
+  
+        method: 'POST', 
+        mode: 'cors', 
+        body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
+  
+      })
+      
+    }
+  
+    return (
+      <div onClick={handleClick} style={{
+        textAlign: 'center',
+        width: '100px',
+        border: '1px solid gray',
+        borderRadius: '5px'
+      }}>
+        Send data to backend
+      </div>
+    );
+}
+  
+export { Script };
 
 */
