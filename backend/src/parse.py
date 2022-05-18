@@ -253,8 +253,8 @@ BLACKLIST_PATTERNS = {
 
 
 extract_requriements = compile(
-f'(?P<{TOKEN_REQUIREMENT}>' + '|'.join(TOKENS_MATCH_PATTERNS.values()) + ')' +
-f' *(,? *{op})? *'
+f' *(,? *{op})? *' +
+f'(?P<{TOKEN_REQUIREMENT}>' + '|'.join(TOKENS_MATCH_PATTERNS.values()) + ')'
 )
 
 blacklist_requirements = compile(
@@ -291,9 +291,9 @@ def parse(expr: str):
     for match in extract_requriements.finditer(expr):
         op = match[TOKEN_OP]
         pos = match.start(TOKEN_OP)
-        yield find_req(match)
         if op:
             yield token(TOKEN_ID=TOKEN_OP, kwargs={TOKEN_OP: op}, pos=pos, expr=op)
+        yield find_req(match)
 
 def requirement_found(expr: str):
     """If an requirement is found within our expression, return true.
@@ -305,4 +305,4 @@ def requirement_found(expr: str):
     Returns:
         boolean: A status indicator for whether a requirement was found
     """
-    return next(parse(expr), None) is not None and blacklist_requirements.search(expr) is None
+    return extract_requriements.search(expr) is not None and blacklist_requirements.search(expr) is None
