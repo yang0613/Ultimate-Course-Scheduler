@@ -2,12 +2,9 @@ export const post = (data) => {
     const response = fetch('http://127.0.0.1:8000/searchclass', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/string'
         },
-        body: {
-            "classstr": "cse 101",
-            "majorstr": ""
-        }, //use JSON.stringify if and when needed, but currently string
+        body: "data", //use JSON.stringify if and when needed, but currently string
     })
     return response
 }

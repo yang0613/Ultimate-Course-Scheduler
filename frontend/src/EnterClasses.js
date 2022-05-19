@@ -164,7 +164,7 @@ class EnterClasses extends React.Component {
 
     // https://reactjs.org/docs/forms.html had this
     handleChange1(event) {  // Handles typing in a class name
-        this.setState({value: event.target.value});
+      this.setState({value: event.target.value});
     }
 
     handleChange2(event) {  // Handles selecting the quarter in the dropdown
@@ -182,6 +182,26 @@ class EnterClasses extends React.Component {
 
     handleChange5(event) {  // Handles selecting major
       // INTEGRATION: Put fetch call here
+
+      // ================================================================================================
+      // INTEGRATION 
+      // ================================================================================================
+      //ADDED -- post frontend fetch call
+
+      const current = {
+        "classstr": "cse 101",
+        "majorstr": ""
+      };
+
+      const response = post(current); //value is the class being added?!?
+      response.then((res)=>{ //res = response.then -- promise, then
+        console.log(JSON.stringify(res), "Result value representing the class entered");
+        console.log(res.JSON());
+        console.log()
+      }).catch((err)=>{
+        console.log(err, "ERROR");
+      })
+      // ================================================================================================
 
       this.setState({currentMajor: event.target.value});
     }
@@ -286,7 +306,6 @@ class EnterClasses extends React.Component {
             // ================================================================================================
 
             let rows = this.buildRows(rowsForEachYear);
-
             value = "";  // For next input
             //this.setState({value: value, classes: classes, classCount: classCount, acadPlanObj:acadPlanObj, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr, rowsForEachYear: rowsForEachYear, rows: rows});
             this.setState({value: value, classes: classes, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr, rowsForEachYear: rowsForEachYear, rows: rows});
@@ -382,6 +401,9 @@ class EnterClasses extends React.Component {
       //console.log(acadPlanObj);
       let acadPlanObjJSON = JSON.stringify(acadPlanObj);
       console.log(acadPlanObjJSON);
+
+      //add post -- acadPlanObjJSON
+
   
       // UPDATE FOR SPRINT 4: need to create another object that contains preferences
       // Then combine acadPlanObj with this new one
@@ -560,11 +582,26 @@ class EnterClasses extends React.Component {
       // ================================================================================================
       //ADDED -- frontend fetch call - success/error message 
       //check for error from Backend - 404 //alert within fetch! 
-      const response = get(verificationResults); //changed from get to post, check with group/TA
+
+      /*
+      fetch('http://127.0.0.1:8000/searchclass')
+      .then(response=>response.JSON())
+      .then(data=>{ console.log(data, "NEW STUFF"); })
+      */
+
+      const response = post(verificationResults); //changed from get to post, check with group/TA
+      //response = response.text();
+      //console.log("YAYY IT WORKS", response);
+
+      //response.then(response=>JSON.stringify(response),
+      //response.then(data=>{ console.log(data, "NEW STUFF"); }),
+
       response.then((res)=>{
         console.log(res, "Hi this was a success!");
-        console.log(JSON.stringify(res), "sdfdsfdf");
-        console.log(res.json());
+        console.log(res.text());
+        console.log(res.type);
+        console.log(JSON.stringify(res));
+        //console.log(res.json());
       }).catch((err)=>{
         console.log(err, "ERROR Verfication Failed");
       })
