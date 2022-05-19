@@ -87,8 +87,7 @@ def get_posts(input:searchClass):
     posts = allClassesByClassName(input.classstr, input.majorstr)
     if posts == []:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"course does not exist")
-    #return{tuple(posts)}
-    return("Hi Christian")
+    return{tuple(posts)}
 
 @app.get("/verification") # verify pre-req quarter-quarter
 def verification(entered: enteredclasses):
