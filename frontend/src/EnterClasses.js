@@ -195,10 +195,12 @@ class EnterClasses extends React.Component {
 
       const response = post(current); //value is the class being added?!?
       response.then((res)=>{ //res = response.then -- promise, then
-        console.log(JSON.stringify(res), "Result value representing the class entered");
-        console.log(res.JSON());
-        console.log()
-      }).catch((err)=>{
+        return res.json();
+      })
+      .then((json) => {
+        console.log(JSON.stringify(json));
+      })
+      .catch((err)=>{
         console.log(err, "ERROR");
       })
       // ================================================================================================
