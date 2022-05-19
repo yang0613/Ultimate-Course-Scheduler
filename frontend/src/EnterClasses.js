@@ -90,7 +90,7 @@ class EnterClasses extends React.Component {
 
     // https://reactjs.org/docs/forms.html had this
     handleChange1(event) {  // Handles typing in a class name
-      this.setState({value: event.target.value});
+        this.setState({value: event.target.value});
     }
 
     handleChange2(event) {  // Handles selecting the quarter in the dropdown
@@ -207,18 +207,6 @@ class EnterClasses extends React.Component {
 
             let rows = this.buildRows(rowsForEachYear);
 
-
-            // ================================================================================================
-            // INTEGRATION 
-            // ================================================================================================
-            //ADDED -- post frontend fetch call
-            const response = post(value); //value is the class being added?!?
-            response.then((res)=>{ //res = response.then -- promise, then
-              console.log(JSON.stringify(res), "Result value representing the class entered");
-            }).catch((err)=>{
-              console.log(err, "ERROR");
-            })
-            // ================================================================================================
             value = "";  // For next input
             //this.setState({value: value, classes: classes, classCount: classCount, acadPlanObj:acadPlanObj, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr, rowsForEachYear: rowsForEachYear, rows: rows});
             this.setState({value: value, classes: classes, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr, rowsForEachYear: rowsForEachYear, rows: rows});
@@ -495,6 +483,8 @@ class EnterClasses extends React.Component {
       const response = get(verificationResults); //changed from get to post, check with group/TA
       response.then((res)=>{
         console.log(res, "Hi this was a success!");
+        console.log(JSON.stringify(res), "sdfdsfdf");
+        console.log(res.json());
       }).catch((err)=>{
         console.log(err, "ERROR Verfication Failed");
       })
