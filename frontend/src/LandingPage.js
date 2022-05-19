@@ -1,11 +1,12 @@
 // heading.js
 
-import Popup from 'reactjs-popup';
+//import Popup from 'reactjs-popup';
 import Login from './Login';
 import Register from './Register';
 import EnterClasses from './EnterClasses';
-import 'reactjs-popup/dist/index.css';
+//import 'reactjs-popup/dist/index.css';
 import React, { useState } from 'react';
+//import {BrowserRouter, Route, Switch} from 'react-router-dom';
 
 class LandingPage extends React.Component 
 {
