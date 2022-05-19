@@ -2,6 +2,7 @@
 from reqs import requirement
 import json
 import query
+from pprint import pprint
 
 # We changed 1, 2, 3, 4 to First, Second, Third, Fourth
 # I just put 1, 2, 3, 4 here since that's what you currently have
@@ -54,7 +55,7 @@ expr2="""
 	"3": {
 		"Fall": ["CSE 115A", "CSE 116"],
 		"Winter": ["CSE 115B", "STAT 131"],
-		"Spring": ["CSE 115C", "CSE 111],
+		"Spring": ["CSE 115C", "CSE 111"],
 		"Summer": []
 	},
 	"4": {
@@ -86,7 +87,7 @@ expr3="""
 	"3": {
 		"Fall": ["CSE 115A", "CSE 116"],
 		"Winter": ["CSE 115B", "STAT 131"],
-		"Spring": ["CSE 115C", "CSE 111],
+		"Spring": ["CSE 115C", "CSE 111"],
 		"Summer": []
 	},
 	"4": {
@@ -116,7 +117,7 @@ expr4="""
 	"3": {
 		"Fall": ["CSE 115A", "CSE 116"],
 		"Winter": ["CSE 115B", "STAT 131"],
-		"Spring": ["CSE 115C", "CSE 111],
+		"Spring": ["CSE 115C", "CSE 111"],
 		"Summer": []
 	},
 	"4": {
@@ -146,7 +147,7 @@ expr5="""
 	"3": {
 		"Fall": ["CSE 115A", "CSE 116"],
 		"Winter": ["CSE 115B", "STAT 131"],
-		"Spring": ["CSE 115C", "CSE 111],
+		"Spring": ["CSE 115C", "CSE 111"],
 		"Summer": []
 	},
 	"4": {
@@ -176,7 +177,7 @@ expr6="""
 	"3": {
 		"Fall": ["CSE 115A", "CSE 116"],
 		"Winter": ["CSE 115B", "STAT 131"],
-		"Spring": ["CSE 115C", "CSE 111],
+		"Spring": ["CSE 115C", "CSE 111"],
 		"Summer": []
 	},
 	"4": {
@@ -206,7 +207,7 @@ exrp7="""
 	"3": {
 		"Fall": ["CSE 115A", "CSE 116"],
 		"Winter": ["CSE 115B", "STAT 131"],
-		"Spring": ["CSE 115C", "CSE 111],
+		"Spring": ["CSE 115C", "CSE 111"],
 		"Summer": []
 	},
 	"4": {
@@ -236,7 +237,7 @@ expr8="""
 	"3": {
 		"Fall": ["CSE 115A", "CSE 116"],
 		"Winter": ["CSE 115B", "STAT 131"],
-		"Spring": ["CSE 115C", "CSE 111],
+		"Spring": ["CSE 115C", "CSE 111"],
 		"Summer": []
 	},
 	"4": {
@@ -266,7 +267,7 @@ expr9="""
 	"3": {
 		"Fall": ["CSE 115A", "CSE 116"],
 		"Winter": ["CSE 115B", "STAT 131"],
-		"Spring": ["CSE 115C", "CSE 111],
+		"Spring": ["CSE 115C", "CSE 111"],
 		"Summer": []
 	},
 	"4": {
@@ -296,7 +297,7 @@ expr10="""
 	"3": {
 		"Fall": ["CSE 115A", "CSE 116"],
 		"Winter": ["CSE 115B", "STAT 131"],
-		"Spring": ["CSE 115C", "CSE 111],
+		"Spring": ["CSE 115C", "CSE 111"],
 		"Summer": []
 	},
 	"4": {
@@ -326,7 +327,7 @@ expr11="""
 	"3": {
 		"Fall": ["CSE 115A", "CSE 116"],
 		"Winter": ["CSE 115B", "STAT 131"],
-		"Spring": ["CSE 180", "CSE 111],
+		"Spring": ["CSE 180", "CSE 111"],
 		"Summer": []
 	},
 	"4": {
@@ -339,4 +340,6 @@ expr11="""
 """
 
 req = requirement()
-print(req.validate(json.loads(expr)))
+test = expr6
+missing = req.validate(json.loads(test))
+print(pprint(missing))

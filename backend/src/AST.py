@@ -1,4 +1,5 @@
 #!/usr/bin/python3.9
+from cgi import parse_multipart
 from boolean import BooleanAlgebra
 from boolean import TOKEN_NOT
 from boolean import TOKEN_AND
@@ -7,6 +8,7 @@ from boolean import TOKEN_TRUE
 from boolean import TOKEN_FALSE
 from boolean import TOKEN_LPAR
 from boolean import TOKEN_RPAR
+from boolean import Expression
 from req_types import Course
 from req_types import ConcurrentEnrollment
 from req_types import NumFrom
@@ -25,7 +27,7 @@ TOKENS = { #Standard tokens from Boolean Algebra
         }
 
 algebra = BooleanAlgebra(allowed_in_token=('.', ':', '_', '-', '/'))
-
+TRUE, FALSE, NOT, AND, OR, symbol = algebra.definition()
 TOKENS_MATCH_SYMBOLS = {
     TOKEN_COURSE: Course,
     TOKEN_CONCURRENT: ConcurrentEnrollment,
@@ -63,6 +65,10 @@ class PrereqAlgebra(BooleanAlgebra):
             if requirement_found(req):
                 yield update_token(TOKEN_LPAR, '(', self.position)
                 for tok, args, expr, pos in parse(req):
+                    # An expression that follows ( and / ( or is invalid
+                    if self.previous_token == TOKEN_LPAR and tok == TOKEN_OP:
+                        yield update_token(TOKEN_FALSE, 'false', self.position)
+
                     req_obj = TOKENS_MATCH_SYMBOLS[tok](**args)
                     yield update_token(req_obj, expr, self.position+pos)
 
@@ -79,3 +85,29 @@ class PrereqAlgebra(BooleanAlgebra):
                 yield update_token(TOKEN_AND, 'and', self.position)
         #Required since "ANDs" require dual operators
         yield update_token(TOKEN_TRUE, 'true', self.position)
+
+
+def missing_requirements(parse: Expression):
+    """Given an Abstract Syntax Tree parse reprsenting our
+    prerequisites, convert this into a string fits more to the format of
+    UCSC's prerequisites. 
+
+    Args:
+        parse (Expression): An parse object from PrereqAlgebra()
+
+    Returns:
+        str: A string of prerequisites
+    """
+    if parse.isliteral:
+        return(str(parse))
+    
+    replace_tokens = [("&", " and "), ("|", " or ")]
+    missing_reqs = []
+    for arg in parse.args:
+        arg = str(arg).strip()
+        for tok, replacement in replace_tokens:
+            arg = arg.replace(tok, replacement)
+        missing_reqs.append(arg)
+    if parse.operator == '|':
+        return "; or ".join(missing_reqs)
+    return "; ".join(missing_reqs)

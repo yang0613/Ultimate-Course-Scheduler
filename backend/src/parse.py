@@ -2,7 +2,6 @@
 from re import compile
 from enumerate import word2int
 from req_types import NumFrom
-
 """
 Responsible for parsing a prerequisite string into tokens from the 
 following patterns
@@ -79,7 +78,7 @@ def split(pattern, expr: str):
     """
     list = pattern.split(expr)
     for elem in list[:]:
-        if elem == '' or pattern.match(expr):
+        if elem == '' or pattern.match(elem):
             list.remove(elem)
     return list
 def requirements_list(expr: str):
@@ -90,17 +89,6 @@ def requirements_list(expr: str):
         expr (list): A list of requirements 
     """
     return split(delim, expr)
-
-def missing_requirements(boolean_expr: str):
-    """Given an boolean expression representing a missing prerequisite,
-    return a structured list that represent what is missing"""
-    reqs = []
-    replace_tokens = [("&", " and "), ("|", " or "), ("(", ""), (")", "")]
-    for expr in split(missing_req_list, boolean_expr):
-        for tok, replacement in replace_tokens:
-            expr = expr.replace(tok, replacement)
-        reqs.append(expr)
-    return reqs
 
 def course_tokens(course_list: str):
     """Returns a stream of courses by their names and starting character
@@ -306,3 +294,4 @@ def requirement_found(expr: str):
         boolean: A status indicator for whether a requirement was found
     """
     return extract_requriements.search(expr) is not None and blacklist_requirements.search(expr) is None
+
