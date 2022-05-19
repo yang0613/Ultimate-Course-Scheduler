@@ -2,19 +2,28 @@ export const post = (data) => {
     const response = fetch('http://127.0.0.1:8000/searchclass', {
         method: 'POST',
         headers: {
-            Accept: 'application.json',
             'Content-Type': 'application/json'
         },
-        body: data, //use JSON.stringify if and when needed, but currently string
+        body: {
+            "classstr": "cse 101",
+            "majorstr": ""
+        }, //use JSON.stringify if and when needed, but currently string
     })
     return response
 }
 
+//const [input, setInput] = React.useState({"classstr": "", "majorstr": ""});
+
+/*const data = {
+            "classstr": "cse 101",
+            "majorstr": ""
+       } */
+
 export const get = (data) => {
-    const response = fetch(`http://127.0.0.1:8000/searchclass?data=${data}`,{
+    //const response = fetch(`http://127.0.0.1:8000/searchclass?data=${data}`,{
+    const response = fetch(`http://127.0.0.1:8000/searchclass`,{
         method: 'GET',
         headers: {
-            Accept: 'application.json',
             'Content-Type': 'application/json'
         },
     })

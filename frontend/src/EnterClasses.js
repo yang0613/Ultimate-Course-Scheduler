@@ -214,7 +214,9 @@ class EnterClasses extends React.Component {
             //ADDED -- post frontend fetch call
             const response = post(value); //value is the class being added?!?
             response.then((res)=>{ //res = response.then -- promise, then
-              console.log(res, "Result value representing the class entered");
+              console.log(JSON.stringify(res), "Result value representing the class entered");
+            }).catch((err)=>{
+              console.log(err, "ERROR");
             })
             // ================================================================================================
             value = "";  // For next input
@@ -489,7 +491,8 @@ class EnterClasses extends React.Component {
           // INTEGRATION 
       // ================================================================================================
       //ADDED -- frontend fetch call - success/error message 
-      const response = post(verificationResults); //changed from get to post, check with group/TA
+      //check for error from Backend - 404 //alert within fetch! 
+      const response = get(verificationResults); //changed from get to post, check with group/TA
       response.then((res)=>{
         console.log(res, "Hi this was a success!");
       }).catch((err)=>{
