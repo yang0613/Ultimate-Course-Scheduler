@@ -2,6 +2,7 @@
 from re import compile
 from enumerate import word2int
 from req_types import NumFrom
+
 """
 Responsible for parsing a prerequisite string into tokens from the 
 following patterns
@@ -78,7 +79,7 @@ def split(pattern, expr: str):
     """
     list = pattern.split(expr)
     for elem in list[:]:
-        if elem == '' or pattern.match(elem):
+        if elem == '' or pattern.match(expr):
             list.remove(elem)
     return list
 def requirements_list(expr: str):
@@ -89,6 +90,17 @@ def requirements_list(expr: str):
         expr (list): A list of requirements 
     """
     return split(delim, expr)
+
+def missing_requirements(boolean_expr: str):
+    """Given an boolean expression representing a missing prerequisite,
+    return a structured list that represent what is missing"""
+    reqs = []
+    replace_tokens = [("&", " and "), ("|", " or "), ("(", ""), (")", "")]
+    for expr in split(missing_req_list, boolean_expr):
+        for tok, replacement in replace_tokens:
+            expr = expr.replace(tok, replacement)
+        reqs.append(expr)
+    return reqs
 
 def course_tokens(course_list: str):
     """Returns a stream of courses by their names and starting character
@@ -241,8 +253,8 @@ BLACKLIST_PATTERNS = {
 
 
 extract_requriements = compile(
-f' *(,? *{op})? *' +
-f'(?P<{TOKEN_REQUIREMENT}>' + '|'.join(TOKENS_MATCH_PATTERNS.values()) + ')'
+f'(?P<{TOKEN_REQUIREMENT}>' + '|'.join(TOKENS_MATCH_PATTERNS.values()) + ')' +
+f' *(,? *{op})? *'
 )
 
 blacklist_requirements = compile(
@@ -279,9 +291,9 @@ def parse(expr: str):
     for match in extract_requriements.finditer(expr):
         op = match[TOKEN_OP]
         pos = match.start(TOKEN_OP)
+        yield find_req(match)
         if op:
             yield token(TOKEN_ID=TOKEN_OP, kwargs={TOKEN_OP: op}, pos=pos, expr=op)
-        yield find_req(match)
 
 def requirement_found(expr: str):
     """If an requirement is found within our expression, return true.
@@ -293,5 +305,4 @@ def requirement_found(expr: str):
     Returns:
         boolean: A status indicator for whether a requirement was found
     """
-    return extract_requriements.search(expr) is not None and blacklist_requirements.search(expr) is None
-
+    return next(parse(expr), None) is not None and blacklist_requirements.search(expr) is None

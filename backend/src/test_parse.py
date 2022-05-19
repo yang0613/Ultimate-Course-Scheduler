@@ -1,10 +1,14 @@
 #!/usr/bin/python3.9
 import parse
 from parse import TOKEN_NAME 
+from parse import TOKEN_COURSE
 from parse import TOKEN_LIST
 from parse import TOKEN_DUE_DATE
 from parse import TOKEN_COUNT
 from parse import TOKEN_TYPE
+from parse import TOKEN_PREV_CONCURRENT
+from parse import TOKEN_CONCURRENT_LIST
+from parse import TOKEN_OP
 import unittest
 
 class testParse(unittest.TestCase):
@@ -19,32 +23,40 @@ class testParse(unittest.TestCase):
         'ENVS 24 or BIOE 20C'
         'ENVS 25'
 
-        Return the tokens of the boolean operands and courses and their
-        starting index poistion in the string
+        Return the tokens of the courses 
         'ENVS 23 or CHEM 1A'
-         0123456789...
-
-        'ENVS 23', 0
-        'or', 8
-        'CHEM 1A', 11
+        'ENVS 23'
+        'CHEM 1A'
 
         """
+        
         def convertToList(expr):
             return list(parse.course_tokens(expr))
 
-        self.assertEqual([('ENVS 100', 0), ('and', 9), ('ENVS 100L', 13)], 
+        def wrapPreviousTestToNewFormat(tuple_list):
+            list = []
+            for course, pos in tuple_list:
+                if course != 'and' and course != 'or':
+                    list.append({TOKEN_COURSE: course})
+            return list
+                
+        self.assertEqual(
+            wrapPreviousTestToNewFormat([('ENVS 100', 0), ('and', 9), ('ENVS 100L', 13)]), 
                         convertToList('ENVS 100 and ENVS 100L'))
 
-        self.assertEqual([('ENVS 183A', 0)], 
+        self.assertEqual(wrapPreviousTestToNewFormat([('ENVS 183A', 0)]), 
                         convertToList('ENVS 183A'))
         
-        self.assertEqual([('ENVS 24', 0), ('or', 8), ('BIOE 20C', 11)], 
+        self.assertEqual(wrapPreviousTestToNewFormat(
+            [('ENVS 24', 0), ('or', 8), ('BIOE 20C', 11)]), 
                         convertToList('ENVS 24 or BIOE 20C'))
     
-        self.assertEqual([('ENVS 24', 0), ('or', 8), ('BIOE 20C', 11)], 
+        self.assertEqual(
+            wrapPreviousTestToNewFormat([('ENVS 24', 0), ('or', 8), ('BIOE 20C', 11)]), 
                         convertToList('ENVS 24 or BIOE 20C'))
 
-        self.assertEqual([
+        self.assertEqual(wrapPreviousTestToNewFormat(
+                        [
                         ('STAT 7', 0),
                         ('and', 7),
                         ('STAT 7L', 11),
@@ -52,9 +64,14 @@ class testParse(unittest.TestCase):
                         ('ECON 113', 23),
                         ('or', 32),
                         ('OCEA 90', 35)
-                        ],
+                        ]),
                     convertToList('STAT 7 and STAT 7L, or ECON 113 or OCEA 90'))
+        
 
+
+        self.assertEqual(
+wrapPreviousTestToNewFormat([('ENVS 100', 0), ('and', 9), ('ENVS 100L', 13)]), 
+                        convertToList('ENVS 100 and ENVS 100L'))
     def test_num_from_tokens(self):
         """
         Given a prerequiste string of
@@ -181,6 +198,42 @@ PHIL 28, or PHIL 80G")
         self.assertEqual(next(tokens), 'PHIL 24')
         self.assertEqual(next(tokens), 'PHIL 28')
         self.assertEqual(next(tokens), 'PHIL 80G')
+    
+    def test_concurrent_enrollment_tokens(self):
+        tokens = parse.concurrent_enrollment_tokens('Previous or concurrent \
+enrollment in MATH 3, AM 3, or equivalent, or a mathematics placement score \
+of 300 or higher')
+        def createDummyTokens(course_list, op=None, allowPrevious=False):
+            if op:
+                return {TOKEN_CONCURRENT_LIST: course_list, 
+                        TOKEN_PREV_CONCURRENT: allowPrevious,
+                        TOKEN_OP: op}
+            return {TOKEN_CONCURRENT_LIST: course_list, 
+                        TOKEN_PREV_CONCURRENT: allowPrevious}
+        self.assertDictEqual(next(tokens), createDummyTokens(
+            allowPrevious = True,
+            course_list = "MATH 3, AM 3"))
         
+        tokens = parse.concurrent_enrollment_tokens('concurrent enrollment \
+        in PHYS 5L is required.')
+
+        self.assertDictEqual(next(tokens), 
+        createDummyTokens(allowPrevious=False, course_list='PHYS 5L')
+        )
+
+        tokens = parse.concurrent_enrollment_tokens('MATH 24 or \
+    previous or concurrent enrollment in AM 20')
+
+        self.assertDictEqual(next(tokens), 
+        createDummyTokens(allowPrevious=True, course_list='AM 20'))
+        
+
+
+
+        
+
+
+
+
 if __name__ == "__main__":
     unittest.main()

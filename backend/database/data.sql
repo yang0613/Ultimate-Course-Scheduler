@@ -68,7 +68,7 @@ INSERT INTO Classes (classID, className, subject, credit, quarters, instructor) 
 ('ENVS 190', 'ENVS 190 Capstone Course: Environmental Problem Solving', 'Environmental Studies', '5', 'Spring', 'Katie Monsen'),
 ('ENVS 195A', 'ENVS 195A Senior Research', 'Environmental Studies', '5', 'Fall, Winter, Spring', ''),
 ('ENVS 195B', 'ENVS 195B Senior Thesis Group', 'Environmental Studies', '5', 'Fall, Winter, Spring', ''),
-('ENVS 196', 'ENVS 196 Senior Seminar', 'Environmental Studies', '5', 'Fall, Winter, Spring', 'Karen Holl, Michael Loik, Carol Shennan, Barry Nickel'),
+('ENVS 196', 'ENVS 196 Senior Seminar', 'Environmental Studies', '5', 'Fall, Winter, Spring', 'Karen Holl, Michael Loik, Carol Shennan, Barry Nickel')
 ON CONFLICT (classID)
 DO NOTHING;
  

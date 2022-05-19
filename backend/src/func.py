@@ -22,26 +22,10 @@ from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
-
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-#from fastapi.middleware.cors 
-
-#from reqs import requirement
+from reqs import requirement
 #from test import requirement
 app = FastAPI()
 ENV = 'prod'
-
-
-origins = ["*"]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 def connectToDB():
     if ENV == 'dev':
@@ -56,7 +40,6 @@ def allClassesByClassName(className, degree):
     cur.execute(query, (className, degree))
     return cur.fetchall()
 
-#schema
 class Post(BaseModel):
     title: str
     content: str
@@ -82,7 +65,7 @@ def root():
     cur = connectToDB()
     return {"message": "Welcome to my api!!!!!!"}
 #Notice: this is the path for functionality No.3: search bar
-@app.post("/searchclass")
+@app.get("/searchclass")
 def get_posts(input:searchClass):
     posts = allClassesByClassName(input.classstr, input.majorstr)
     if posts == []:
@@ -94,16 +77,16 @@ def verification(entered: enteredclasses):
     #test = Requirement(); test.validate(schedule)
     #print(entered)
     #<Shing's Verification functions>
-    #req = requirement()
-    #result = req.validate(entered)
-    #return(result)
-    return (entered)
+    req = requirement()
+    result = req.validate(entered.dict())
+    return(result)
 
 @app.get("/recommendation")
 def verification(entered: enteredclasses):
+    print(dict(entered))
     #print(entered.classes)
     #<Shing's Course Recommendation functions>
-    return(entered)
+    return(dict(entered))
 
 @app.get("/getFall")
 def getFall(entered: Quarters):
