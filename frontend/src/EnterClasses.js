@@ -103,7 +103,6 @@ class EnterClasses extends React.Component {
         //acadPlanObj: {"Year 1": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 2": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 3": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 4": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}},
         //acadPlanObj: {"1": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "2": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "3": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "4": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}},
 
-        // A 3D array containing the "rows" for each year
         //   Explanation: Each year has a set of rows contained within it
         //      First 4 is the number of years.
         //      Second 4 is the number of rows for that year (Can add more rows. Ex. Adding more classes)
@@ -164,6 +163,9 @@ class EnterClasses extends React.Component {
 
     // https://reactjs.org/docs/forms.html had this
     handleChange1(event) {  // Handles typing in a class name
+
+      // INTEGRATION: fetch calls here
+
       this.setState({value: event.target.value});
     }
 
