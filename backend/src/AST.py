@@ -100,7 +100,6 @@ def missing_requirements(parse: Expression):
     """
     if parse.isliteral:
         return(str(parse))
-    
     replace_tokens = [("&", " and "), ("|", " or ")]
     missing_reqs = []
     for arg in parse.args:
@@ -108,6 +107,6 @@ def missing_requirements(parse: Expression):
         for tok, replacement in replace_tokens:
             arg = arg.replace(tok, replacement)
         missing_reqs.append(arg)
-    if parse.operator == '|':
+    if parse.pretty().startswith("OR"):
         return "; or ".join(missing_reqs)
     return "; ".join(missing_reqs)
