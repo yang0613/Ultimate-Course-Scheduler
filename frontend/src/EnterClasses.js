@@ -25,6 +25,79 @@ class EnterClasses extends React.Component {
         // INTEGRATION: Currently dummy data. Need data returned by API.
         availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21"],
         verificationResults: [],
+        currentMajor: "", 
+        major:[
+          'Agroecology B.A.',
+          'Anthropology B.A.',
+          'Applied Linguistics and Multilingualism B.A.',
+          'Applied Mathematics B.S.',
+          'Applied Physics B.S.',
+          'Art and Design: Games and Playable Media B.A.',
+          'Art B.A.',
+          'Biochemistry and Molecular Biology B.S.',
+          'Biology B.A.',
+          'Biology B.S.',
+          'Biomolecular Engineering and Bioinformatics B.S.',
+          'Biotechnology B.A.',
+          'Business Management Economics B.A.',
+          'Chemistry B.A.',
+          'Chemistry B.S.',
+          'Classical Studies B.A.',
+          'Cognitive Science B.S.',
+          'Community Studies B.A.',
+          'Computer Engineering B.S.',
+          'Computer Science B.A.',
+          'Computer Science B.S.',
+          'Computer Science: Computer Game Design B.S.',
+          'Critical Race and Ethnic Studies B.A.',
+          'Earth Sciences B.S.',
+          'Earth Sciences/Anthropology Combined Major B.A.',
+          'Ecology and Evolution B.S.',
+          'Economics B.A.',
+          'Economics/Mathematics Combined B.A.',
+          'Education, Democracy, and Justice B.A.',
+          'Electrical Engineering B.S.',
+          'Environmental Sciences B.S.',
+          'Environmental Studies B.A.',
+          'Environmental Studies/Biology Combined Major B.A.',
+          'Environmental Studies/Earth Sciences Combined Major B.A.',
+          'Environmental Studies/Economics Combined Major B.A.',
+          'Feminist Studies B.A.',
+          'Film and Digital Media B.A.',
+          'Global Economics B.A.',
+          'History B.A.',
+          'History of Art and Visual Culture B.A.',
+          'Human Biology B.S.',
+          'Jewish Studies B.A.',
+          'Language Studies B.A.',
+          'Latin American and Latino Studies B.A.',
+          'Latin American and Latino Studies/Politics Combined B.A.',
+          'Latin American and Latino Studies/Sociology Combined B.A.',
+          'Legal Studies B.A.',
+          'Linguistics B.A.',
+          'Literature B.A.',
+          'Marine Biology B.S.',
+          'Mathematics B.A.',
+          'Mathematics B.S.',
+          'Mathematics Education B.A.',
+          'Molecular, Cell, and Developmental Biology B.S.',
+          'Music B.A.',
+          'Music B.M.',
+          'Network and Digital Technology B.A.',
+          'Neuroscience B.S.',
+          'Philosophy B.A.',
+          'Physics (Astrophysics) B.S.',
+          'Physics B.S.',
+          'Plant Sciences B.S.',
+          'Politics B.A.',
+          'Psychology B.A.',
+          'Robotics Engineering B.S.',
+          'Science Education B.S.',
+          'Sociology B.A.',
+          'Spanish Studies B.A.',
+          'Technology and Information Management B.S.',
+          'Theater Arts B.A.'
+        ],
 
         // Object containing list of classes for each quarter for each year (Keep the commented version in case it's needed)
         //acadPlanObj: {"Year 1": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 2": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 3": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 4": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}},
@@ -67,6 +140,7 @@ class EnterClasses extends React.Component {
       this.handleChange2 = this.handleChange2.bind(this); // *** Handles changing the current quarter to put a class into
       this.handleChange3 = this.handleChange3.bind(this); // *** Handles changing the year to put a class into
       this.handleChange4 = this.handleChange4.bind(this); // *** Handles selecting the class to be removed (before confirmation of removal)
+      this.handleChange5 = this.handleChange5.bind(this); // INTEGRATION: For the major selection
       this.handleSubmit1 = this.handleSubmit1.bind(this); // Handles clicking "Add" when entering a class
       this.handleSubmit2 = this.handleSubmit2.bind(this); // Handles clicking "Submit" when submitting all classes to be taken
       this.handleSubmit3 = this.handleSubmit3.bind(this); // *** Handles clicking "Remove" when removing a class
@@ -104,6 +178,12 @@ class EnterClasses extends React.Component {
     handleChange4(event) {  // Handles selecting the class to be removed 
       console.log("toRemove:" + event.target.value); // FOR TESTING
       this.setState({toRemove: event.target.value});
+    }
+
+    handleChange5(event) {  // Handles selecting major
+      // INTEGRATION: Put fetch call here
+
+      this.setState({currentMajor: event.target.value});
     }
 
     /*  Format for acadPlanObj
@@ -596,6 +676,16 @@ class EnterClasses extends React.Component {
       return (
         <div className="container1">
           <form onSubmit={this.handleSubmit1}>
+            {
+              // ADDED for integeration may 18
+            }
+            <label>Major:&nbsp;</label>
+            <select className="toRemove" value={this.state.major} onChange={this.handleChange5}>
+              <option value="Select">Select</option>
+              {this.state.major.map((theMajor) => <option value={theMajor.value}>{theMajor}</option>)}
+            </select>
+            &nbsp;
+      
             <label>Enter Course:&nbsp;</label>
             <input list="availableClasses" name="classstr" value={this.state.value} onChange={this.handleChange1} />
             <datalist id="availableClasses">
