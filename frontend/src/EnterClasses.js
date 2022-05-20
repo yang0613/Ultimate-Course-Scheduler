@@ -23,10 +23,10 @@ class EnterClasses extends React.Component {
         classes: Array(0).fill(""),  // Array of all entered classes. Purpose is to make dealing with some parts easier.
 
         // INTEGRATION: Currently dummy data. Need data returned by API.
-        //availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21"],
-        availableClasses: [],
+        availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21"],
+        //availableClasses: [],  // USE THIS WHEN POST/FETCH CALL RETURNS LIST OF CLASSES AS A JSON
         verificationResults: [],
-        currentMajor: "", 
+        currentMajor: "Select", 
         major:[
           'Agroecology B.A.',
           'Anthropology B.A.',
@@ -206,12 +206,16 @@ class EnterClasses extends React.Component {
 
       // Christian: Response returns a list of classes as a JSON.
       //   Is this the proper way to use response? I notice a return res.json() above. How do I get that?
-      let availableClasses = JSON.parse(response);
+      //   Comment out for now
+      //let availableClasses = JSON.parse(response);
 
-      // Christian: Below, I'm setting the availableClasses state to the availableClasses obtained above
+      // Christian: Below, I'm setting the availableClasses state to the availableClasses obtained above...
       //   So that the list of classes will showup in the search suggestions
-      //this.setState({currentMajor: event.target.value});  // Keep for reference
-      this.setState({currentMajor: event.target.value, availableClasses: availableClasses});
+      //   Commenting out for now until post/fetch call returns list of classes as a JSON
+      //this.setState({currentMajor: event.target.value, availableClasses: availableClasses});
+
+      this.setState({currentMajor: currentMajor});
+      //this.setState({currentMajor: event.target.value});
     }
 
     handleSubmit1(event) {  // Handles entering classes
@@ -683,7 +687,7 @@ class EnterClasses extends React.Component {
               // ADDED for integeration may 18
             }
             <label>Major:&nbsp;</label>
-            <select className="toRemove" value={this.state.major} onChange={this.handleChange5}>
+            <select className="majorList" value={this.state.currentMajor} onChange={this.handleChange5}>
               <option value="Select">Select</option>
               {this.state.major.map((theMajor) => <option value={theMajor.value}>{theMajor}</option>)}
             </select>
@@ -751,6 +755,7 @@ class EnterClasses extends React.Component {
                 // check in how to implement this! 
                 // post/get call? not sure! - same implementation as above but for data! 
                 //   Oh, this will be in handleSubmit2. Right after     let acadPlanObjJSON = JSON.stringify(acadPlanObj);
+                //   I'm responsible with this part. Just need the post/fetch call to return the data in the format me and Shing agreed on (See handleSubmit2 resultJSON)
           }      
           <br></br>
           <h2>Verification Results:</h2>
