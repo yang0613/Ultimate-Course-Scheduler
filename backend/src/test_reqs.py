@@ -190,7 +190,8 @@ expr6="""
 """
 
 # Invalid. Missing CSE 130 for 115A
-exrp7="""
+# Note, CSE130 is in winter quarter of year 2 and is taken before CSE115A
+expr7="""
 {
 	"1": {
 		"Fall": ["CSE 20", "MATH 19A"],
@@ -280,6 +281,7 @@ expr9="""
 """
 
 # Invalid? CSE 101 isn't available during the summer right? Or does it vary?
+# 
 expr10="""
 {
 	"1": {
@@ -340,6 +342,6 @@ expr11="""
 """
 
 req = requirement()
-test = expr6
+test = expr
 missing = req.validate(json.loads(test))
-print(pprint(missing))
+pprint(missing)

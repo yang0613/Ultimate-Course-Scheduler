@@ -9,7 +9,12 @@ class Course(Symbol):
     className classID[optLetter]
     """
     def __init__(self, expr, **kwargs):
+        self.expr = expr
         super().__init__(expr)
+    
+    def _subs(self, substitutions, default, simplify):
+        if self.expr in substitutions.keys():
+            return substitutions[self.expr]
 
 class ConcurrentEnrollment(Symbol):
     """A class representing a Concurrent Enrollment requirement in our

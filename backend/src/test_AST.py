@@ -28,7 +28,8 @@ expr14 = "one from: \"req\" CSE 103, CSE 102, CSE 104, or MATH 19A start discoun
 expr15 = 'CSE 15 and CSE 15L; or CSE 13S and CMPM 35; or CSE 13E and CMPM 35; or ECE 13 and CMPM 35; or CSE 101.'
 expr16 = 'CSE 15 and CSE 15L; or CSE 13S and CMPM 35; or CSE 13E and CMPM 35; or ECE 13 and CMPM 35; or CSE 101. ECON 101.'
 expr17 = 'MATH 11A or MATH 19A or MATH 20A or AM 11A or AM 15A'
-test_expr = expr17
+expr18 = "satisfaction of the Entry Level Writing and Composition requirements and CSE 101 and CSE 130."
+test_expr = expr4
 print("=====================")
 print("Raw Expression:")
 print(test_expr)

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 from AST import PrereqAlgebra
 from constraint import Constraint
-from constraint_types import generate_prereq_func
+from constraint_types import generate_prereq_func, not_avaliable_during
 
 algebra = PrereqAlgebra()
 
@@ -46,7 +46,7 @@ class requirement:
     def __init__(self, expr=''):
         self.expr = expr
         self.ast = algebra.parse(expr).simplify()
-        self.constraint = Constraint([generate_prereq_func()])
+        self.constraint = Constraint([generate_prereq_func(), not_avaliable_during])
 
 
     def validate(self, schedule):
