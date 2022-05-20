@@ -24,8 +24,9 @@ class EnterClasses extends React.Component {
 
         // INTEGRATION: Currently dummy data. Need data returned by API.
         availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21"],
+        //availableClasses: [],  // USE THIS WHEN POST/FETCH CALL RETURNS LIST OF CLASSES AS A JSON
         verificationResults: [],
-        currentMajor: "", 
+        currentMajor: "Select", 
         major:[
           'Agroecology B.A.',
           'Anthropology B.A.',
@@ -99,10 +100,6 @@ class EnterClasses extends React.Component {
           'Theater Arts B.A.'
         ],
 
-        // Object containing list of classes for each quarter for each year (Keep the commented version in case it's needed)
-        //acadPlanObj: {"Year 1": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 2": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 3": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}, "Year 4": {"Fall": ["", "", "", ""], "Winter": ["", "", "", ""], "Spring": ["", "", "", ""], "Summer": ["", "", "", ""]}},
-        //acadPlanObj: {"1": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "2": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "3": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "4": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}},
-
         // A 3D array containing the "rows" for each year
         //   Explanation: Each year has a set of rows contained within it
         //      First 4 is the number of years.
@@ -126,12 +123,6 @@ class EnterClasses extends React.Component {
         // https://stackoverflow.com/questions/50807131/how-do-i-use-array-fill-for-creating-an-array-of-objects
         // Needed to keep track of current row occupied for each quarter for each year
         rowsFilledForQtr: Array(4).fill(0).map(() => ({"Fall": 0, "Winter": 0, "Spring": 0, "Summer": 0})),
-
-        // INTEGERATION: Replace this with whatever backend returns
-        dummyReqsJSON: '["CSE 101", "CSE 102", "CSE 103", "CSE 120", "CSE 130", "CSE 116", "STAT 131"]',
-        requiredList: "", // Requirements list as a string
-        missingList: "",  // Missing requirements as a string
-        fulfilledList: "", // Fulfilled requirements as a string
       };
 
       // I would have preferred to have more obvious names, but React suggests to use handle{Event} naming convention
@@ -148,6 +139,7 @@ class EnterClasses extends React.Component {
       // INTEGRATION:
       //   Add handleChange functions for Mhia's dropdown(and other preference options) in the sidebar
       //   Then just add it on the HTML's on{Event} attribute (Ex. onChange)
+      //   UPDATE: Temporarily just added major selection before the enter classes input form
     }
 
     // Used to show initial table
@@ -181,19 +173,26 @@ class EnterClasses extends React.Component {
     }
 
     handleChange5(event) {  // Handles selecting major
-      // INTEGRATION: Put fetch call here
-
       // ================================================================================================
       // INTEGRATION 
       // ================================================================================================
       //ADDED -- post frontend fetch call
+
+      // Christian: Not sure why a tuple is needed, since only the major(not any class) is being passed here.
+      //   Pass major -> ... -> Backend(or database) returns list of classes as a JSON as the response:
+      //       '["CSE 101", "CSE 102", "CSE 103", ...]'   OR   "['CSE 101', 'CSE 102', 'CSE 103', ...]"
+      //        Both are valid JSON strings. Use the above as format for the response
 
       const current = {
         "classstr": "cse 101",
         "majorstr": ""
       };
 
-      const response = post(current); //value is the class being added?!?
+      // IMPORTANT: This is the data to be passed to the post/fetch call
+      let currentMajor = event.target.value;  // Christian: This is the major to be passed in
+
+      // Christian: currentMajor is the major being passed in
+      const response = post(current); //value is the class being added?!?  Christian: No classes are being added here, only passing in the major
       response.then((res)=>{ //res = response.then -- promise, then
         return res.json();
       })
@@ -205,36 +204,19 @@ class EnterClasses extends React.Component {
       })
       // ================================================================================================
 
-      this.setState({currentMajor: event.target.value});
-    }
+      // Christian: Response returns a list of classes as a JSON.
+      //   Is this the proper way to use response? I notice a return res.json() above. How do I get that?
+      //   Comment out for now
+      //let availableClasses = JSON.parse(response);
 
-    /*  Format for acadPlanObj
-    {
-      "1": {
-        "Fall": 
-          ["CSE-130", "CSE-103", "CSE-183"]
-        ,
-        "Winter":
-          ["CSE-115A", "CSE-102", "CSE-110A"]
-        ,
-        "Spring":
-          same format as above
-        ,
-        "Summer":
-          same
-      },
-      "2": {
-        "Fall": 
-          same
-        ,
-        "Winter": 
-          same
-        ,
-        ...Then the remaining quarters
-      }
-      ... Then the remaining years
+      // Christian: Below, I'm setting the availableClasses state to the availableClasses obtained above...
+      //   So that the list of classes will showup in the search suggestions
+      //   Commenting out for now until post/fetch call returns list of classes as a JSON
+      //this.setState({currentMajor: event.target.value, availableClasses: availableClasses});
+
+      this.setState({currentMajor: currentMajor});
+      //this.setState({currentMajor: event.target.value});
     }
-    */
 
     handleSubmit1(event) {  // Handles entering classes
       let yr = this.state.year;
@@ -324,10 +306,7 @@ class EnterClasses extends React.Component {
         }
       }
 
-      // INTEGRATION: Wenhao mentioned that there could be a POST request after entering a class
       event.preventDefault();
-
-
     }
 
     // Build the rows for the academic plan table
@@ -345,10 +324,8 @@ class EnterClasses extends React.Component {
     }
 
     handleSubmit2(event) {  // Handles submitting the list of classes (Clicking Verify)
-
       // INTEGRATION: Create the object that will be passed to the backend
       let rowsForEachYear = this.state.rowsForEachYear.slice();
-      //let acadPlanObj = {"1": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "2": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "3": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}, "4": {"Fall": [""], "Winter": [""], "Spring": [""], "Summer": [""]}};
       //let acadPlanObj = {"1": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "2": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "3": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "4": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}};
       let acadPlanObj = {"first": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "second": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "third": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "fourth": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}};
       for (let k = 0; k < rowsForEachYear.length; k++) {  // Iterate through each year
@@ -400,81 +377,73 @@ class EnterClasses extends React.Component {
         }
       }
 
-      //console.log(acadPlanObj);
       let acadPlanObjJSON = JSON.stringify(acadPlanObj);
       console.log(acadPlanObjJSON);
 
-      //add post -- acadPlanObjJSON
+      // IGNORE FOR NOW
+      //   FOR SPRINT 4: need to create another object that contains preferences
+      //   Then combine acadPlanObj with this new one
 
-  
-      // UPDATE FOR SPRINT 4: need to create another object that contains preferences
-      // Then combine acadPlanObj with this new one
-
-      // INTEGRATION: (IMPORTANT):
-      //   How is data submitted?     See file that Shing showed
-      //   Put this data in resultJSON
-
-      /*
-
+      // INTEGRATION:  This is the format of the JSON that will be passed to the post/fetch request
+      /*  Format for acadPlanObj   Instead of first, second, etc.  it used to be 1, 2, etc.
       {
-      	"1": {
-      		"Fall": {
-      			"CSE 102": ["Missing a prerequisite CSE 101"],
-      			"CSE 130": ["Error 1", "Error 2"]
-      		},
-      		"Winter": {
-      			"CSE 111": ["Error A", "Error B"]
-      		},
-      		"Spring": {
-      			"CSE 114A": ["Error C"],
-      			"CSE 110A": ["Error D"]
-      		},
-      		"Summer": {}
-      	},
-      	"2": {
-      		"Fall": {
-      			"CSE 183": ["Error 1", "Error 2"],
-      			"CSE 130": ["Error A"]
-      		},
-      		"Winter": {
-      			"CSE 111": ["Error B"]
-      		},
-      		"Spring": {
-      			"CSE 114A": ["Error C"],
-      			"CSE 110A": ["Error D"]
-      		},
-      		"Summer": {
-      			"CSE 110B": ["Error E"]
-      		}
-      	},
-      	"3": {
-      		"Fall": {
-      			"CSE 138": ["Error 1", "Error 2"],
-      			"CSE 130": ["Error A"]
-      		},
-      		"Winter": {
-      			"CSE 111": ["Error B"]
-      		},
-      		"Spring": {
-      			"CSE 114A": ["Error C"],
-      			"CSE 110A": ["Error D"]
-      		},
-      		"Summer": {
-      			"CSE 110B": ["Error E"]
-      		}
-      	},
-      	"4": {
-      		"Fall": {},
-      		"Winter": {},
-      		"Spring": {},
-      		"Summer": {}
-      	}
+        "first": {
+          "Fall": ["CSE 101"],
+          "Winter": ["CSE 102", "CSE 103"],
+          "Spring": [],
+          "Summer": []
+        },
+        "second": {
+          "Fall": [],
+          "Winter": ["CSE 130", "CSE 120"],
+          "Spring": [],
+          "Summer": []
+        },
+        "third": {
+          "Fall": ["CSE 115A"],
+          "Winter": ["CSE 115B"],
+          "Spring": ["CSE 115C"],
+          "Summer": []
+        },
+        "fourth": {
+          "Fall": [],
+          "Winter": [],
+          "Spring": [],
+          "Summer": []
+        }
       }
-
       */
 
-      // Get JSON Data returned by backend. See format above
-      // let result = APICall ...
+      // INTEGRATION:
+      // add post -- acadPlanObjJSON
+      // Christian: fetch/post request here (Same idea as in handleSubmit5)
+      //   This time acadPlanObjJSON is being passed in. See the format above.
+
+      // Christian: Moved this here so we can just edit later. 
+      //   There's also another one below(within this function). Don't know how that one works though
+      /*
+      const current = {
+        "classstr": "cse 101",
+        "majorstr": ""
+      };
+
+      const response = post(current);
+      response.then((res)=>{ //res = response.then -- promise, then
+        return res.json();
+      })
+      .then((json) => {
+        console.log(JSON.stringify(json));
+      })
+      .catch((err)=>{
+        console.log(err, "ERROR");
+      })
+      */
+
+      // INTEGRATION: Instead of the resultJSON below
+      //let resultJSON = response;
+
+      // INTEGRATION: Replace resultJSON with what the post/fetch call returns
+      //   Will be in the format shown in resultJSON below.
       // https://stackoverflow.com/questions/805107/creating-multiline-strings-in-javascript 
       let resultJSON = `
       {
@@ -551,36 +520,38 @@ class EnterClasses extends React.Component {
 
       console.log(JSON.stringify(errorMessageList));  // TESTING
       /*  CONSOLE SHOWS
-        ["CSE 102: Missing a prerequisite CSE 101",
-        "CSE 130:  Error 1  |  Error 2",
-        "CSE 111:  Error A  |  Error B",
-        "CSE 114A:  Error C",
-        "CSE 110A:  Error D",
-        "CSE 183:  Error 1  |  Error 2",
-        "CSE 130:  Error A",
-        "CSE 111:  Error B",
-        "CSE 114A:  Error C",
-        "CSE 110A:  Error D",
-        "CSE 110B:  Error E",
-        "CSE 138:  Error 1  |  Error 2",
-        "CSE 130:  Error A",
-        "CSE 111:  Error B",
-        "CSE 114A:  Error C",
-        "CSE 110A:  Error D",
-        "CSE 110B:  Error E"]
+        [
+          "CSE 102: Missing a prerequisite CSE 101",
+          "CSE 130:  Error 1  |  Error 2",
+          "CSE 111:  Error A  |  Error B",
+          "CSE 114A:  Error C",
+          "CSE 110A:  Error D",
+          "CSE 183:  Error 1  |  Error 2",
+          "CSE 130:  Error A",
+          "CSE 111:  Error B",
+          "CSE 114A:  Error C",
+          "CSE 110A:  Error D",
+          "CSE 110B:  Error E",
+          "CSE 138:  Error 1  |  Error 2",
+          "CSE 130:  Error A",
+          "CSE 111:  Error B",
+          "CSE 114A:  Error C",
+          "CSE 110A:  Error D",
+          "CSE 110B:  Error E"
+        ]
       */
 
+      // Works, but need to change formatting so it looks better
       const verificationResults = errorMessageList.map((string) =>
         <li>{string}</li>
       );
         
       // INTEGRATION (FOR SPRINT4 GENERATING):
-      // For generating, create a seperate handleSubmit
+      // For generating a schedule, create a seperate handleSubmit
       // Then just update rowsForEachYear by parsing the data returned by backend
 
-    
       // ================================================================================================
-          // INTEGRATION 
+      // INTEGRATION 
       // ================================================================================================
       //ADDED -- frontend fetch call - success/error message 
       //check for error from Backend - 404 //alert within fetch! 
@@ -610,14 +581,11 @@ class EnterClasses extends React.Component {
       // ================================================================================================
 
 
-      // OLD, keep for reference
-      // INTEGRATION: Probably just need a state for the result
-      //this.setState({requiredList: requiredList, missingList: missingList, fulfilledList: fulfilledList});
+
       this.setState({verificationResults: verificationResults});
 
       alert("Use API calls later, then return result. For now, look at console."); // Temporary. REMOVE LATER
       event.preventDefault(); // Without this, the page re-renders and all states are lost
-      // INTEGRATION: Maybe keep the event.preventDefault() above and just use the API calls to get the needed data
     }
 
     handleSubmit3(event) {  // For class removal from the list of entered classes
@@ -719,7 +687,7 @@ class EnterClasses extends React.Component {
               // ADDED for integeration may 18
             }
             <label>Major:&nbsp;</label>
-            <select className="toRemove" value={this.state.major} onChange={this.handleChange5}>
+            <select className="majorList" value={this.state.currentMajor} onChange={this.handleChange5}>
               <option value="Select">Select</option>
               {this.state.major.map((theMajor) => <option value={theMajor.value}>{theMajor}</option>)}
             </select>
@@ -786,6 +754,8 @@ class EnterClasses extends React.Component {
             // INTEGRATION: Edit this part later so it takes in data returned by the backend
                 // check in how to implement this! 
                 // post/get call? not sure! - same implementation as above but for data! 
+                //   Oh, this will be in handleSubmit2. Right after     let acadPlanObjJSON = JSON.stringify(acadPlanObj);
+                //   I'm responsible with this part. Just need the post/fetch call to return the data in the format me and Shing agreed on (See handleSubmit2 resultJSON)
           }      
           <br></br>
           <h2>Verification Results:</h2>

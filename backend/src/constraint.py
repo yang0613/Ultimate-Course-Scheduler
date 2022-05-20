@@ -105,10 +105,10 @@ class Constraint:
                 if classes:
                     for func in self.constraints:
                         #Applys the constraints to each quarter
-                        fail_constraint = func(classes)
+                        fail_constraint = func(quarter, classes)
 
                         #And if the constraint is not satsified, add it to the list of errors
-                        if fail_constraint:
+                        if fail_constraint != True:
                             dict_list_append(error, fail_constraint)
                 if year not in schedule_errors.keys():
                     schedule_errors[year] = {}

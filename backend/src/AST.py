@@ -1,5 +1,4 @@
 #!/usr/bin/python3.9
-from cgi import parse_multipart
 from boolean import BooleanAlgebra
 from boolean import TOKEN_NOT
 from boolean import TOKEN_AND
@@ -66,10 +65,13 @@ class PrereqAlgebra(BooleanAlgebra):
                 yield update_token(TOKEN_LPAR, '(', self.position)
                 for tok, args, expr, pos in parse(req):
                     # An expression that follows ( and / ( or is invalid
-                    if self.previous_token == TOKEN_LPAR and tok == TOKEN_OP:
-                        yield update_token(TOKEN_FALSE, 'false', self.position)
-
                     req_obj = TOKENS_MATCH_SYMBOLS[tok](**args)
+                    if self.previous_token == TOKEN_LPAR:
+                        if req_obj == TOKEN_OR:
+                            yield update_token(TOKEN_FALSE, 'false', self.position)
+                        elif req_obj == TOKEN_AND:
+                            yield update_token(TOKEN_TRUE, 'true', self.position)
+
                     yield update_token(req_obj, expr, self.position+pos)
 
                 ##Check to see for unbalanced operators from our regex
