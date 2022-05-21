@@ -23,6 +23,8 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
 
+#sdfdsf
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 #from fastapi.middleware.cors 
