@@ -1,9 +1,6 @@
 from boolean import Symbol
 from enumerate import int2word
-from boolean import BooleanAlgebra
-
-algebra = BooleanAlgebra(allowed_in_token=('.', ':', '_', '-', '/'))
-
+import AST
 class Course(Symbol):
     """A variable representing the following format: 
     className classID[optLetter]
@@ -27,20 +24,26 @@ class ConcurrentEnrollment(Symbol):
         super().__init__(expr)
 
     def _subs(self, substitutions, default, simplify):
+        algebra = AST.algebra
         for course in self.concurrent_list:
             if self.prevEnrollAllowed:
-                test_course = algebra.parse(course).subs(substitutions).simplify()
+                all_classes = substitutions | self.quarter
+                test_course = algebra.parse(course).subs(all_classes).simplify()
             else:
                 test_course = algebra.parse(course).subs(self.quarter).simplify()
             if test_course == algebra.TRUE:
                 return algebra.TRUE
-            return self
+        return self
     
-    def setQuarterClasses(self, substitution):
+    def setQuarterClasses(self, classes):
         """A helper function for constraint.py to check for concurrent
         enrollment
         """
-        self.quarter = substitution
+        subs = {}
+        algebra = AST.algebra
+        for course in classes:
+            subs[course] = algebra.TRUE
+        self.quarter = subs
 
 class NumFrom(Symbol):
     """A class representing any Num_From expression
@@ -51,26 +54,43 @@ class NumFrom(Symbol):
         self.total = total
         self.quarter = quarter
         self.name = name
+        self.expr = expr
+        if self.name:
+            #Temporarily remove the list from the expression
+            #because the expression's list can be very long and
+            #cloud up the results
+            self.expr = self.expr_without_list()
         super().__init__(expr)
 
+    def expr_without_list(self):
+        """Returns the expression without the list
+        From "one from: "NumFrom name" COURSE 1A, COURSE1B, or COURSE 3A
+        to "one from: "NumFrom name"
+        """
+        return f"{int2word[self.total]} from: \"{self.name}\""
+
     def count(self, substitutions):
+        algebra = AST.algebra
         count = 0
         for course in self.course_list:
             test_course = algebra.parse(course).subs(substitutions).simplify()
             if test_course == algebra.TRUE:
+                print(course)
                 count = count + 1
         for discount in self.discounts:
-            count = count + max(discount.total, discount.count(substitutions))
+            count = count + min(discount.total, discount.count(substitutions))
         return count
 
     def _subs(self, substitutions, default, simplify):
+        algebra = AST.algebra
         remaining_class = self.total - self.count(substitutions)
-        if remaining_class < 0:
+        if remaining_class <= 0:
             return algebra.TRUE
         else:
             new_expr = self.expr.replace(int2word[self.total],
             int2word[remaining_class], 1)
             return self.__class__(expr=new_expr,
-                                  course_list=self.course_list,
+                                  name=self.name,
+                                  list=self.course_list,
                                   total = remaining_class,
                                   discounts = self.discounts)

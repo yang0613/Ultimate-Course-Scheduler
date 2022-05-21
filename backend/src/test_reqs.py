@@ -340,8 +340,188 @@ expr11="""
 	}
 }
 """
+#No Upper Divsion Electives
+expr12="""
+{
+	"1": {
+		"Fall": ["CSE 20", "MATH 19A"],
+		"Winter": ["CSE 12", "CSE 16", "CSE 30"],
+		"Spring": ["CSE 13S", "MATH 21"],
+		"Summer": []
+	},
+	"2": {
+		"Fall": ["CSE 101", "MATH 19B"],
+		"Winter": ["CSE 130", "CSE 103", "ECE 30"],
+		"Spring": ["CSE 102", "CSE 120"],
+		"Summer": []
+	},
+	"3": {
+		"Fall": [],
+		"Winter": ["STAT 131"],
+		"Spring": [ ],
+		"Summer": []
+	},
+	"4": {
+		"Fall": [],
+		"Winter": [""],
+		"Spring": [],
+		"Summer": []
+	}
+}
+"""
 
-req = requirement()
-test = expr
+#One upper division elective combination for CSE: PHYS 5A and PHYS 5B
+expr13="""
+{
+	"1": {
+		"Fall": ["CSE 20", "MATH 19A"],
+		"Winter": ["CSE 12", "CSE 16", "CSE 30"],
+		"Spring": ["CSE 13S", "MATH 21"],
+		"Summer": []
+	},
+	"2": {
+		"Fall": ["CSE 101", "MATH 19B"],
+		"Winter": ["CSE 130", "CSE 103", "ECE 30"],
+		"Spring": ["CSE 102", "CSE 120"],
+		"Summer": []
+	},
+	"3": {
+		"Fall": [],
+		"Winter": ["STAT 131"],
+		"Spring": [],
+		"Summer": []
+	},
+	"4": {
+		"Fall": ["PHYS 5A", "PHYS 5B"],
+		"Winter": [""],
+		"Spring": [],
+		"Summer": []
+	}
+}
+"""
+
+#One upper division elective combination for CSE: PHYS 5A only won't count
+expr14="""
+{
+	"1": {
+		"Fall": ["CSE 20", "MATH 19A"],
+		"Winter": ["CSE 12", "CSE 16", "CSE 30"],
+		"Spring": ["CSE 13S", "MATH 21"],
+		"Summer": []
+	},
+	"2": {
+		"Fall": ["CSE 101", "MATH 19B"],
+		"Winter": ["CSE 130", "CSE 103", "ECE 30"],
+		"Spring": ["CSE 102", "CSE 120"],
+		"Summer": []
+	},
+	"3": {
+		"Fall": [],
+		"Winter": ["STAT 131"],
+		"Spring": [],
+		"Summer": []
+	},
+	"4": {
+		"Fall": ["PHYS 5A", ""],
+		"Winter": [""],
+		"Spring": [],
+		"Summer": []
+	}
+}
+"""
+
+#An mathematic/computional media elective won't count more than two
+expr15="""
+{
+	"1": {
+		"Fall": ["CSE 20", "MATH 19A"],
+		"Winter": ["CSE 12", "CSE 16", "CSE 30"],
+		"Spring": ["CSE 13S", "MATH 21"],
+		"Summer": []
+	},
+	"2": {
+		"Fall": ["CSE 101", "MATH 19B"],
+		"Winter": ["CSE 130", "CSE 103", "ECE 30"],
+		"Spring": ["CSE 102", "CSE 120"],
+		"Summer": []
+	},
+	"3": {
+		"Fall": [],
+		"Winter": ["STAT 131"],
+		"Spring": [],
+		"Summer": []
+	},
+	"4": {
+		"Fall": ["PHYS 5A", "PHYS 5B"],
+		"Winter": ["AM 114", "AM 147"],
+		"Spring": [],
+		"Summer": []
+	}
+}
+"""
+
+#ENVS 130A requires concurrent enrollment, so DOES PHYS 5A
+expr16="""
+{
+	"1": {
+		"Fall": ["ENVS 130A", "ENVS 130L", "ENVS 100", "ENVS 100L", "CSE 20", "MATH 19A"],
+		"Winter": ["CSE 12", "CSE 16", "CSE 30"],
+		"Spring": ["CSE 13S", "MATH 21"],
+		"Summer": []
+	},
+	"2": {
+		"Fall": ["CSE 101", "MATH 19B"],
+		"Winter": ["CSE 130", "CSE 103", "ECE 30"],
+		"Spring": ["CSE 102", "CSE 120"],
+		"Summer": []
+	},
+	"3": {
+		"Fall": [],
+		"Winter": ["STAT 131"],
+		"Spring": [],
+		"Summer": []
+	},
+	"4": {
+		"Fall": ["PHYS 5A", "PHYS 5B"],
+		"Winter": ["AM 114", "AM 147"],
+		"Spring": [],
+		"Summer": []
+	}
+}
+"""
+
+#Attempt to Fulfill the requirements for ENVS 100 and ENVS 100L
+expr16="""
+{
+	"1": {
+		"Fall": [ "CSE 20", "MATH 19A"],
+		"Winter": ["CSE 12", "CSE 16", "CSE 30"],
+		"Spring": ["CSE 13S", "MATH 21"],
+		"Summer": []
+	},
+	"2": {
+		"Fall": ["CSE 101", "MATH 19B"],
+		"Winter": ["CSE 130", "CSE 103", "ECE 30"],
+		"Spring": ["CSE 102", "CSE 120"],
+		"Summer": ["BIOE 20C"]
+	},
+	"3": {
+		"Fall": ["ENVS 25", "STAT 7L", "STAT 7"],
+		"Winter": ["STAT 131", "ANTH 2", "CHEM 1A"],
+		"Spring": ["ENVS 130A", "ENVS 130L", "ENVS 100", "ENVS 100L"],
+		"Summer": []
+	},
+	"4": {
+		"Fall": ["PHYS 5A", "PHYS 5B"],
+		"Winter": ["AM 114", "AM 147"],
+		"Spring": [],
+		"Summer": []
+	}
+}
+"""
+req = requirement(major='Computer Science B.S.')
+test = expr16
 missing = req.validate(json.loads(test))
+major = req.verify_major(json.loads(test))
 pprint(missing)
+print(major)

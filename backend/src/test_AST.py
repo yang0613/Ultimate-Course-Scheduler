@@ -1,7 +1,5 @@
 #!/usr/bin/python3.9
-
-from AST import PrereqAlgebra
-from AST import missing_requirements
+import AST
 
 """
 This is not a up-to-standard UnitTest. The reason is because
@@ -10,7 +8,7 @@ a tree. Instead I have compiled a list of a variety of prerequisite
 expressions where you can check visually what they should look like to
 see if our implementation matches expected behavior.
 """
-test = PrereqAlgebra()
+test = AST.PrereqAlgebra()
 expr = "Previous or concurrent enrollment in MATH 3, AM 3, or equivalent, or a mathematics placement score of 300 or higher; taking the online chemistry self-assessment exam is strongly recommended."
 expr2 = "AM 3 or AM 6, or MATH 3 or higher; or mathematics placement examination (MPE) score of 300 or higher; or AP Calculus AB exam score of 3 or higher; ENVS 23 recommended as prerequisite to this course."
 expr3 = "score of 300 or higher on the mathematics placement examination (MPE), or AM 3 or AM 6 or AM 11A or AM 15A or MATH 3 or MATH 11A or MATH 19A. Concurrent enrollment in STAT 7L is required."
@@ -29,7 +27,8 @@ expr15 = 'CSE 15 and CSE 15L; or CSE 13S and CMPM 35; or CSE 13E and CMPM 35; or
 expr16 = 'CSE 15 and CSE 15L; or CSE 13S and CMPM 35; or CSE 13E and CMPM 35; or ECE 13 and CMPM 35; or CSE 101. ECON 101.'
 expr17 = 'MATH 11A or MATH 19A or MATH 20A or AM 11A or AM 15A'
 expr18 = "satisfaction of the Entry Level Writing and Composition requirements and CSE 101 and CSE 130."
-test_expr = expr4
+expr19 = "CSE 100"
+test_expr = expr
 print("=====================")
 print("Raw Expression:")
 print(test_expr)
@@ -40,5 +39,5 @@ print(parsed.pretty())
 print("=====================")
 
 print("Boolean string representation")
-print(missing_requirements(parsed))
+print(AST.missing_requirements(parsed))
 print("=====================")

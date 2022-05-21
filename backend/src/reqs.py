@@ -1,7 +1,8 @@
 #!/usr/bin/python3
-from AST import PrereqAlgebra
+from AST import PrereqAlgebra, missing_requirements, convert_schedule, split_ast
 from constraint import Constraint
 from constraint_types import generate_prereq_func, not_avaliable_during
+from major_database import MAJOR_MATCH_EXPRESSION
 
 algebra = PrereqAlgebra()
 
@@ -43,16 +44,17 @@ class requirement:
     Additionally, 1 class from CSE-13S or CSE-30 will be required by 
     quarter 3, CSE-101 will be required as well as MATH-19A or MATH-19B.
     """
-    def __init__(self, expr=''):
-        self.expr = expr
-        self.ast = algebra.parse(expr).simplify()
+    def __init__(self, major=''):
+        self.major = major
+        major_boolean_expr = MAJOR_MATCH_EXPRESSION[major]
+        self.ast = algebra.parse(major_boolean_expr).simplify()
         self.constraint = Constraint([generate_prereq_func(), not_avaliable_during])
 
 
     def validate(self, schedule):
-        """Verfies the schedule to see if it satsifies the requirements
-        set by expr. If all the requirements are sastified, return "1" 
-        or True. Otherwise, return the missing requirements as a 
+        """Validates the schedule to see if there are any errors
+        for each class. If all the requirements are sastified, return
+        an empty requirements. Otherwise, return the missing requirements as a 
         boolean expression.
 
         Args:
@@ -63,3 +65,20 @@ class requirement:
             by a list of failed requirements
         """
         return self.constraint.validate(schedule)
+
+    def verify_major(self, schedule):
+        """Verfies the schedule to see if the schedule meets the major
+        requirement. If all the requirements are sastified, return
+        an empty list. Otherwise, return the missing requirements as a 
+        boolean expression.
+
+        Args:
+            schedule (dict): JSON Object holding our Schedule
+
+        Returns:
+            A list of requirements that is required to fulfill
+            the major requirements
+        """
+        process_ast = convert_schedule(schedule)
+        major_req = self.ast.subs(process_ast).simplify()
+        return split_ast(major_req)
