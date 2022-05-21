@@ -17,18 +17,23 @@ class requirement:
     be expanded as an a boolean function where the inputs are the 
     classes themselves.
 
-    Our implementation allows anyone with basic boolean and bracket 
-    balancing skills to easily create any requirement for any classes
+    Our implementation allows anyone with basic boolean skills
+    to easily create any requirement for any classes
     as a boolean expression string, and the class will automatically
     solve and find the remaining classes needed to satisfy your
     requirement. Additionally, there are other phrases where it is 
     possible to even verify whether your schedule has enough classes
-    for a certain "category" by X date. This is done by expanding on
-    an existing boolean parser library with evaluation and string 
-    support, and functionally resolving our special phrases before it 
-    even reaches the parser, allowing us to functionally process our 
-    input without having to develop a seperate parser for this 
-    exclusive language from scratch.
+    for a certain "category" by X date. This is done by equipping
+    an existing boolean parser library with the capabilties to read
+    and process a special language exclusively used to represent
+    any sort of requirement. With the language now processed and 
+    converted into an Abstract Syntax Tree (AST), the parser can now
+    "trim the branches", so to speak, where each class in our schedule
+    is a branch. The more classes we have in our schedule, the more 
+    branches we can cut, and the more likely it is our requirements will
+    be completely sastified. Therefore what is left of the tree must 
+    represent whatever is remaining/missing to sastify our requirement, 
+    or to "fully cut down the tree". 
 
     Examples:
 
@@ -54,8 +59,7 @@ class requirement:
     def validate(self, schedule):
         """Validates the schedule to see if there are any errors
         for each class. If all the requirements are sastified, return
-        an empty requirements. Otherwise, return the missing requirements as a 
-        boolean expression.
+        an empty requirements.
 
         Args:
             schedule (dict): JSON Object holding our Schedule
@@ -69,9 +73,7 @@ class requirement:
     def verify_major(self, schedule):
         """Verfies the schedule to see if the schedule meets the major
         requirement. If all the requirements are sastified, return
-        an empty list. Otherwise, return the missing requirements as a 
-        boolean expression.
-
+        an empty list.
         Args:
             schedule (dict): JSON Object holding our Schedule
 
