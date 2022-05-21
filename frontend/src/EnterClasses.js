@@ -23,8 +23,8 @@ class EnterClasses extends React.Component {
         classes: Array(0).fill(""),  // Array of all entered classes. Purpose is to make dealing with some parts easier.
 
         // INTEGRATION: Currently dummy data. Need data returned by API.
-        availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21"],
-        //availableClasses: [],  // USE THIS WHEN POST/FETCH CALL RETURNS LIST OF CLASSES AS A JSON
+        //availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21"],
+        availableClasses: [],  // USE THIS WHEN POST/FETCH CALL RETURNS LIST OF CLASSES AS A JSON
         arrOfArrOfClassData: [],  // The response from the major selection dropdown containing the class data
         verificationResults: [],
         currentMajor: "Select", 
@@ -214,11 +214,13 @@ class EnterClasses extends React.Component {
         availableClasses.push(arrOfArrOfClassData[i][0]);
       }
 
+      // Don't forget to change Script.js (the body, I think?)
+
       // ================================================================================================
 
       //this.setState({currentMajor: event.target.value});  Keep for reference
-      this.setState({currentMajor: currentMajor});
-      //this.setState({currentMajor: currentMajor, arrOfArrOfClassData: arrOfArrOfClassData, availableClasses: availableClasses});
+      //this.setState({currentMajor: currentMajor});
+      this.setState({currentMajor: currentMajor, arrOfArrOfClassData: arrOfArrOfClassData, availableClasses: availableClasses});
     }
 
     handleSubmit1(event) {  // Handles entering classes
