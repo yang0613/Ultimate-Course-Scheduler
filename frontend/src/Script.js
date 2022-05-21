@@ -5,7 +5,7 @@ export const post = (data) => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            "classstr": "cse",
+            "classstr": "",  // Edited
             "majorstr": ""
         }), //use JSON.stringify if and when needed, but currently string
     })
