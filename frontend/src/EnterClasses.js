@@ -194,7 +194,7 @@ class EnterClasses extends React.Component {
         return res.json();
       })
       .then((json) => {
-        returnedData = json;  // I added
+        returnedData = JSON.stringify(json);  // I added
         console.log("json: " + JSON.stringify(json));
         console.log("returnedData: " + JSON.stringify(returnedData));  // I added
       })
