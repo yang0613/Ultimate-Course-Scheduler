@@ -29,7 +29,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 #from fastapi.middleware.cors 
 
-#from reqs import requirement
+from reqs import requirement
 #from test import requirement
 app = FastAPI()
 ENV = 'prod'
@@ -95,7 +95,7 @@ def verification(entered: enteredclasses):
     #test = Requirement(); test.validate(schedule)
     #print(entered)
     #<Shing's Verification functions>
-    #req = requirement()
+    req = requirement()
     #result = req.validate(entered)
     #return(result)
     return (entered)
