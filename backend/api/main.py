@@ -50,10 +50,10 @@ def connectToDB():
         conn = psycopg2.connect('dbname=dckbguanuf8a45 port=5432 user=uxoitcpyfpqfvq host=ec2-44-196-223-128.compute-1.amazonaws.com password=f646a5b031a7b5f570ef097d77f987809613ca53ee77167d1430d246105a0a08', options='-c search_path=Majors')
     return conn.cursor()
 
-def allClassesByClassName(className, degree):
+def allClassesByMajor(major):
     cur = connectToDB()
-    query = "SELECT Classes.classID, className, subject, credit, quarters FROM Classes, Requirements WHERE UPPER(className) LIKE UPPER('%%' || %s || '%%') AND Classes.classID = Requirements.classID AND UPPER(gradReq) LIKE UPPER('%%' || %s || '%%')"
-    cur.execute(query, (className, degree))
+    query = "SELECT Classes.classID, className, credit, quarters FROM Classes, Requirements WHERE Classes.classID = Requirements.classID AND UPPER(gradReq) LIKE UPPER('%%' || %s || '%%')"
+    cur.execute(query, (major,))
     return cur.fetchall()
 
 #schema
@@ -63,7 +63,6 @@ class Post(BaseModel):
     published: bool = True
 # "title": "<content>"
 class searchClass(BaseModel):
-    classstr: Optional[str] = ' '
     majorstr: str
 class Quarters(BaseModel):
     Fall: list[str]
@@ -84,7 +83,7 @@ def root():
 #Notice: this is the path for functionality No.3: search bar
 @app.post("/searchclass")
 def get_posts(input:searchClass):
-    posts = allClassesByClassName(input.classstr, input.majorstr)
+    posts = allClassesByMajor(input.majorstr)
     if posts == []:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"course does not exist")
     return{tuple(posts)}

@@ -58,13 +58,20 @@ def singleClassQuarters(classID):
     cur.execute(query, (classID,))
     return cur.fetchall()
 
-# for frontend search bar
-# all classes with attribute classname, subject, credit, quarter
-def allClassesByClassName(className, degree):
+
+def allClassByID(classID):
     cur = connectToDB()
-    query = "SELECT className, subject, credit, quarters FROM Classes, Requirements WHERE UPPER(className) LIKE UPPER('%%' || %s || '%%') AND Classes.classID = Requirements.classID AND UPPER(gradReq) LIKE UPPER('%%' || %s || '%%')"
-    cur.execute(query, (className, degree))
+    query = "SELECT prereq FROM Requirements WHERE classID IN %s" 
+    cur.execute(query, (classID,))
     return cur.fetchall()
 
-#print(singleClassRequirement('CSE 101'))
-#print(allClassesByClassName('MATH',''))
+# for frontend search bar
+# all classes with attribute classname, subject, credit, quarter
+def allClassesByMajor(major):
+    cur = connectToDB()
+    query = "SELECT Classes.classID, className, credit, quarters FROM Classes, Requirements WHERE Classes.classID = Requirements.classID AND UPPER(gradReq) LIKE UPPER('%%' || %s || '%%')"
+    cur.execute(query, (major,))
+    return cur.fetchall()
+
+print(allClassByID(('CSE 20', 'MATH 19A', 'CSE 12', 'CSE 16', 'CSE 30', 'CSE 13S', 'MATH 21', 'CSE 101', 'MATH 19B', 'CSE 130', 'CSE 103', 'ECE 30', 'CSE 102', 'CSE 120', 'BIOE 20C', 'ENVS 25', 'STAT 7L', 'STAT 7', 'STAT 131', 'ANTH 2', 'CHEM 1A', 'ENVS 130A', 'ENVS 130L', 'ENVS 100', 'ENVS 100L', 'PHYS 5A', 'PHYS 5B', 'AM 114', 'AM 147')))
+# print(allClassesByMajor('computer Science B.s.'))
