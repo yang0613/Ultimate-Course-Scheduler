@@ -181,13 +181,11 @@ class EnterClasses extends React.Component {
 
       let currentMajor = event.target.value;  // This is the data to be passed to the post/fetch call
 
-      /*
       console.log(currentMajor);
 
       let returnedData = "";  // The response
 
       const current = {
-        "classstr": "",
         "majorstr": currentMajor
       };
 
@@ -196,19 +194,20 @@ class EnterClasses extends React.Component {
         return res.json();
       })
       .then((json) => {
-        returnedData = JSON.stringify(json);  // I added
-        console.log("json: " + JSON.stringify(json));
-        console.log("returnedData: " + JSON.stringify(returnedData));  // I added
+        returnedData = json;  // I added
+        //console.log("json: " + JSON.stringify(json));
+        console.log("returnedData: ", returnedData);  // I added
       })
       .catch((err)=>{
         console.log(err, "ERROR");
       })
 
-      returnedData = JSON.parse(returnedData);  // Convert from JSON into an array
+      //returnedData = JSON.parse(returnedData);  // Convert from JSON into an array
 
       // Looking at the format, seems like an array of array of arrays (3D Array)
       // Keep the array of arrays. 
-      let arrOfArrOfClassData = returnedData[0];  // Keep this for later (Sprint 4, can show units, full name, etc.)
+      let arrOfArrOfClassData = returnedData;  // Keep this for later (Sprint 4, can show units, full name, etc.)
+      console.log("OUTPUT: ", returnedData);
 
       let availableClasses = [];  // This will be the list of available classes. Need to parse response first
       let numberOfClasses = arrOfArrOfClassData.length;
@@ -216,15 +215,15 @@ class EnterClasses extends React.Component {
         availableClasses.push(arrOfArrOfClassData[i][0]);
       }
 
+      
+
       // Don't forget to change Script.js (the body, I think?)
 
       // ================================================================================================
 
-      */
-
       //this.setState({currentMajor: event.target.value});  Keep for reference
-      this.setState({currentMajor: currentMajor});
-      //this.setState({currentMajor: currentMajor, arrOfArrOfClassData: arrOfArrOfClassData, availableClasses: availableClasses});
+      //this.setState({currentMajor: currentMajor});
+      this.setState({currentMajor: currentMajor, arrOfArrOfClassData: arrOfArrOfClassData, availableClasses: availableClasses});
     }
 
     handleSubmit1(event) {  // Handles entering classes
