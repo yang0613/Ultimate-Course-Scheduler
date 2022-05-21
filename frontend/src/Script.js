@@ -4,7 +4,11 @@ export const post = (data) => {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: data, 
+        body: JSON.stringify(data), 
+        /*body: JSON.stringify({
+            "classstr": "",  // Edited
+            "majorstr": ""
+        }), //use JSON.stringify if and when needed, but currently string */
     })
     return response
 }

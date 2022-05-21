@@ -23,8 +23,9 @@ class EnterClasses extends React.Component {
         classes: Array(0).fill(""),  // Array of all entered classes. Purpose is to make dealing with some parts easier.
 
         // INTEGRATION: Currently dummy data. Need data returned by API.
-        availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21"],
-        //availableClasses: [],  // USE THIS WHEN POST/FETCH CALL RETURNS LIST OF CLASSES AS A JSON
+        //availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21"],
+        availableClasses: [],  // USE THIS WHEN POST/FETCH CALL RETURNS LIST OF CLASSES AS A JSON
+        arrOfArrOfClassData: [],  // The response from the major selection dropdown containing the class data
         verificationResults: [],
         currentMajor: "Select", 
         major:[
@@ -178,44 +179,48 @@ class EnterClasses extends React.Component {
       // ================================================================================================
       //ADDED -- post frontend fetch call
 
-      // Christian: Not sure why a tuple is needed, since only the major(not any class) is being passed here.
-      //   Pass major -> ... -> Backend(or database) returns list of classes as a JSON as the response:
-      //       '["CSE 101", "CSE 102", "CSE 103", ...]'   OR   "['CSE 101', 'CSE 102', 'CSE 103', ...]"
-      //        Both are valid JSON strings. Use the above as format for the response
+      let currentMajor = event.target.value;  // This is the data to be passed to the post/fetch call
+      console.log(currentMajor);
+
+      let returnedData = "";  // The response
 
       const current = {
-        "classstr": "cse 101",
-        "majorstr": ""
+        "classstr": "",
+        "majorstr": currentMajor
       };
 
-      // IMPORTANT: This is the data to be passed to the post/fetch call
-      let currentMajor = event.target.value;  // Christian: This is the major to be passed in
-
-      // Christian: currentMajor is the major being passed in
-      const response = post(current); //value is the class being added?!?  Christian: No classes are being added here, only passing in the major
+      const response = post(current);
       response.then((res)=>{ //res = response.then -- promise, then
         return res.json();
       })
       .then((json) => {
-        console.log(JSON.stringify(json));
+        returnedData = JSON.stringify(json);  // I added
+        console.log("json: " + JSON.stringify(json));
+        console.log("returnedData: " + JSON.stringify(returnedData));  // I added
       })
       .catch((err)=>{
         console.log(err, "ERROR");
       })
+
+      returnedData = JSON.parse(returnedData);  // Convert from JSON into an array
+
+      // Looking at the format, seems like an array of array of arrays (3D Array)
+      // Keep the array of arrays. 
+      let arrOfArrOfClassData = returnedData[0];  // Keep this for later (Sprint 4, can show units, full name, etc.)
+
+      let availableClasses = [];  // This will be the list of available classes. Need to parse response first
+      let numberOfClasses = arrOfArrOfClassData.length;
+      for (let i = 0; i < numberOfClasses; i++) {  // For each class, get the 0th element (Contains class name  Ex. "CSE 101")
+        availableClasses.push(arrOfArrOfClassData[i][0]);
+      }
+
+      // Don't forget to change Script.js (the body, I think?)
+
       // ================================================================================================
 
-      // Christian: Response returns a list of classes as a JSON.
-      //   Is this the proper way to use response? I notice a return res.json() above. How do I get that?
-      //   Comment out for now
-      //let availableClasses = JSON.parse(response);
-
-      // Christian: Below, I'm setting the availableClasses state to the availableClasses obtained above...
-      //   So that the list of classes will showup in the search suggestions
-      //   Commenting out for now until post/fetch call returns list of classes as a JSON
-      //this.setState({currentMajor: event.target.value, availableClasses: availableClasses});
-
-      this.setState({currentMajor: currentMajor});
-      //this.setState({currentMajor: event.target.value});
+      //this.setState({currentMajor: event.target.value});  Keep for reference
+      //this.setState({currentMajor: currentMajor});
+      this.setState({currentMajor: currentMajor, arrOfArrOfClassData: arrOfArrOfClassData, availableClasses: availableClasses});
     }
 
     handleSubmit1(event) {  // Handles entering classes
@@ -545,10 +550,13 @@ class EnterClasses extends React.Component {
       const verificationResults = errorMessageList.map((string) =>
         <li>{string}</li>
       );
-        
+      
+      // IGNORE FOR NOW
       // INTEGRATION (FOR SPRINT4 GENERATING):
       // For generating a schedule, create a seperate handleSubmit
       // Then just update rowsForEachYear by parsing the data returned by backend
+
+      /*  Do above, just keep for now for reference
 
       // ================================================================================================
       // INTEGRATION 
@@ -556,11 +564,11 @@ class EnterClasses extends React.Component {
       //ADDED -- frontend fetch call - success/error message 
       //check for error from Backend - 404 //alert within fetch! 
 
-      /*
-      fetch('http://127.0.0.1:8000/searchclass')
-      .then(response=>response.JSON())
-      .then(data=>{ console.log(data, "NEW STUFF"); })
-      */
+      
+      //fetch('http://127.0.0.1:8000/searchclass')
+      //.then(response=>response.JSON())
+      //.then(data=>{ console.log(data, "NEW STUFF"); })
+      
 
       const response = post(verificationResults); //changed from get to post, check with group/TA
       //response = response.text();
@@ -580,6 +588,7 @@ class EnterClasses extends React.Component {
       })
       // ================================================================================================
 
+      */
 
 
       this.setState({verificationResults: verificationResults});

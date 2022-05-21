@@ -63,11 +63,11 @@ types = f"(?P<{TOKEN_TYPE}>(?:start *discounting|discounting|by *quarter\
 num_from = compile(
     f"(?P<{TOKEN_NUM_FROM_EACH}> *{nums} *from: *(\"(?P<{TOKEN_NAME}>.*?)\")? *{req_list_better} *{types} *)"
 )
-delim = compile(r"(; *and *|\. *|; *(?! *or))")
+delim = compile(r"(; *and *|\. *|; *(?! *or)|\n)")
 concurrent_enrollment_list = f"(?P<{TOKEN_CONCURRENT_LIST}>([A-Z]+ *[\d]+[A-Z]?)\
 (,? *(and|or)? *[A-Z]+ *[\d]+[A-Z]?)*)"
 concurrent_enrollment = compile(
-f"(?P<{TOKEN_CONCURRENT}>(?P<{TOKEN_PREV_CONCURRENT}>[pP]revious *or)? *[cC]oncurrent *enrollment *in *\
+f"(?P<{TOKEN_CONCURRENT}>(?P<{TOKEN_PREV_CONCURRENT}>[pP]revious *or)? *([cC]oncurrent *enrollment *in|[cC]orequisite:) *\
 {concurrent_enrollment_list} *(is *required)? *)"
 )
 missing_req_list = compile(r"&\s*(?![^()]*\))")
@@ -213,7 +213,7 @@ def concurrent_enrollment_tokens(conc_enr: str):
         else:
             toks[TOKEN_PREV_CONCURRENT] = False
         course_list = match[TOKEN_CONCURRENT_LIST]
-        toks[TOKEN_CONCURRENT_LIST] = course_list
+        toks[TOKEN_CONCURRENT_LIST] = [course for course in reqs_list_tokens(course_list)]
         yield toks
 
 TOKENS_MATCH_FUNCTIONS = {
@@ -295,3 +295,17 @@ def requirement_found(expr: str):
     """
     return extract_requriements.search(expr) is not None and blacklist_requirements.search(expr) is None
 
+
+def schedule_tokens(schedule):
+    """Returns a stream of classes identified by year and quarter
+    in the schedule.
+
+    Args:
+        schedule (JSON): JSON Object holding our Schedule
+
+    Returns:
+        A stream of classes with their year and quarter
+    """
+    for year in schedule.keys():
+        for quarter, classes in schedule[year].items():
+            yield year, quarter, classes

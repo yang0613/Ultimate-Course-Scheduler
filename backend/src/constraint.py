@@ -1,4 +1,5 @@
 
+from parse import schedule_tokens
 
 
 def dict_list_append(src: dict[str, list], dict: dict[str, list]):
@@ -15,9 +16,9 @@ def dict_list_append(src: dict[str, list], dict: dict[str, list]):
     """
     for key,list in dict.items():
         if key in src.keys():
-            src[key].extend(list)
+            src[key].append(list)
         else:
-            src[key] = list
+            src[key] = [list]
 
 class Constraint:
     """
@@ -99,21 +100,18 @@ class Constraint:
             }
         """
         schedule_errors = {}
-        for year in schedule.keys():
-            for quarter, classes in schedule[year].items():
-                error = {}
-                if classes:
-                    for func in self.constraints:
-                        #Applys the constraints to each quarter
-                        fail_constraint = func(quarter, classes)
+        for year, quarter, classes in schedule_tokens(schedule):
+            error = {}
+            if classes:
+                for func in self.constraints:
+                    #Applys the constraints to each quarter
+                    fail_constraint = func(quarter, classes)
 
-                        #And if the constraint is not satsified, add it to the list of errors
-                        if fail_constraint != True:
-                            dict_list_append(error, fail_constraint)
-                if year not in schedule_errors.keys():
-                    schedule_errors[year] = {}
-                schedule_errors[year][quarter] = error
+                    #And if the constraint is not satsified, add it to the list of errors
+                    if fail_constraint != True:
+                        dict_list_append(error, fail_constraint)
+            if year not in schedule_errors.keys():
+                schedule_errors[year] = {}
+            schedule_errors[year][quarter] = error
         return schedule_errors
-        
-
 

@@ -1,7 +1,8 @@
 #!/usr/bin/python3
-from AST import PrereqAlgebra
+from AST import PrereqAlgebra, missing_requirements, convert_schedule, split_ast
 from constraint import Constraint
 from constraint_types import generate_prereq_func, not_avaliable_during
+from major_database import MAJOR_MATCH_EXPRESSION
 
 algebra = PrereqAlgebra()
 
@@ -16,18 +17,23 @@ class requirement:
     be expanded as an a boolean function where the inputs are the 
     classes themselves.
 
-    Our implementation allows anyone with basic boolean and bracket 
-    balancing skills to easily create any requirement for any classes
+    Our implementation allows anyone with basic boolean skills
+    to easily create any requirement for any classes
     as a boolean expression string, and the class will automatically
     solve and find the remaining classes needed to satisfy your
     requirement. Additionally, there are other phrases where it is 
     possible to even verify whether your schedule has enough classes
-    for a certain "category" by X date. This is done by expanding on
-    an existing boolean parser library with evaluation and string 
-    support, and functionally resolving our special phrases before it 
-    even reaches the parser, allowing us to functionally process our 
-    input without having to develop a seperate parser for this 
-    exclusive language from scratch.
+    for a certain "category" by X date. This is done by equipping
+    an existing boolean parser library with the capabilties to read
+    and process a special language exclusively used to represent
+    any sort of requirement. With the language now processed and 
+    converted into an Abstract Syntax Tree (AST), the parser can now
+    "trim the branches", so to speak, where each class in our schedule
+    is a branch. The more classes we have in our schedule, the more 
+    branches we can cut, and the more likely it is our requirements will
+    be completely sastified. Therefore what is left of the tree must 
+    represent whatever is remaining/missing to sastify our requirement, 
+    or to "fully cut down the tree". 
 
     Examples:
 
@@ -43,17 +49,17 @@ class requirement:
     Additionally, 1 class from CSE-13S or CSE-30 will be required by 
     quarter 3, CSE-101 will be required as well as MATH-19A or MATH-19B.
     """
-    def __init__(self, expr=''):
-        self.expr = expr
-        self.ast = algebra.parse(expr).simplify()
+    def __init__(self, major=''):
+        self.major = major
+        major_boolean_expr = MAJOR_MATCH_EXPRESSION[major]
+        self.ast = algebra.parse(major_boolean_expr).simplify()
         self.constraint = Constraint([generate_prereq_func(), not_avaliable_during])
 
 
     def validate(self, schedule):
-        """Verfies the schedule to see if it satsifies the requirements
-        set by expr. If all the requirements are sastified, return "1" 
-        or True. Otherwise, return the missing requirements as a 
-        boolean expression.
+        """Validates the schedule to see if there are any errors
+        for each class. If all the requirements are sastified, return
+        an empty requirements.
 
         Args:
             schedule (dict): JSON Object holding our Schedule
@@ -63,3 +69,18 @@ class requirement:
             by a list of failed requirements
         """
         return self.constraint.validate(schedule)
+
+    def verify_major(self, schedule):
+        """Verfies the schedule to see if the schedule meets the major
+        requirement. If all the requirements are sastified, return
+        an empty list.
+        Args:
+            schedule (dict): JSON Object holding our Schedule
+
+        Returns:
+            A list of requirements that is required to fulfill
+            the major requirements
+        """
+        process_ast = convert_schedule(schedule)
+        major_req = self.ast.subs(process_ast).simplify()
+        return split_ast(major_req)
