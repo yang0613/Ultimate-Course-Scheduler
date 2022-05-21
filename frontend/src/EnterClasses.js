@@ -180,6 +180,8 @@ class EnterClasses extends React.Component {
       //ADDED -- post frontend fetch call
 
       let currentMajor = event.target.value;  // This is the data to be passed to the post/fetch call
+
+      /*
       console.log(currentMajor);
 
       let returnedData = "";  // The response
@@ -218,9 +220,11 @@ class EnterClasses extends React.Component {
 
       // ================================================================================================
 
+      */
+
       //this.setState({currentMajor: event.target.value});  Keep for reference
-      //this.setState({currentMajor: currentMajor});
-      this.setState({currentMajor: currentMajor, arrOfArrOfClassData: arrOfArrOfClassData, availableClasses: availableClasses});
+      this.setState({currentMajor: currentMajor});
+      //this.setState({currentMajor: currentMajor, arrOfArrOfClassData: arrOfArrOfClassData, availableClasses: availableClasses});
     }
 
     handleSubmit1(event) {  // Handles entering classes
@@ -424,12 +428,15 @@ class EnterClasses extends React.Component {
       // Christian: fetch/post request here (Same idea as in handleSubmit5)
       //   This time acadPlanObjJSON is being passed in. See the format above.
 
-      // Christian: Moved this here so we can just edit later. 
-      //   There's also another one below(within this function). Don't know how that one works though
       /*
+      let currentMajor = event.target.value;  // This is the data to be passed to the post/fetch call
+      console.log(currentMajor);
+
+      let returnedData = "";  // The response
+
       const current = {
-        "classstr": "cse 101",
-        "majorstr": ""
+        "classstr": "",
+        "majorstr": currentMajor
       };
 
       const response = post(current);
@@ -437,11 +444,15 @@ class EnterClasses extends React.Component {
         return res.json();
       })
       .then((json) => {
-        console.log(JSON.stringify(json));
+        returnedData = JSON.stringify(json);  // I added
+        console.log("json: " + JSON.stringify(json));
+        console.log("returnedData: " + JSON.stringify(returnedData));  // I added
       })
       .catch((err)=>{
         console.log(err, "ERROR");
       })
+
+      returnedData = JSON.parse(returnedData);  // Convert from JSON into an array
       */
 
       // INTEGRATION: Instead of the resultJSON below
