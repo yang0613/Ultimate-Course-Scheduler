@@ -426,25 +426,21 @@ class EnterClasses extends React.Component {
       // add post -- acadPlanObjJSON
       // Christian: fetch/post request here (Same idea as in handleSubmit5)
       //   This time acadPlanObjJSON is being passed in. See the format above.
+    
 
-      /*
-      let currentMajor = event.target.value;  // This is the data to be passed to the post/fetch call
-      console.log(currentMajor);
-
-      let returnedData = "";  // The response
+      //let acadPlanObjJSON = JSON.stringify(acadPlanObj);
+      //console.log(acadPlanObjJSON);
 
       const current = {
-        "classstr": "",
-        "majorstr": currentMajor
+        "listOfClasses": acadPlanObjJSON
       };
 
-      const response = post(current);
+      const response = verify(current);
       response.then((res)=>{ //res = response.then -- promise, then
         return res.json();
       })
       .then((json) => {
         returnedData = JSON.stringify(json);  // I added
-        console.log("json: " + JSON.stringify(json));
         console.log("returnedData: " + JSON.stringify(returnedData));  // I added
       })
       .catch((err)=>{
@@ -452,7 +448,7 @@ class EnterClasses extends React.Component {
       })
 
       returnedData = JSON.parse(returnedData);  // Convert from JSON into an array
-      */
+      
 
       // INTEGRATION: Instead of the resultJSON below
       //let resultJSON = response;

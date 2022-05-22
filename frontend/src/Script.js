@@ -5,10 +5,17 @@ export const post = (data) => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(data), 
-        /*body: JSON.stringify({
-            "classstr": "",  // Edited
-            "majorstr": ""
-        }), //use JSON.stringify if and when needed, but currently string */
+    })
+    return response
+}
+
+export const verify = (data) => {
+    const response = fetch('http://127.0.0.1:8000/verification', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data), 
     })
     return response
 }
