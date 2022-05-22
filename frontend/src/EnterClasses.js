@@ -220,33 +220,7 @@ class EnterClasses extends React.Component {
         console.log(err, "ERROR");
       })
 
-      //returnedData = JSON.parse(returnedData);  // Convert from JSON into an array
 
-      /*
-      // Looking at the format, seems like an array of array of arrays (3D Array)
-      // Keep the array of arrays. 
-      let arrOfArrOfClassData = returnedData[0][0];  // Keep this for later (Sprint 4, can show units, full name, etc.)
-      console.log("OUTPUT: ", arrOfArrOfClassData);
-      
-      let availableClasses = [];  // This will be the list of available classes. Need to parse response first
-      let numberOfClasses = arrOfArrOfClassData.length;
-      console.log(numberOfClasses);
-      for (let i = 0; i < numberOfClasses; i++) 
-      {  // For each class, get the 0th element (Contains class name  Ex. "CSE 101")
-        availableClasses.push(arrOfArrOfClassData[i][0]);
-        console.log("available classes: ", arrOfArrOfClassData[i][0]);
-      }
-      */
-      
-
-      //console.log("availableclasses: ", availableClasses);
-
-      // Don't forget to change Script.js (the body, I think?)
-
-      // ================================================================================================
-      //this.setState({currentMajor: event.target.value});  Keep for reference
-      //this.setState({currentMajor: currentMajor});
-      //this.setState({currentMajor: currentMajor, arrOfArrOfClassData: arrOfArrOfClassData, availableClasses: availableClasses});
     }
 
     handleSubmit1(event) {  // Handles entering classes
@@ -357,25 +331,25 @@ class EnterClasses extends React.Component {
       // INTEGRATION: Create the object that will be passed to the backend
       let rowsForEachYear = this.state.rowsForEachYear.slice();
       //let acadPlanObj = {"1": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "2": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "3": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "4": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}};
-      let acadPlanObj = {"first": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "second": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "third": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "fourth": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}};
+      let acadPlanObj = {"First": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "Second": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "Third": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "Fourth": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}};
       for (let k = 0; k < rowsForEachYear.length; k++) {  // Iterate through each year
         //let yr = String(k + 1);  // Will be 1 to 4
         let yr = "";
         switch(k) {
           case 0:
-            yr = "first";
+            yr = "First";
             break;
           case 1:
-            yr = "second";
+            yr = "Second";
             break;
           case 2:
-            yr = "third";
+            yr = "Third";
             break;
           case 3:
-            yr = "fourth";
+            yr = "Fourth";
             break;
           default:
-            yr = "first";
+            yr = "First";
         }
 
         for (let i = 0; i < rowsForEachYear[k].length; i++) {  // Iterate through each row for each year
@@ -453,6 +427,7 @@ class EnterClasses extends React.Component {
       //let acadPlanObjJSON = JSON.stringify(acadPlanObj);
       //console.log(acadPlanObjJSON);
 
+      // Pass in the list of classes (acadPlanObjJSON)
       const current = {
         "listOfClasses": acadPlanObjJSON
       };
@@ -462,21 +437,70 @@ class EnterClasses extends React.Component {
         return res.json();
       })
       .then((json) => {
-        returnedData = JSON.stringify(json);  // I added
-        console.log("returnedData: " + JSON.stringify(returnedData));  // I added
+        let resultJSON = json;  // I added
+
+        let errorMessageList = [];
+
+        // Iterate through the resulting object to get the error messages
+        let resultObj = JSON.parse(resultJSON);
+        for (let year of Object.keys(resultObj)) {
+          let yearObj = resultObj[year];
+          for (let quarter of Object.keys(yearObj)) {
+            let quarterObj = yearObj[quarter];
+            for (let thisClass of Object.keys(quarterObj)) {
+              let classObj = quarterObj[thisClass];
+              let errorMessage = thisClass + ":\xa0\xa0";
+              for (let i = 0; i < classObj.length; i++) {
+                // https://stackoverflow.com/questions/5237989/how-is-a-non-breaking-space-represented-in-a-javascript-string
+                errorMessage += classObj[i] + "\xa0\xa0|\xa0\xa0";  // TEMPORARY
+              }
+              if (classObj.length >= 1) {  // If this class actually has error messages
+                errorMessage = errorMessage.slice(0, -5);
+                errorMessageList.push(errorMessage);
+              }
+            }
+          }
+        }
+  
+        console.log(JSON.stringify(errorMessageList));  // TESTING
+        /*  CONSOLE SHOWS
+          [
+            "CSE 102: Missing a prerequisite CSE 101",
+            "CSE 130:  Error 1  |  Error 2",
+            "CSE 111:  Error A  |  Error B",
+            "CSE 114A:  Error C",
+            "CSE 110A:  Error D",
+            "CSE 183:  Error 1  |  Error 2",
+            "CSE 130:  Error A",
+            "CSE 111:  Error B",
+            "CSE 114A:  Error C",
+            "CSE 110A:  Error D",
+            "CSE 110B:  Error E",
+            "CSE 138:  Error 1  |  Error 2",
+            "CSE 130:  Error A",
+            "CSE 111:  Error B",
+            "CSE 114A:  Error C",
+            "CSE 110A:  Error D",
+            "CSE 110B:  Error E"
+          ]
+        */
+  
+        // Works, but need to change formatting so it looks better
+        const verificationResults = errorMessageList.map((string) =>
+          <li>{string}</li>
+        );
+
+        this.setState({verificationResults: verificationResults});
+
+        //alert("Use API calls later, then return result. For now, look at console."); // Temporary. REMOVE LATER
+        //event.preventDefault(); // Without this, the page re-renders and all states are lost
+        
       })
       .catch((err)=>{
         console.log(err, "ERROR");
       })
 
-      returnedData = JSON.parse(returnedData);  // Convert from JSON into an array
-      
-
-      // INTEGRATION: Instead of the resultJSON below
-      //let resultJSON = response;
-
-      // INTEGRATION: Replace resultJSON with what the post/fetch call returns
-      //   Will be in the format shown in resultJSON below.
+      /* Leave it here for format
       // https://stackoverflow.com/questions/805107/creating-multiline-strings-in-javascript 
       let resultJSON = `
       {
@@ -526,102 +550,13 @@ class EnterClasses extends React.Component {
       		}
       	}
       }`;
-
-      let errorMessageList = [];
-
-      // Iterate through the resulting object to get the error messages
-      let resultObj = JSON.parse(resultJSON);
-      for (let year of Object.keys(resultObj)) {
-        //if (year) {  // If there's an error message for that year  NOT NEEDED, wouldn't be traversed in the first place
-        let yearObj = resultObj[year];
-        for (let quarter of Object.keys(yearObj)) {
-          let quarterObj = yearObj[quarter];
-          for (let thisClass of Object.keys(quarterObj)) {
-            let classObj = quarterObj[thisClass];
-            let errorMessage = thisClass + ":\xa0\xa0";
-            for (let i = 0; i < classObj.length; i++) {
-              // https://stackoverflow.com/questions/5237989/how-is-a-non-breaking-space-represented-in-a-javascript-string
-              errorMessage += classObj[i] + "\xa0\xa0|\xa0\xa0";  // TEMPORARY
-            }
-            if (classObj.length >= 1) {  // If this class actually has error messages
-              errorMessage = errorMessage.slice(0, -5);
-              errorMessageList.push(errorMessage);
-            }
-          }
-        }
-      }
-
-      console.log(JSON.stringify(errorMessageList));  // TESTING
-      /*  CONSOLE SHOWS
-        [
-          "CSE 102: Missing a prerequisite CSE 101",
-          "CSE 130:  Error 1  |  Error 2",
-          "CSE 111:  Error A  |  Error B",
-          "CSE 114A:  Error C",
-          "CSE 110A:  Error D",
-          "CSE 183:  Error 1  |  Error 2",
-          "CSE 130:  Error A",
-          "CSE 111:  Error B",
-          "CSE 114A:  Error C",
-          "CSE 110A:  Error D",
-          "CSE 110B:  Error E",
-          "CSE 138:  Error 1  |  Error 2",
-          "CSE 130:  Error A",
-          "CSE 111:  Error B",
-          "CSE 114A:  Error C",
-          "CSE 110A:  Error D",
-          "CSE 110B:  Error E"
-        ]
-      */
-
-      // Works, but need to change formatting so it looks better
-      const verificationResults = errorMessageList.map((string) =>
-        <li>{string}</li>
-      );
+      */ 
       
       // IGNORE FOR NOW
       // INTEGRATION (FOR SPRINT4 GENERATING):
       // For generating a schedule, create a seperate handleSubmit
       // Then just update rowsForEachYear by parsing the data returned by backend
 
-      /*  Do above, just keep for now for reference
-
-      // ================================================================================================
-      // INTEGRATION 
-      // ================================================================================================
-      //ADDED -- frontend fetch call - success/error message 
-      //check for error from Backend - 404 //alert within fetch! 
-
-      
-      //fetch('http://127.0.0.1:8000/searchclass')
-      //.then(response=>response.JSON())
-      //.then(data=>{ console.log(data, "NEW STUFF"); })
-      
-
-      const response = post(verificationResults); //changed from get to post, check with group/TA
-      //response = response.text();
-      //console.log("YAYY IT WORKS", response);
-
-      //response.then(response=>JSON.stringify(response),
-      //response.then(data=>{ console.log(data, "NEW STUFF"); }),
-
-      response.then((res)=>{
-        console.log(res, "Hi this was a success!");
-        console.log(res.text());
-        console.log(res.type);
-        console.log(JSON.stringify(res));
-        //console.log(res.json());
-      }).catch((err)=>{
-        console.log(err, "ERROR Verfication Failed");
-      })
-      // ================================================================================================
-
-      */
-
-
-      this.setState({verificationResults: verificationResults});
-
-      alert("Use API calls later, then return result. For now, look at console."); // Temporary. REMOVE LATER
       event.preventDefault(); // Without this, the page re-renders and all states are lost
     }
 
