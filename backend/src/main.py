@@ -90,15 +90,15 @@ def get_posts(input:searchClass):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"course does not exist")
     return{tuple(posts)}
 
-@app.get("/verification") # verify pre-req quarter-quarter
+@app.post("/verification") # verify pre-req quarter-quarter
 def verification(entered: enteredclasses):
     #test = Requirement(); test.validate(schedule)
     #print(entered)
     #<Shing's Verification functions>
     req = requirement()
-    #result = req.validate(entered)
-    #return(result)
-    return (entered)
+    result = req.validate(entered)
+    return(result)
+    #return (entered)
 
 @app.get("/recommendation")
 def verification(entered: enteredclasses):
