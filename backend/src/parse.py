@@ -54,7 +54,7 @@ op = f"(?P<{TOKEN_OP}>(and|or))"
 course = f"(?P<{TOKEN_COURSE}>[A-Z]+ *[\d]+[A-Z]?)"
 courses_list = compile(f" *(Completion *of *)?{course},? *{op}? *")
 nums = f"(?P<{TOKEN_COUNT}>one|two|three|four|five|six|seven|eight|nine|ten)"
-req_list_better = f"(?P<{TOKEN_LIST}>(.+?))"
+req_list = f"(?P<{TOKEN_LIST}>(.+?))"
 #Modified regex expression from
 #https://stackoverflow.com/questions/33400570/regex-to-parse-a-comma-separated-list-excluding-content-within-parentheses
 seperate_req_list = compile(
@@ -62,7 +62,7 @@ seperate_req_list = compile(
 types = f"(?P<{TOKEN_TYPE}>(?:start *discounting|discounting|by *quarter\
  *(?P<{TOKEN_DUE_DATE}>\d+)|$))"
 num_from = compile(
-    f"(?P<{TOKEN_NUM_FROM_EACH}> *{nums} *from: *(\"(?P<{TOKEN_NAME}>.*?)\")? *{req_list_better} *{types} *)"
+    f"( *(?P<{TOKEN_NUM_FROM_EACH}> *{nums} *from: *(\"(?P<{TOKEN_NAME}>.*?)\")? *{req_list} *{types}) *)"
 )
 delim = compile(r"(; *and *|\. *|; *(?! *or)|\n)")
 concurrent_enrollment_list = f"(?P<{TOKEN_CONCURRENT_LIST}>([A-Z]+ *[\d]+[A-Z]?)\
@@ -342,4 +342,3 @@ def classIDS(schedule):
     for _, _, classes in schedule_tokens(schedule):
         classIDs.extend(classes)
     return tuple(classIDs)
-

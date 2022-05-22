@@ -9,6 +9,7 @@ from parse import TOKEN_TYPE
 from parse import TOKEN_PREV_CONCURRENT
 from parse import TOKEN_CONCURRENT_LIST
 from parse import TOKEN_OP
+from parse import TOKEN_EXPR
 import unittest
 
 class testParse(unittest.TestCase):
@@ -88,8 +89,8 @@ wrapPreviousTestToNewFormat([('ENVS 100', 0), ('and', 9), ('ENVS 100L', 13)]),
         """
         test = self
 
-        def createDummyTokens(total, name, list, type, due_date):
-            return {TOKEN_COUNT: total, TOKEN_NAME: name, 
+        def createDummyTokens(expr, total, name, list, type, due_date):
+            return {TOKEN_EXPR: expr, TOKEN_COUNT: total, TOKEN_NAME: name, 
                     TOKEN_LIST: list, TOKEN_TYPE: type,
                     TOKEN_DUE_DATE: due_date}
         class NumTest:
@@ -117,10 +118,13 @@ wrapPreviousTestToNewFormat([('ENVS 100', 0), ('and', 9), ('ENVS 100L', 13)]),
         
         simpleNumList.testCurrentToken(
             createDummyTokens(
+            expr = 'one from: ANTH 2, SOCY 1, SOCY 10, SOCY 15, PHIL 21, PHIL 22, PHIL 24, PHIL 28,\
+ or PHIL 80G',
             total=1, 
             name=None, 
-            list='ANTH 2, SOCY 1, SOCY 10, SOCY 15, PHIL 21, PHIL 22, \
-PHIL 24, PHIL 28, or PHIL 80G',
+            list=
+            ['ANTH 2', 'SOCY 1', 'SOCY 10', 'SOCY 15', 'PHIL 21', 'PHIL 22', 
+            'PHIL 24', 'PHIL 28', 'PHIL 80G'],
             type=None,
             due_date = None))
 
@@ -131,26 +135,30 @@ three from: another random string wait until due date by quarter 400')
 
         simpleNumList.testCurrentToken(
             createDummyTokens(
+            expr = 'two from: "req_name test" CSE 130A, random string until the list ends \
+start discounting',
             total=2, 
             name="req_name test",
             type='start discounting',
-            list='CSE 130A, random string until the list ends', 
+            list=['CSE 130A', 'random string until the list ends'], 
             due_date = None))
 
         simpleNumList.testCurrentToken(
-            createDummyTokens(
+            createDummyTokens( 
+            expr = 'one from: "discount_req" another random string discounting',
             total=1, 
             name="discount_req", 
             type='discounting',
-            list='another random string', 
+            list=['another random string'], 
             due_date = None))
 
         simpleNumList.testCurrentToken(
             createDummyTokens(
+            expr = 'three from: another random string wait until due date by quarter 400',
             total=3, 
             name=None, 
             type='by quarter 400',
-            list='another random string wait until due date', 
+            list=['another random string wait until due date'], 
             due_date = 400))
 
     def test_reqs_list_tokens(self):
@@ -212,20 +220,20 @@ of 300 or higher')
                         TOKEN_PREV_CONCURRENT: allowPrevious}
         self.assertDictEqual(next(tokens), createDummyTokens(
             allowPrevious = True,
-            course_list = "MATH 3, AM 3"))
+            course_list = ["MATH 3", "AM 3"]))
         
         tokens = parse.concurrent_enrollment_tokens('concurrent enrollment \
         in PHYS 5L is required.')
 
         self.assertDictEqual(next(tokens), 
-        createDummyTokens(allowPrevious=False, course_list='PHYS 5L')
+        createDummyTokens(allowPrevious=False, course_list=['PHYS 5L'])
         )
 
         tokens = parse.concurrent_enrollment_tokens('MATH 24 or \
     previous or concurrent enrollment in AM 20')
 
         self.assertDictEqual(next(tokens), 
-        createDummyTokens(allowPrevious=True, course_list='AM 20'))
+        createDummyTokens(allowPrevious=True, course_list=['AM 20']))
         
 
 
