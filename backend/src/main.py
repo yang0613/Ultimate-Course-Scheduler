@@ -91,7 +91,7 @@ def get_posts(input:searchClass):
     
     return{tuple(posts)}
 
-@app.get("/verification") # verify pre-req quarter-quarter
+@app.post("/verification") # verify pre-req quarter-quarter
 def verification(entered: enteredclasses):
     #test = Requirement(); test.validate(schedule)
     #print(entered)
