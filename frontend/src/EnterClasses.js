@@ -357,7 +357,7 @@ class EnterClasses extends React.Component {
       // INTEGRATION: Create the object that will be passed to the backend
       let rowsForEachYear = this.state.rowsForEachYear.slice();
       //let acadPlanObj = {"1": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "2": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "3": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "4": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}};
-      let acadPlanObj = {"first": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "second": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "third": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "fourth": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}};
+      let acadPlanObj = {"First": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "Second": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "Third": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "Fourth": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}};
       for (let k = 0; k < rowsForEachYear.length; k++) {  // Iterate through each year
         //let yr = String(k + 1);  // Will be 1 to 4
         let yr = "";
@@ -407,8 +407,8 @@ class EnterClasses extends React.Component {
         }
       }
 
-      let acadPlanObjJSON = JSON.stringify(acadPlanObj);
-      console.log(acadPlanObjJSON);
+      let acadPlanObjJSON = acadPlanObj;
+      console.log("acad plan", acadPlanObjJSON);
 
       // IGNORE FOR NOW
       //   FOR SPRINT 4: need to create another object that contains preferences
@@ -454,9 +454,7 @@ class EnterClasses extends React.Component {
       //console.log(acadPlanObjJSON);
 
       let returnedData = []; 
-      const current = {
-        "listOfClasses": acadPlanObjJSON
-      };
+      const current = acadPlanObjJSON;
 
       const response = verify(current);
       response.then((res)=>{ //res = response.then -- promise, then
@@ -464,13 +462,13 @@ class EnterClasses extends React.Component {
       })
       .then((json) => {
         returnedData = JSON.stringify(json);  // I added
-        console.log("returnedData: " + JSON.stringify(returnedData));  // I added
+        console.log("returnedVERIFYData: " + JSON.stringify(returnedData));  // I added
       })
       .catch((err)=>{
         console.log(err, "ERROR");
       })
 
-      returnedData = JSON.parse(returnedData);  // Convert from JSON into an array
+      returnedData = returnedData;  // Convert from JSON into an array
       
 
       // INTEGRATION: Instead of the resultJSON below
