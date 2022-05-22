@@ -1,10 +1,10 @@
-#!/usr/bin/python3
-from AST import PrereqAlgebra, missing_requirements, convert_schedule, split_ast
-from constraint import Constraint
-from constraint_types import generate_prereq_func, not_avaliable_during
-from major_database import MAJOR_MATCH_EXPRESSION
+#!/usr/bin/python3.9
+import AST
+import constraint
+import constraint_types
+import major_database
 
-algebra = PrereqAlgebra()
+algebra = AST.algebra
 
 class requirement:
     """A class designed to verify if the courses in your schedule meet
@@ -51,9 +51,10 @@ class requirement:
     """
     def __init__(self, major=''):
         self.major = major
-        major_boolean_expr = MAJOR_MATCH_EXPRESSION[major]
+        major_boolean_expr = major_database.MAJOR_MATCH_EXPRESSION[major]
         self.ast = algebra.parse(major_boolean_expr).simplify()
-        self.constraint = Constraint([generate_prereq_func(), not_avaliable_during])
+        self.constraint = constraint.Constraint([constraint_types.generate_prereq_func(), 
+                                                constraint_types.not_avaliable_during])
 
 
     def validate(self, schedule):
@@ -81,6 +82,6 @@ class requirement:
             A list of requirements that is required to fulfill
             the major requirements
         """
-        process_ast = convert_schedule(schedule)
+        process_ast = AST.convert_schedule(schedule)
         major_req = self.ast.subs(process_ast).simplify()
-        return split_ast(major_req)
+        return AST.split_ast(major_req)

@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from reqs import requirement
+import reqs
 import json
 import query
 from pprint import pprint
@@ -573,7 +573,7 @@ expr18 = """
     }
 }
 """
-req = requirement(major='Business Management Economics B.A.')
+req = reqs.requirement(major='Business Management Economics B.A.')
 test = expr18
 schedule = json.loads(test)
 missing = req.validate(schedule)

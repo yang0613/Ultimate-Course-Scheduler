@@ -1,7 +1,6 @@
 import query
 import parse
 database_cache = {}
-
 def update_cache(schedule):
     """Updates the cache in database_cache to reflect the contents
     of the schedule.

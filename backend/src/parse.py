@@ -1,7 +1,7 @@
 #!/usr/bin/python3.9
+from ast import AST
 from re import compile
 from enumerate import word2int
-from req_types import NumFrom
 """
 Responsible for parsing a prerequisite string into tokens from the 
 following patterns
@@ -160,7 +160,7 @@ def build_num_from(num_from_expr: str):
 
     for tok in each_num_from:
         due_date = tok[TOKEN_DUE_DATE]
-        discounts.append(NumFrom(**tok))
+        discounts.append(AST.NumFrom(**tok))
         if due_date:
             num_from_args[TOKEN_DUE_DATE] = due_date
     yield num_from_args
