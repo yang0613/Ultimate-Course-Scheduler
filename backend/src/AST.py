@@ -57,14 +57,13 @@ class PrereqAlgebra(BooleanAlgebra):
                 for tok, args, expr, pos in parse.parse(req):
                     # An expression that follows ( and / ( or is invalid
                     req_obj = TOKENS_MATCH_SYMBOLS[tok](**args)
-                    if self.previous_token == TOKEN_LPAR:
-                        if req_obj == TOKEN_OR:
-                            yield update_token(TOKEN_FALSE, 'false', self.position)
-                        elif req_obj == TOKEN_AND:
-                            yield update_token(TOKEN_TRUE, 'true', self.position)
-
-                    yield update_token(req_obj, expr, self.position+pos)
-
+                    if req_obj is not None:
+                        if self.previous_token == TOKEN_LPAR:
+                            if req_obj == TOKEN_OR:
+                                yield update_token(TOKEN_FALSE, 'false', self.position)
+                            elif req_obj == TOKEN_AND:
+                                yield update_token(TOKEN_TRUE, 'true', self.position)
+                        yield update_token(req_obj, expr, self.position+pos)
                 ##Check to see for unbalanced operators from our regex
                 ##expression. When every possible requirement is encountered
                 ##for, no unbalanced operators will occur and these yields 
@@ -170,12 +169,17 @@ class NumFrom(Symbol):
                                   total = remaining_class,
                                   discounts = self.discounts)
 
+def paranthesis_symbol(expr='', paranthesis=''):
+    if paranthesis in ('(', ')'):
+        return TOKENS[paranthesis]
+    return None
+
 TOKENS_MATCH_SYMBOLS = {
     parse.TOKEN_COURSE: Course,
     parse.TOKEN_CONCURRENT: ConcurrentEnrollment,
     parse.TOKEN_NUM_FROM: NumFrom,
     parse.TOKEN_OP: lambda op: TOKENS[op.lower()],
-    parse.TOKEN_PAR: lambda expr: TOKENS[expr.lower()]
+    parse.TOKEN_PAR: paranthesis_symbol
 }
 
 

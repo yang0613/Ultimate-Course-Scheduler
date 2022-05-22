@@ -1,5 +1,5 @@
 #!/usr/bin/python3.9
-from ast import AST
+import AST
 from re import compile
 from enumerate import word2int
 """
@@ -46,15 +46,15 @@ TOKEN_POS = 'position'
 TOKEN_EXPR = 'expr'
 TOKEN_RECOMMEND = 'rec'
 TOKEN_NO_CREDIT = 'no_credit'
-TOKEN_BLACKLIST = 'bkaclist'
+TOKEN_BLACKLIST = 'blacklist'
 TOKEN_PAR = 'paranthesis'
-
+TOKEN_LR_PAR ='left_or_right_paranthesis'
 #Regex pattern matches responsible for parsing our prerequisites
 op = f"(?P<{TOKEN_OP}>(and|or))"
 course = f"(?P<{TOKEN_COURSE}>[A-Z]+ *[\d]+[A-Z]?)"
 courses_list = compile(f" *(Completion *of *)?{course},? *{op}? *")
 nums = f"(?P<{TOKEN_COUNT}>one|two|three|four|five|six|seven|eight|nine|ten)"
-req_list = f"(?P<{TOKEN_LIST}>(.+?))"
+req_list_better = f"(?P<{TOKEN_LIST}>(.+?))"
 #Modified regex expression from
 #https://stackoverflow.com/questions/33400570/regex-to-parse-a-comma-separated-list-excluding-content-within-parentheses
 seperate_req_list = compile(
@@ -62,7 +62,7 @@ seperate_req_list = compile(
 types = f"(?P<{TOKEN_TYPE}>(?:start *discounting|discounting|by *quarter\
  *(?P<{TOKEN_DUE_DATE}>\d+)|$))"
 num_from = compile(
-    f"( *(?P<{TOKEN_NUM_FROM_EACH}> *{nums} *from: *(\"(?P<{TOKEN_NAME}>.*?)\")? *{req_list} *{types}) *)"
+    f"( *(?P<{TOKEN_NUM_FROM_EACH}>{nums} *from: *(\"(?P<{TOKEN_NAME}>.*?)\")? *{req_list_better} *{types}) *)"
 )
 delim = compile(r"(; *and *|\. *|; *(?! *or)|\n)")
 concurrent_enrollment_list = f"(?P<{TOKEN_CONCURRENT_LIST}>([A-Z]+ *[\d]+[A-Z]?)\
@@ -73,7 +73,7 @@ f"(?P<{TOKEN_CONCURRENT}>(?P<{TOKEN_PREV_CONCURRENT}>[pP]revious *or)? *([cC]onc
 )
 missing_req_list = compile(r"&\s*(?![^()]*\))")
 #Special paranthesis pattern to avoid phrases like (MPE)
-paranthesis = compile(f"(?P<{TOKEN_PAR}>\((?!MPE\))|(?<!\(MPE)\))")
+paranthesis = compile(f"(?P<{TOKEN_PAR}>\([a-zA-Z]+\)|(?P<{TOKEN_LR_PAR}>\(|\)))")
 
 def split(pattern, expr: str):
     """Split a string by an regex expression, and remove any empty
@@ -241,15 +241,33 @@ def dummy_token(expr: str):
     Yields:
         dict: An empty dictionary
     """
-    yield {}
+    return {}
 
+def paranthesis_token(par: str):
+    """
+    Yields either L_PAR '(' or R_PAR ')' as long as it isn't the
+    surrounding paranthesis encompass only a word. In other words,
+    strings like (WORD) won't yield '(' or ')' in that case.
+
+    Args:
+        par (str): Any string containing paranthesis
+
+    Yields:
+        A dummy token
+    """
+    for match in paranthesis.finditer(par):
+        legal_par = match[TOKEN_LR_PAR]
+        if legal_par:
+            yield {TOKEN_PAR: legal_par}
+        else:
+            yield dummy_token(par)
 
 
 TOKENS_MATCH_FUNCTIONS = {
     TOKEN_COURSE: course_tokens,
     TOKEN_CONCURRENT: concurrent_enrollment_tokens,
     TOKEN_NUM_FROM: build_num_from,
-    TOKEN_PAR: dummy_token 
+    TOKEN_PAR: paranthesis_token
 }
 
 TOKENS_MATCH_PATTERNS = {

@@ -10,6 +10,7 @@ from parse import TOKEN_PREV_CONCURRENT
 from parse import TOKEN_CONCURRENT_LIST
 from parse import TOKEN_OP
 from parse import TOKEN_EXPR
+from parse import TOKEN_LR_PAR, TOKEN_PAR
 import unittest
 
 class testParse(unittest.TestCase):
@@ -234,6 +235,12 @@ of 300 or higher')
 
         self.assertDictEqual(next(tokens), 
         createDummyTokens(allowPrevious=True, course_list=['AM 20']))
+
+    def test_paranthesis_tokens(self):
+        tokens = parse.paranthesis_token('(IgnoresTheseTwoParanthesis) (ECON 13 or ECON 14)')
+        self.assertEqual(next(tokens), {})
+        self.assertEqual(next(tokens), {TOKEN_PAR: '('})
+        self.assertEqual(next(tokens), {TOKEN_PAR: ')'})
         
 
 

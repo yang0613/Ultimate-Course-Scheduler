@@ -574,7 +574,7 @@ expr18 = """
 }
 """
 req = reqs.requirement(major='Business Management Economics B.A.')
-test = expr18
+test = expr2
 schedule = json.loads(test)
 missing = req.validate(schedule)
 major = req.verify_major(schedule)
