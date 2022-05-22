@@ -61,7 +61,7 @@ def singleClassQuarters(classID):
 
 def allClassByID(classID):
     cur = connectToDB()
-    query = "SELECT * FROM Classes, Requirements WHERE Classes.classID = Requirements.classID AND Requirements.classID IN %s" 
+    query = "SELECT prereq FROM Requirements WHERE classID IN %s" 
     cur.execute(query, (classID,))
     return cur.fetchall()
 
