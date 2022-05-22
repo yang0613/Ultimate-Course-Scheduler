@@ -124,7 +124,7 @@ def missing_requirements(parse: Expression):
     missing_reqs = split_ast(parse)
     if parse.pretty().startswith("OR"):
         return "; or ".join(missing_reqs)
-    return "; ".join(missing_reqs)
+    return missing_reqs
 
 
 def convert_schedule(schedule):

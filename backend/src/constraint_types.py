@@ -1,9 +1,8 @@
 from AST import PrereqAlgebra
 from AST import missing_requirements
 from req_types import ConcurrentEnrollment
-from query import singleClassQuarters, singleClassRequirement
+import cache
 algebra = PrereqAlgebra()
-
 
 def generate_prereq_func():
     """To check for prerequisites, the function should remember
@@ -28,12 +27,10 @@ def generate_prereq_func():
             return True.
         """
         missing_prereqs = {}
-        subs = {}
         for course in classes:
-            prereq = singleClassRequirement(course)
+            prereq = cache.prerequisite(course)
             if prereq:
                 #Adapt query.py format, first index is prereq string
-                prereq = prereq[0]
                 has_prereqs = algebra.parse(prereq).simplify()
                 for req_type in has_prereqs.symbols:
                     if isinstance(req_type, ConcurrentEnrollment):
@@ -41,8 +38,7 @@ def generate_prereq_func():
                 has_prereqs = has_prereqs.subs(schedule).simplify()
                 if has_prereqs != algebra.TRUE:
                     missing_prereqs[course] = missing_requirements(has_prereqs)
-            subs[course] = algebra.TRUE
-
+        subs = {course: algebra.TRUE for course in classes}
         schedule.update(subs)            
         if missing_prereqs:
             return missing_prereqs
@@ -57,20 +53,11 @@ def not_avaliable_during(quarter, classes):
         are a list of conclicts for class K. If every class is
         avaliable for their specific quarter in the schedule, return True.
     """
-    def parse_format(query_result):
-        """A query result can sometimes return [('',)] or []. This
-        temporary function is used to correctly parse for these
-        situations
-        """
-        if query_result == [('',)] or query_result == []:
-            return None
-        return query_result[0][0]
-
     wrong_quarter ={}
     for course in classes:
-        avaliable_quarters = parse_format(singleClassQuarters(course))          
+        avaliable_quarters = cache.quarters(course)   
         if avaliable_quarters and quarter not in avaliable_quarters:
-            wrong_quarter[course] = f"{course} in {quarter} is not avaliable during {avaliable_quarters}"
+            wrong_quarter[course] = [f"{course} in {quarter} is not avaliable during {avaliable_quarters}"]
     if wrong_quarter:
         return wrong_quarter        
     return True

@@ -71,6 +71,7 @@ class Quarters(BaseModel):
     Winter: list[str]
     Spring: list[str]
     Summer: list[str]
+    
 class enteredclasses(BaseModel):
     First: Quarters
     Second: Quarters
