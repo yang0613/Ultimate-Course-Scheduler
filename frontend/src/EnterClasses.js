@@ -210,7 +210,7 @@ class EnterClasses extends React.Component {
         console.log(numberOfClasses);
         for (let i = 0; i < numberOfClasses; i++) 
         {  // For each class, get the 0th element (Contains class name  Ex. "CSE 101")
-          availableClasses.push(arrOfArrOfClassData[i][0]);
+          availableClasses.push(arrOfArrOfClassData[i][1]);
           console.log("available classes: ", arrOfArrOfClassData[i][1]);
         }
 
