@@ -17,9 +17,9 @@ def dict_list_append(src: dict[str, list], dict: dict[str, list]):
     """
     for key,list in dict.items():
         if key in src.keys():
-            src[key].append(list)
+            src[key].extend(list)
         else:
-            src[key] = [list]
+            src[key] = list
 
 class Constraint:
     """

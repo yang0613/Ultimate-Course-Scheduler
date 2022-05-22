@@ -308,7 +308,6 @@ def schedule_tokens(schedule):
     """
     for year in schedule.keys():
         for quarter, classes in schedule[year].items():
-            if classes:
                 yield year, quarter, classes
 
 def classIDS(schedule):

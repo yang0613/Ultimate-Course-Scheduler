@@ -549,7 +549,7 @@ expr18 = """
 {
     "First": {
         "Fall": ["BIOC 163A"],
-        "Winter": [],
+        "Winter": ["ENVS 100"],
         "Spring": [],
         "Summer": []
     },
@@ -574,7 +574,7 @@ expr18 = """
 }
 """
 req = requirement(major='Computer Science B.S.')
-test = expr15
+test = expr18
 schedule = json.loads(test)
 missing = req.validate(schedule)
 major = req.verify_major(schedule)

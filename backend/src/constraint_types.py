@@ -31,7 +31,6 @@ def generate_prereq_func():
             prereq = cache.prerequisite(course)
             if prereq:
                 #Adapt query.py format, first index is prereq string
-                prereq = prereq[0]
                 has_prereqs = algebra.parse(prereq).simplify()
                 for req_type in has_prereqs.symbols:
                     if isinstance(req_type, ConcurrentEnrollment):
@@ -58,7 +57,7 @@ def not_avaliable_during(quarter, classes):
     for course in classes:
         avaliable_quarters = cache.quarters(course)   
         if avaliable_quarters and quarter not in avaliable_quarters:
-            wrong_quarter[course] = f"{course} in {quarter} is not avaliable during {avaliable_quarters}"
+            wrong_quarter[course] = [f"{course} in {quarter} is not avaliable during {avaliable_quarters}"]
     if wrong_quarter:
         return wrong_quarter        
     return True
