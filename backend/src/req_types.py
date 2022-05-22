@@ -75,7 +75,6 @@ class NumFrom(Symbol):
         for course in self.course_list:
             test_course = algebra.parse(course).subs(substitutions).simplify()
             if test_course == algebra.TRUE:
-                print(course)
                 count = count + 1
         for discount in self.discounts:
             count = count + min(discount.total, discount.count(substitutions))

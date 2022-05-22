@@ -308,4 +308,20 @@ def schedule_tokens(schedule):
     """
     for year in schedule.keys():
         for quarter, classes in schedule[year].items():
-            yield year, quarter, classes
+            if classes:
+                yield year, quarter, classes
+
+def classIDS(schedule):
+    """Converts a schedule into a tuple of classes for the use of
+    query.py/allClassByID
+
+    Args:
+        schedule (JSON): JSON Object holding our Schedule
+
+    Returns:
+        A tuple of classes
+    """
+    classIDs = []
+    for _, _, classes in schedule_tokens(schedule):
+        classIDs.extend(classes)
+    return tuple(classIDs)

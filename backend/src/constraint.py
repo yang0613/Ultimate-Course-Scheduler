@@ -1,5 +1,6 @@
 
 from parse import schedule_tokens
+import cache
 
 
 def dict_list_append(src: dict[str, list], dict: dict[str, list]):
@@ -100,6 +101,7 @@ class Constraint:
             }
         """
         schedule_errors = {}
+        cache.update_cache(schedule)
         for year, quarter, classes in schedule_tokens(schedule):
             error = {}
             if classes:

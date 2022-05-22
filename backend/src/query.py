@@ -61,7 +61,7 @@ def singleClassQuarters(classID):
 
 def allClassByID(classID):
     cur = connectToDB()
-    query = "SELECT prereq FROM Requirements WHERE classID IN %s" 
+    query = "SELECT * FROM Classes, Requirements WHERE Classes.classID = Requirements.classID AND Requirements.classID IN %s" 
     cur.execute(query, (classID,))
     return cur.fetchall()
 
@@ -73,5 +73,27 @@ def allClassesByMajor(major):
     cur.execute(query, (major,))
     return cur.fetchall()
 
+def database_cache(classID):
+    """Returns a dictionary of prerequisites and its avaliable quarters
+
+    Args:
+        classID (tuple): A tuple of classes
+
+    Returns:
+        dict: A dictionary key delimited by its class ID and whose values
+        are dictionaries of each class's associated properties
+    """
+    database_cache = {}
+    cur = connectToDB()
+    query = "SELECT Classes.classID, quarters, prereq FROM Classes, Requirements WHERE Classes.classID = Requirements.classID AND Requirements.classID IN %s"
+    cur.execute(query, (classID,))
+    columns = [col[0] for col in cur.description]
+    for row in cur.fetchall():
+        course = row[0]
+        properties = dict(zip(columns, row))
+        properties.pop('classid')
+        database_cache[course] = properties
+    return database_cache
+
 #print(allClassByID(('CSE 20', 'MATH 19A', 'CSE 12', 'CSE 16', 'CSE 30', 'CSE 13S', 'MATH 21', 'CSE 101', 'MATH 19B', 'CSE 130', 'CSE 103', 'ECE 30', 'CSE 102', 'CSE 120', 'BIOE 20C', 'ENVS 25', 'STAT 7L', 'STAT 7', 'STAT 131', 'ANTH 2', 'CHEM 1A', 'ENVS 130A', 'ENVS 130L', 'ENVS 100', 'ENVS 100L', 'PHYS 5A', 'PHYS 5B', 'AM 114', 'AM 147')))
-print(allClassesByMajor('computer Science B.s.'))
+#print(allClassesByMajor('computer Science B.s.'))
