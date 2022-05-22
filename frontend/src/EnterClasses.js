@@ -183,20 +183,38 @@ class EnterClasses extends React.Component {
 
       console.log(currentMajor);
 
-      let returnedData = "";  // The response
+      //let returnedData = "";  // The response
 
       const current = {
         "majorstr": currentMajor
       };
+
+      let returnedData = [];
 
       const response = post(current);
       response.then((res)=>{ //res = response.then -- promise, then
         return res.json();
       })
       .then((json) => {
-        returnedData = json;  // I added
+        let returnedData = json;  // I added
         //console.log("json: " + JSON.stringify(json));
         console.log("returnedData: ", returnedData);  // I added
+
+        // Looking at the format, seems like an array of array of arrays (3D Array)
+        // Keep the array of arrays. 
+        let arrOfArrOfClassData = returnedData[0];  // Keep this for later (Sprint 4, can show units, full name, etc.)
+        console.log("OUTPUT: ", arrOfArrOfClassData);
+        
+        let availableClasses = [];  // This will be the list of available classes. Need to parse response first
+        let numberOfClasses = arrOfArrOfClassData.length;
+        console.log(numberOfClasses);
+        for (let i = 0; i < numberOfClasses; i++) 
+        {  // For each class, get the 0th element (Contains class name  Ex. "CSE 101")
+          availableClasses.push(arrOfArrOfClassData[i][0]);
+          console.log("available classes: ", arrOfArrOfClassData[i][1]);
+        }
+
+        this.setState({currentMajor: currentMajor, arrOfArrOfClassData: arrOfArrOfClassData, availableClasses: availableClasses});
       })
       .catch((err)=>{
         console.log(err, "ERROR");
@@ -204,26 +222,31 @@ class EnterClasses extends React.Component {
 
       //returnedData = JSON.parse(returnedData);  // Convert from JSON into an array
 
+      /*
       // Looking at the format, seems like an array of array of arrays (3D Array)
       // Keep the array of arrays. 
-      let arrOfArrOfClassData = returnedData;  // Keep this for later (Sprint 4, can show units, full name, etc.)
-      console.log("OUTPUT: ", returnedData);
-
+      let arrOfArrOfClassData = returnedData[0][0];  // Keep this for later (Sprint 4, can show units, full name, etc.)
+      console.log("OUTPUT: ", arrOfArrOfClassData);
+      
       let availableClasses = [];  // This will be the list of available classes. Need to parse response first
       let numberOfClasses = arrOfArrOfClassData.length;
-      for (let i = 0; i < numberOfClasses; i++) {  // For each class, get the 0th element (Contains class name  Ex. "CSE 101")
+      console.log(numberOfClasses);
+      for (let i = 0; i < numberOfClasses; i++) 
+      {  // For each class, get the 0th element (Contains class name  Ex. "CSE 101")
         availableClasses.push(arrOfArrOfClassData[i][0]);
+        console.log("available classes: ", arrOfArrOfClassData[i][0]);
       }
-
+      */
       
+
+      //console.log("availableclasses: ", availableClasses);
 
       // Don't forget to change Script.js (the body, I think?)
 
       // ================================================================================================
-
       //this.setState({currentMajor: event.target.value});  Keep for reference
       //this.setState({currentMajor: currentMajor});
-      this.setState({currentMajor: currentMajor, arrOfArrOfClassData: arrOfArrOfClassData, availableClasses: availableClasses});
+      //this.setState({currentMajor: currentMajor, arrOfArrOfClassData: arrOfArrOfClassData, availableClasses: availableClasses});
     }
 
     handleSubmit1(event) {  // Handles entering classes
@@ -308,7 +331,6 @@ class EnterClasses extends React.Component {
             this.setState({value: value});
           }
         } else {
-          alert("This class has already been added.");
           value = "";  // For next input
           this.setState({value: value});
         }
