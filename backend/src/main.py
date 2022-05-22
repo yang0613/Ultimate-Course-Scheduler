@@ -88,6 +88,7 @@ def get_posts(input:searchClass):
     posts = allClassesByMajor(input.majorstr)
     if posts == []:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"course does not exist")
+    
     return{tuple(posts)}
 
 @app.get("/verification") # verify pre-req quarter-quarter
@@ -96,9 +97,12 @@ def verification(entered: enteredclasses):
     #print(entered)
     #<Shing's Verification functions>
     req = requirement()
+    schedule = entered.dict()
+    result = req.validate(schedule)
+
     #result = req.validate(entered)
     #return(result)
-    return (entered)
+    return (result)
 
 @app.get("/recommendation")
 def verification(entered: enteredclasses):
