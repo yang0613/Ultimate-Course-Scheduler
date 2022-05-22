@@ -9,7 +9,7 @@ from boolean import TOKEN_LPAR
 from boolean import TOKEN_RPAR
 from boolean import Expression
 from req_types import Course, ConcurrentEnrollment, NumFrom
-from parse import TOKEN_OP
+from parse import TOKEN_OP, TOKEN_PAR
 from parse import requirements_list, requirement_found, parse
 from parse import TOKEN_COURSE, TOKEN_CONCURRENT, TOKEN_NUM_FROM
 from parse import schedule_tokens
@@ -25,12 +25,12 @@ TOKENS = { #Standard tokens from Boolean Algebra
         }
 
 
-
 TOKENS_MATCH_SYMBOLS = {
     TOKEN_COURSE: Course,
     TOKEN_CONCURRENT: ConcurrentEnrollment,
     TOKEN_NUM_FROM: NumFrom,
-    TOKEN_OP: lambda op: TOKENS[op.lower()]
+    TOKEN_OP: lambda op: TOKENS[op.lower()],
+    TOKEN_PAR: lambda expr: TOKENS[expr.lower()]
 }
 
 

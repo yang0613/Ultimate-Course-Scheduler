@@ -47,6 +47,7 @@ TOKEN_EXPR = 'expr'
 TOKEN_RECOMMEND = 'rec'
 TOKEN_NO_CREDIT = 'no_credit'
 TOKEN_BLACKLIST = 'bkaclist'
+TOKEN_PAR = 'paranthesis'
 
 #Regex pattern matches responsible for parsing our prerequisites
 op = f"(?P<{TOKEN_OP}>(and|or))"
@@ -71,6 +72,8 @@ f"(?P<{TOKEN_CONCURRENT}>(?P<{TOKEN_PREV_CONCURRENT}>[pP]revious *or)? *([cC]onc
 {concurrent_enrollment_list} *(is *required)? *)"
 )
 missing_req_list = compile(r"&\s*(?![^()]*\))")
+#Special paranthesis pattern to avoid phrases like (MPE)
+paranthesis = compile(f"(?P<{TOKEN_PAR}>\((?!MPE\))|(?<!\(MPE)\))")
 
 def split(pattern, expr: str):
     """Split a string by an regex expression, and remove any empty
@@ -216,16 +219,44 @@ def concurrent_enrollment_tokens(conc_enr: str):
         toks[TOKEN_CONCURRENT_LIST] = [course for course in reqs_list_tokens(course_list)]
         yield toks
 
+def token(TOKEN_ID, kwargs, expr, pos):
+    """Abstraction method that specifies what format a token should be
+    returned as
+
+    Args:
+        TOKEN_ID (str): A token identifier matching the the associated token object
+        kwargs (**kwargs): Standard keyword arguments for the token object
+        expr (str): The token expression
+        pos (int): An integer representing the initial position of the expression
+    """
+    return TOKEN_ID, kwargs, expr, pos
+
+def dummy_token(expr: str):
+    """A dummy token that yields nothing because it does not need
+    any additional arguments
+
+    Args:
+        expr (str): Any string input
+
+    Yields:
+        dict: An empty dictionary
+    """
+    yield {}
+
+
+
 TOKENS_MATCH_FUNCTIONS = {
     TOKEN_COURSE: course_tokens,
     TOKEN_CONCURRENT: concurrent_enrollment_tokens,
-    TOKEN_NUM_FROM: build_num_from
+    TOKEN_NUM_FROM: build_num_from,
+    TOKEN_PAR: dummy_token 
 }
 
 TOKENS_MATCH_PATTERNS = {
     TOKEN_NUM_FROM: f'(?P<{TOKEN_NUM_FROM}>'+ num_from.pattern +'+)',
     TOKEN_CONCURRENT: concurrent_enrollment.pattern,
-    TOKEN_COURSE: course
+    TOKEN_COURSE: course,
+    TOKEN_PAR: paranthesis.pattern
 }
 
 """
@@ -258,19 +289,6 @@ def find_req(match):
             args[TOKEN_EXPR] = req
             return token(TOKEN_ID=tok, kwargs=args, 
                         pos=req_pos, expr=req)
-
-
-def token(TOKEN_ID, kwargs, expr, pos):
-    """Abstraction method that specifies what format a token should be
-    returned as
-
-    Args:
-        TOKEN_ID (str): A token identifier matching the the associated token object
-        kwargs (**kwargs): Standard keyword arguments for the token object
-        expr (str): The token expression
-        pos (int): An integer representing the initial position of the expression
-    """
-    return TOKEN_ID, kwargs, expr, pos
 
 def parse(expr: str):
     """The main tokenizer function that extracts requirements into the
@@ -324,3 +342,4 @@ def classIDS(schedule):
     for _, _, classes in schedule_tokens(schedule):
         classIDs.extend(classes)
     return tuple(classIDs)
+
