@@ -10,7 +10,7 @@
 import React from 'react';
 import { Grid } from 'gridjs-react';
 import "gridjs/dist/theme/mermaid.css";
-import {post, get} from './Script';
+import {post, get, verify} from './Script';
 
 class EnterClasses extends React.Component {
     constructor(props) {
@@ -453,6 +453,7 @@ class EnterClasses extends React.Component {
       //let acadPlanObjJSON = JSON.stringify(acadPlanObj);
       //console.log(acadPlanObjJSON);
 
+      let returnedData = []; 
       const current = {
         "listOfClasses": acadPlanObjJSON
       };
