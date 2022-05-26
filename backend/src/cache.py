@@ -11,8 +11,18 @@ def update_cache(schedule):
     Returns:
         None: Returns nothing and mutates database_cache
     """
-    global database_cache
-    database_cache = query.database_cache(parse.classIDS(schedule))
+    database = query.database_cache(parse.classIDS(schedule))
+    database_cache.update(query.database_cache(parse.classIDS(schedule)))
+
+def update_full_database():
+    """
+    Updates the cache in the database_cache to reflect the whole database
+
+    Returns:
+        None: Returns nothing and mutates database_cache
+    """
+    database_cache.update(query.database_cache(tuple(query.allClassIDs())))
+
     
 def prerequisite(course):
     if course in database_cache:
