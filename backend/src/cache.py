@@ -12,7 +12,7 @@ def update_cache(schedule):
         None: Returns nothing and mutates database_cache
     """
     database = query.database_cache(parse.classIDS(schedule))
-    database_cache.update(query.database_cache(parse.classIDS(schedule)))
+    database_cache.update(database)
 
 def update_full_database():
     """

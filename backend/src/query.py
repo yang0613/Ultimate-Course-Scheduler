@@ -96,6 +96,11 @@ def database_cache(classID):
     return database_cache
 
 def allClassIDs():
+    """Gets a list of all the class IDs in the database
+
+    Returns:
+        (list): A list of every class ID
+    """
     cur = connectToDB()
     query = "SELECT Classes.classID FROM Classes"
     cur.execute(query)
