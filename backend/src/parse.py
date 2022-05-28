@@ -1,4 +1,28 @@
 #!/usr/bin/python3.9
+TOKEN_DISCOUNTS = 'discounts'
+TOKEN_NAME = 'name'
+TOKEN_LIST = 'list'
+TOKEN_DUE_DATE = 'quarter'
+TOKEN_COURSE = 'course_list'
+TOKEN_OP = 'op'
+TOKEN_COUNT = 'total'
+TOKEN_TYPE = 'type'
+TOKEN_CONCURRENT = 'concurrent'
+TOKEN_CONCURRENT_LIST = 'concurrent_list'
+TOKEN_PREV_CONCURRENT = 'prevEnrollAllowed'
+TOKEN_MULTIPLE_CONCURRENT = 'multiple'
+TOKEN_NUM_FROM = 'num_from'
+TOKEN_NUM_FROM_EACH = 'each_list'
+
+TOKEN_REQUIREMENT = 'req'
+TOKEN_POS = 'position'
+TOKEN_EXPR = 'expr'
+TOKEN_RECOMMEND = 'rec'
+TOKEN_NO_CREDIT = 'no_credit'
+TOKEN_BLACKLIST = 'blacklist'
+TOKEN_PAR = 'paranthesis'
+TOKEN_LR_PAR ='left_or_right_paranthesis'
+
 import AST
 from re import compile
 from enumerate import word2int
@@ -26,29 +50,7 @@ repeat multiple times
 """
 
 #These tokens are identifiers 
-TOKEN_DISCOUNTS = 'discounts'
-TOKEN_NAME = 'name'
-TOKEN_LIST = 'list'
-TOKEN_DUE_DATE = 'quarter'
-TOKEN_COURSE = 'course_list'
-TOKEN_OP = 'op'
-TOKEN_COUNT = 'total'
-TOKEN_TYPE = 'type'
-TOKEN_CONCURRENT = 'concurrent'
-TOKEN_CONCURRENT_LIST = 'concurrent_list'
-TOKEN_PREV_CONCURRENT = 'prevEnrollAllowed'
-TOKEN_MULTIPLE_CONCURRENT = 'multiple'
-TOKEN_NUM_FROM = 'num_from'
-TOKEN_NUM_FROM_EACH = 'each_list'
 
-TOKEN_REQUIREMENT = 'req'
-TOKEN_POS = 'position'
-TOKEN_EXPR = 'expr'
-TOKEN_RECOMMEND = 'rec'
-TOKEN_NO_CREDIT = 'no_credit'
-TOKEN_BLACKLIST = 'blacklist'
-TOKEN_PAR = 'paranthesis'
-TOKEN_LR_PAR ='left_or_right_paranthesis'
 #Regex pattern matches responsible for parsing our prerequisites
 op = f"(?P<{TOKEN_OP}>(and|or))"
 course = f"(?P<{TOKEN_COURSE}>[A-Z]+ *[\d]+[A-Z]?)"
