@@ -28,7 +28,9 @@ expr16 = 'CSE 15 and CSE 15L; or CSE 13S and CMPM 35; or CSE 13E and CMPM 35; or
 expr17 = 'MATH 11A or MATH 19A or MATH 20A or AM 11A or AM 15A'
 expr18 = "satisfaction of the Entry Level Writing and Composition requirements and CSE 101 and CSE 130."
 expr19 = "CSE 100"
-test_expr = expr
+expr20 = "(ECON 11A or AM 11A) and (ECON 11B or AM 11B); or MATH 11A and MATH 11B and MATH 22; or MATH 19A and MATH 19B and (MATH 22 or MATH 23A)"
+expr21 = "score of 300 or higher on the mathematics placement examination (MPE), or AM 3 or AM 6 or AM 11A or AM 15A or MATH 3 or MATH 11A or MATH 19A. Concurrent enrollment in STAT 7L is required."
+test_expr = expr21
 print("=====================")
 print("Raw Expression:")
 print(test_expr)

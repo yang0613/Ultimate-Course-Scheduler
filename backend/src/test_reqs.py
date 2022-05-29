@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from reqs import requirement
+import reqs
 import json
 import query
 from pprint import pprint
@@ -334,7 +334,7 @@ expr11="""
 	},
 	"4": {
 		"Fall": ["CSE 118", "CSE 117"],
-		"Winter": [""],
+		"Winter": ["MATH 3"],
 		"Spring": [],
 		"Summer": []
 	}
@@ -498,11 +498,6 @@ expr16="""
 		"Winter": ["CSE 12", "CSE 16", "CSE 30"],
 		"Spring": ["CSE 13S", "MATH 21"],
 		"Summer": []
-	},
-	"2": {
-		"Fall": ["CSE 101", "MATH 19B"],
-		"Winter": ["CSE 130", "CSE 103", "ECE 30"],
-		"Spring": ["CSE 102", "CSE 120"],
 		"Summer": ["BIOE 20C"]
 	},
 	"3": {
@@ -519,9 +514,69 @@ expr16="""
 	}
 }
 """
-req = requirement(major='Computer Science B.S.')
-test = expr16
-missing = req.validate(json.loads(test))
-major = req.verify_major(json.loads(test))
+
+#Double classes should not return different missing prerequisites
+expr17="""
+{
+	"1": {
+		"Fall": [ "CSE 130", "CSE 183", "CSE 183"],
+		"Winter": [],
+		"Spring": [],
+		"Summer": []
+	},
+	"2": {
+		"Fall": [],
+		"Winter": [],
+		"Spring": [],
+		"Summer": []
+	},
+	"3": {
+		"Fall": [],
+		"Winter": [],
+		"Spring": [],
+		"Summer": []
+	},
+	"4": {
+		"Fall": [],
+		"Winter": [],
+		"Spring": [],
+		"Summer": []
+	}
+}
+"""
+#Test for Economics BME
+expr18 = """
+{
+    "First": {
+        "Fall": ["BIOC 163A"],
+        "Winter": ["ENVS 100"],
+        "Spring": [],
+        "Summer": []
+    },
+    "Second": {
+        "Fall": ["ECON 1"],
+        "Winter": [],
+        "Spring": [],
+        "Summer": []
+    },
+    "Third": {
+        "Fall": ["STAT 7"],
+        "Winter": ["ECON 101"],
+        "Spring": ["ECON 104"],
+        "Summer": []
+    },
+    "Fourth": {
+        "Fall": [],
+        "Winter": [],
+        "Spring": [],
+        "Summer": []
+    }
+}
+"""
+req = reqs.requirement(major='Business Management Economics B.A.')
+test = expr2
+schedule = json.loads(test)
+missing = req.validate(schedule)
+major = req.verify_major(schedule)
 pprint(missing)
 print(major)

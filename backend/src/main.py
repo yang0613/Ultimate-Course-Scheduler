@@ -71,6 +71,7 @@ class Quarters(BaseModel):
     Winter: list[str]
     Spring: list[str]
     Summer: list[str]
+    
 class enteredclasses(BaseModel):
     First: Quarters
     Second: Quarters
@@ -88,36 +89,8 @@ def get_posts(input:searchClass):
     posts = allClassesByMajor(input.majorstr)
     if posts == []:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"course does not exist")
+    
     return{tuple(posts)}
-
-
-# {
-#     "First": {
-#         "Fall": ["CSE 101"],
-#         "Winter": ["CSE 102", "CSE 103"],
-#         "Spring": [],
-#         "Summer": []
-#     },
-#     "Second": {
-#         "Fall": [],
-#         "Winter": ["CSE 130", "CSE 120"],
-#         "Spring": [],
-#         "Summer": []
-#     },
-#     "Third": {
-#         "Fall": ["CSE 115A"],
-#         "Winter": ["CSE 115B"],
-#         "Spring": ["CSE 115C"],
-#         "Summer": []
-#     },
-#     "Fourth": {
-#         "Fall": [],
-#         "Winter": [],
-#         "Spring": [],
-#         "Summer": []
-#     }
-# }
-
 
 @app.post("/verification") # verify pre-req quarter-quarter
 def verification(entered: enteredclasses):
@@ -125,59 +98,12 @@ def verification(entered: enteredclasses):
     #print(entered)
     #<Shing's Verification functions>
     req = requirement()
+    schedule = entered.dict()
+    result = req.validate(schedule)
+
     #result = req.validate(entered)
     #return(result)
-
-    #input.dict
-
-    
-    return {
-      	"1": {
-      		"Fall": {
-      			"CSE 102": ["Missing a prerequisite CSE 101"],
-      			"CSE 130": ["Error 1", "Error 2"]
-      		},
-      		"Winter": {
-      			"CSE 111": ["Error A", "Error B"]
-      		},
-      		"Summer": {
-      			"CSE 114A": ["Error C"],
-      			"CSE 110A": ["Error D"]
-      		}
-      	},
-      	"2": {
-      		"Fall": {
-      			"CSE 183": ["Error 1", "Error 2"],
-      			"CSE 130": ["Error A"]
-      		},
-      		"Winter": {
-      			"CSE 111": ["Error B"]
-      		},
-      		"Spring": {
-      			"CSE 114A": ["Error C"],
-      			"CSE 110A": ["Error D"]
-      		},
-      		"Summer": {
-      			"CSE 110B": ["Error E"]
-      		}
-      	},
-      	"4": {
-      		"Fall": {
-      			"CSE 138": ["Error 1", "Error 2"],
-      			"CSE 130": ["Error A"]
-      		},
-      		"Winter": {
-      			"CSE 111": ["Error B"]
-      		},
-      		"Spring": {
-      			"CSE 114A": ["Error C"],
-      			"CSE 110A": ["Error D"]
-      		},
-      		"Summer": {
-      			"CSE 110B": ["Error E"]
-      		}
-      	}
-      }
+    return (result)
 
 @app.get("/recommendation")
 def verification(entered: enteredclasses):

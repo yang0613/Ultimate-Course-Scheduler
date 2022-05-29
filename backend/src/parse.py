@@ -1,7 +1,31 @@
 #!/usr/bin/python3.9
+TOKEN_DISCOUNTS = 'discounts'
+TOKEN_NAME = 'name'
+TOKEN_LIST = 'list'
+TOKEN_DUE_DATE = 'quarter'
+TOKEN_COURSE = 'course_list'
+TOKEN_OP = 'op'
+TOKEN_COUNT = 'total'
+TOKEN_TYPE = 'type'
+TOKEN_CONCURRENT = 'concurrent'
+TOKEN_CONCURRENT_LIST = 'concurrent_list'
+TOKEN_PREV_CONCURRENT = 'prevEnrollAllowed'
+TOKEN_MULTIPLE_CONCURRENT = 'multiple'
+TOKEN_NUM_FROM = 'num_from'
+TOKEN_NUM_FROM_EACH = 'each_list'
+
+TOKEN_REQUIREMENT = 'req'
+TOKEN_POS = 'position'
+TOKEN_EXPR = 'expr'
+TOKEN_RECOMMEND = 'rec'
+TOKEN_NO_CREDIT = 'no_credit'
+TOKEN_BLACKLIST = 'blacklist'
+TOKEN_PAR = 'paranthesis'
+TOKEN_LR_PAR ='left_or_right_paranthesis'
+
+import AST
 from re import compile
 from enumerate import word2int
-from req_types import NumFrom
 """
 Responsible for parsing a prerequisite string into tokens from the 
 following patterns
@@ -26,27 +50,6 @@ repeat multiple times
 """
 
 #These tokens are identifiers 
-TOKEN_DISCOUNTS = 'discounts'
-TOKEN_NAME = 'name'
-TOKEN_LIST = 'list'
-TOKEN_DUE_DATE = 'quarter'
-TOKEN_COURSE = 'course_list'
-TOKEN_OP = 'op'
-TOKEN_COUNT = 'total'
-TOKEN_TYPE = 'type'
-TOKEN_CONCURRENT = 'concurrent'
-TOKEN_CONCURRENT_LIST = 'concurrent_list'
-TOKEN_PREV_CONCURRENT = 'prevEnrollAllowed'
-TOKEN_MULTIPLE_CONCURRENT = 'multiple'
-TOKEN_NUM_FROM = 'num_from'
-TOKEN_NUM_FROM_EACH = 'each_list'
-
-TOKEN_REQUIREMENT = 'req'
-TOKEN_POS = 'position'
-TOKEN_EXPR = 'expr'
-TOKEN_RECOMMEND = 'rec'
-TOKEN_NO_CREDIT = 'no_credit'
-TOKEN_BLACKLIST = 'bkaclist'
 
 #Regex pattern matches responsible for parsing our prerequisites
 op = f"(?P<{TOKEN_OP}>(and|or))"
@@ -61,7 +64,7 @@ seperate_req_list = compile(
 types = f"(?P<{TOKEN_TYPE}>(?:start *discounting|discounting|by *quarter\
  *(?P<{TOKEN_DUE_DATE}>\d+)|$))"
 num_from = compile(
-    f"(?P<{TOKEN_NUM_FROM_EACH}> *{nums} *from: *(\"(?P<{TOKEN_NAME}>.*?)\")? *{req_list_better} *{types} *)"
+    f"( *(?P<{TOKEN_NUM_FROM_EACH}>{nums} *from: *(\"(?P<{TOKEN_NAME}>.*?)\")? *{req_list_better} *{types}) *)"
 )
 delim = compile(r"(; *and *|\. *|; *(?! *or)|\n)")
 concurrent_enrollment_list = f"(?P<{TOKEN_CONCURRENT_LIST}>([A-Z]+ *[\d]+[A-Z]?)\
@@ -71,6 +74,8 @@ f"(?P<{TOKEN_CONCURRENT}>(?P<{TOKEN_PREV_CONCURRENT}>[pP]revious *or)? *([cC]onc
 {concurrent_enrollment_list} *(is *required)? *)"
 )
 missing_req_list = compile(r"&\s*(?![^()]*\))")
+#Special paranthesis pattern to avoid phrases like (MPE)
+paranthesis = compile(f"(?P<{TOKEN_PAR}>\([a-zA-Z]+\)|(?P<{TOKEN_LR_PAR}>\(|\)))")
 
 def split(pattern, expr: str):
     """Split a string by an regex expression, and remove any empty
@@ -157,7 +162,7 @@ def build_num_from(num_from_expr: str):
 
     for tok in each_num_from:
         due_date = tok[TOKEN_DUE_DATE]
-        discounts.append(NumFrom(**tok))
+        discounts.append(AST.NumFrom(**tok))
         if due_date:
             num_from_args[TOKEN_DUE_DATE] = due_date
     yield num_from_args
@@ -216,16 +221,62 @@ def concurrent_enrollment_tokens(conc_enr: str):
         toks[TOKEN_CONCURRENT_LIST] = [course for course in reqs_list_tokens(course_list)]
         yield toks
 
+def token(TOKEN_ID, kwargs, expr, pos):
+    """Abstraction method that specifies what format a token should be
+    returned as
+
+    Args:
+        TOKEN_ID (str): A token identifier matching the the associated token object
+        kwargs (**kwargs): Standard keyword arguments for the token object
+        expr (str): The token expression
+        pos (int): An integer representing the initial position of the expression
+    """
+    return TOKEN_ID, kwargs, expr, pos
+
+def dummy_token(expr: str):
+    """A dummy token that yields nothing because it does not need
+    any additional arguments
+
+    Args:
+        expr (str): Any string input
+
+    Yields:
+        dict: An empty dictionary
+    """
+    return {}
+
+def paranthesis_token(par: str):
+    """
+    Yields either L_PAR '(' or R_PAR ')' as long as it isn't the
+    surrounding paranthesis encompass only a word. In other words,
+    strings like (WORD) won't yield '(' or ')' in that case.
+
+    Args:
+        par (str): Any string containing paranthesis
+
+    Yields:
+        A dummy token
+    """
+    for match in paranthesis.finditer(par):
+        legal_par = match[TOKEN_LR_PAR]
+        if legal_par:
+            yield {TOKEN_PAR: legal_par}
+        else:
+            yield dummy_token(par)
+
+
 TOKENS_MATCH_FUNCTIONS = {
     TOKEN_COURSE: course_tokens,
     TOKEN_CONCURRENT: concurrent_enrollment_tokens,
-    TOKEN_NUM_FROM: build_num_from
+    TOKEN_NUM_FROM: build_num_from,
+    TOKEN_PAR: paranthesis_token
 }
 
 TOKENS_MATCH_PATTERNS = {
     TOKEN_NUM_FROM: f'(?P<{TOKEN_NUM_FROM}>'+ num_from.pattern +'+)',
     TOKEN_CONCURRENT: concurrent_enrollment.pattern,
-    TOKEN_COURSE: course
+    TOKEN_COURSE: course,
+    TOKEN_PAR: paranthesis.pattern
 }
 
 """
@@ -258,19 +309,6 @@ def find_req(match):
             args[TOKEN_EXPR] = req
             return token(TOKEN_ID=tok, kwargs=args, 
                         pos=req_pos, expr=req)
-
-
-def token(TOKEN_ID, kwargs, expr, pos):
-    """Abstraction method that specifies what format a token should be
-    returned as
-
-    Args:
-        TOKEN_ID (str): A token identifier matching the the associated token object
-        kwargs (**kwargs): Standard keyword arguments for the token object
-        expr (str): The token expression
-        pos (int): An integer representing the initial position of the expression
-    """
-    return TOKEN_ID, kwargs, expr, pos
 
 def parse(expr: str):
     """The main tokenizer function that extracts requirements into the
@@ -308,4 +346,19 @@ def schedule_tokens(schedule):
     """
     for year in schedule.keys():
         for quarter, classes in schedule[year].items():
-            yield year, quarter, classes
+                yield year, quarter, classes
+
+def classIDS(schedule):
+    """Converts a schedule into a tuple of classes for the use of
+    query.py/allClassByID
+
+    Args:
+        schedule (JSON): JSON Object holding our Schedule
+
+    Returns:
+        A tuple of classes
+    """
+    classIDs = []
+    for _, _, classes in schedule_tokens(schedule):
+        classIDs.extend(classes)
+    return tuple(classIDs)
