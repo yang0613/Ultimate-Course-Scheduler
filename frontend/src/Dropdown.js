@@ -130,7 +130,7 @@ class Dropdown extends React.Component {
           <option value="Select">Select</option>
           {this.state.divs.map((theDivs) => <option value={theDivs.value}>{theDivs}</option>)}
         </select>
-        &nbsp;
+        <br />
         <input className="button" type="submit" value="Submit" />
       </form>
     );
