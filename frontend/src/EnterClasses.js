@@ -6,10 +6,13 @@
 // https://stackoverflow.com/questions/42238556/accessing-multidimensional-array-with-react-js
 // https://dev.to/antdp425/populate-dropdown-options-in-react-1nk0  For the dropdown
 // https://jsonlint.com/  Useful for validating and making JSON easier to look at
+// https://colors.muz.li/color/e6e6e6 For colors
+// https://icongr.am/ For icons
 
 import React from 'react';
 import { Grid } from 'gridjs-react';
 import "gridjs/dist/theme/mermaid.css";
+import { _ } from "gridjs-react";
 import {post, get, verify} from './Script';
 
 class EnterClasses extends React.Component {
@@ -22,9 +25,9 @@ class EnterClasses extends React.Component {
         toRemove: "Select",  // Value to be removed (Select when nothing selected)
         classes: Array(0).fill(""),  // Array of all entered classes. Purpose is to make dealing with some parts easier.
 
-        // INTEGRATION: Currently dummy data. Need data returned by API.
+        // Keep dummy availableClasses for testing
         //availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21"],
-        availableClasses: [],  // USE THIS WHEN POST/FETCH CALL RETURNS LIST OF CLASSES AS A JSON
+        availableClasses: [],  // List of available clases, after major has been selected
         arrOfArrOfClassData: [],  // The response from the major selection dropdown containing the class data
         verificationResults: [],
         currentMajor: "Select", 
@@ -126,21 +129,13 @@ class EnterClasses extends React.Component {
         rowsFilledForQtr: Array(4).fill(0).map(() => ({"Fall": 0, "Winter": 0, "Spring": 0, "Summer": 0})),
       };
 
-      // I would have preferred to have more obvious names, but React suggests to use handle{Event} naming convention
-      // FOR DRAG AND DROP: If drag and drop is implemented, I put a *** for the ones that would no longer be needed
-      this.handleChange1 = this.handleChange1.bind(this); // Handles typing in a class
-      this.handleChange2 = this.handleChange2.bind(this); // *** Handles changing the current quarter to put a class into
-      this.handleChange3 = this.handleChange3.bind(this); // *** Handles changing the year to put a class into
-      this.handleChange4 = this.handleChange4.bind(this); // *** Handles selecting the class to be removed (before confirmation of removal)
-      this.handleChange5 = this.handleChange5.bind(this); // INTEGRATION: For the major selection
-      this.handleSubmit1 = this.handleSubmit1.bind(this); // Handles clicking "Add" when entering a class
-      this.handleSubmit2 = this.handleSubmit2.bind(this); // Handles clicking "Submit" when submitting all classes to be taken
-      this.handleSubmit3 = this.handleSubmit3.bind(this); // *** Handles clicking "Remove" when removing a class
-
-      // INTEGRATION:
-      //   Add handleChange functions for Mhia's dropdown(and other preference options) in the sidebar
-      //   Then just add it on the HTML's on{Event} attribute (Ex. onChange)
-      //   UPDATE: Temporarily just added major selection before the enter classes input form
+      this.handleChangeClass = this.handleChangeClass.bind(this); // Handles typing in a class
+      this.handleChangeQuarter = this.handleChangeQuarter.bind(this); // Handles changing the current quarter to put a class into
+      this.handleChangeYear = this.handleChangeYear.bind(this); // Handles changing the year to put a class into
+      this.handleChangeMajor = this.handleChangeMajor.bind(this); // Handles selecting the major
+      this.handleAddClass = this.handleAddClass.bind(this); // Handles clicking "Add" when entering a class
+      this.handleVerify = this.handleVerify.bind(this); // Handles clicking "Verify" when submitting all classes to be taken
+      this.handleRemoveClass = this.handleRemoveClass.bind(this); // Handles clicking "Remove" when removing a class
     }
 
     // Used to show initial table
@@ -156,40 +151,25 @@ class EnterClasses extends React.Component {
     }
 
     // https://reactjs.org/docs/forms.html had this
-    handleChange1(event) {  // Handles typing in a class name
+    handleChangeClass(event) {  // Handles typing in a class name
       this.setState({value: event.target.value});
     }
 
-    handleChange2(event) {  // Handles selecting the quarter in the dropdown
+    handleChangeQuarter(event) {  // Handles selecting the quarter in the dropdown
       this.setState({quarter: event.target.value});
     }
 
-    handleChange3(event) {  // Handles selecting the year in the dropdown
+    handleChangeYear(event) {  // Handles selecting the year in the dropdown
       this.setState({year: event.target.value});
     }
 
-    handleChange4(event) {  // Handles selecting the class to be removed 
-      console.log("toRemove:" + event.target.value); // FOR TESTING
-      this.setState({toRemove: event.target.value});
-    }
-
-    handleChange5(event) {  // Handles selecting major
-      // ================================================================================================
-      // INTEGRATION 
-      // ================================================================================================
-      //ADDED -- post frontend fetch call
-
+    handleChangeMajor(event) {  // Handles selecting major
       let currentMajor = event.target.value;  // This is the data to be passed to the post/fetch call
-
       console.log(currentMajor);
-
-      //let returnedData = "";  // The response
 
       const current = {
         "majorstr": currentMajor
       };
-
-      //let returnedData = [];
 
       const response = post(current);
       response.then((res)=>{ //res = response.then -- promise, then
@@ -197,17 +177,15 @@ class EnterClasses extends React.Component {
       })
       .then((json) => {
         let returnedData = json;  // I added
-        //console.log("json: " + JSON.stringify(json));
-        console.log("returnedData: ", returnedData);  // I added
+        console.log("returnedData: ", returnedData);
 
-        // Looking at the format, seems like an array of array of arrays (3D Array)
-        // Keep the array of arrays. 
+        // returnedData is an array of array of arrays
+        // Keep the array of arrays, which is an array of class data(class data is an array)
         let arrOfArrOfClassData = returnedData[0];  // Keep this for later (Sprint 4, can show units, full name, etc.)
-        console.log("OUTPUT: ", arrOfArrOfClassData);
+        console.log("arrOfArrOfClassData: ", arrOfArrOfClassData);
         
-        let availableClasses = [];  // This will be the list of available classes. Need to parse response first
+        let availableClasses = [];  // This will be the list of available classes.
         let numberOfClasses = arrOfArrOfClassData.length;
-        console.log(numberOfClasses);
         for (let i = 0; i < numberOfClasses; i++) 
         {  // For each class, get the 0th element (Contains class name  Ex. "CSE 101")
           availableClasses.push(arrOfArrOfClassData[i][0]);
@@ -219,37 +197,9 @@ class EnterClasses extends React.Component {
       .catch((err)=>{
         console.log(err, "ERROR");
       })
-
-      //returnedData = JSON.parse(returnedData);  // Convert from JSON into an array
-
-      /*
-      // Looking at the format, seems like an array of array of arrays (3D Array)
-      // Keep the array of arrays. 
-      let arrOfArrOfClassData = returnedData[0][0];  // Keep this for later (Sprint 4, can show units, full name, etc.)
-      console.log("OUTPUT: ", arrOfArrOfClassData);
-      
-      let availableClasses = [];  // This will be the list of available classes. Need to parse response first
-      let numberOfClasses = arrOfArrOfClassData.length;
-      console.log(numberOfClasses);
-      for (let i = 0; i < numberOfClasses; i++) 
-      {  // For each class, get the 0th element (Contains class name  Ex. "CSE 101")
-        availableClasses.push(arrOfArrOfClassData[i][0]);
-        console.log("available classes: ", arrOfArrOfClassData[i][0]);
-      }
-      */
-      
-
-      //console.log("availableclasses: ", availableClasses);
-
-      // Don't forget to change Script.js (the body, I think?)
-
-      // ================================================================================================
-      //this.setState({currentMajor: event.target.value});  Keep for reference
-      //this.setState({currentMajor: currentMajor});
-      //this.setState({currentMajor: currentMajor, arrOfArrOfClassData: arrOfArrOfClassData, availableClasses: availableClasses});
     }
 
-    handleSubmit1(event) {  // Handles entering classes
+    handleAddClass(event) {  // Handles entering classes
       let yr = this.state.year;
       let yrNum = Number(yr);
       let qtr = this.state.quarter;
@@ -266,7 +216,7 @@ class EnterClasses extends React.Component {
             classes.push(value);  // Add this class to list of all classes
 
             // ====================================================================================================
-            // Update rowsForEachYear (Functionality explained in this.state within the constructor above
+            // Update rowsForEachYear (Functionality explained in this.state within the constructor at the very beginning of this JavaScript class
             // ====================================================================================================
 
             let yrIndex = yrNum - 1;  // yr - 1: Ex. Year 1, yrNum = 1, so correct index would be 0
@@ -295,9 +245,10 @@ class EnterClasses extends React.Component {
             //    First 4 is the number of years. 
             //    Second 4 is the number of rows for that year (Can add more rows. Ex. Adding more classes)
             //    The 5 is the number of columns for that year (Same for each year. Cannot be changed)
-            // rowsForEachYear: Array(4).fill(0).map(rowsForOneYear => Array(4).fill(0).map(row => new Array(5).fill("")))
-            // rowsFilled: Array(4).fill(0)  // Update by +1 before each use (So on first use, 0 -> 1)
-            // rowsFilledForQtr: Array(4).fill(0).map(() => ({"Fall": 0, "Winter": 0, "Spring": 0, "Summer": 0}))
+            //
+            //    rowsForEachYear: Array(4).fill(0).map(rowsForOneYear => Array(4).fill(0).map(row => new Array(5).fill("")))
+            //    rowsFilled: Array(4).fill(0)  // Update by +1 before each use (So on first use, 0 -> 1)
+            //    rowsFilledForQtr: Array(4).fill(0).map(() => ({"Fall": 0, "Winter": 0, "Spring": 0, "Summer": 0}))
             let rowsForEachYear = this.state.rowsForEachYear.slice();
             let rowsFilled = this.state.rowsFilled.slice();
             let rowsFilledForQtr = this.state.rowsFilledForQtr.slice();
@@ -313,6 +264,7 @@ class EnterClasses extends React.Component {
             if (curRow >= rowsForEachYear[yrIndex].length) { // If another row is needed
               rowsForEachYear[yrIndex].push(["","","","",""]); // Add a row with 5 columns
             }
+
             // [year][row][column]
             rowsForEachYear[yrIndex][curRowForQtr][column] = value;  // Add the class to the current row for the selected quarter for the selected year
 
@@ -353,7 +305,7 @@ class EnterClasses extends React.Component {
       return rows;  // rows state is changed in the function that calls buildRows
     }
 
-    handleSubmit2(event) {  // Handles submitting the list of classes (Clicking Verify)
+    handleVerify(event) {  // Handles submitting the list of classes for verification (Clicking Verify)
       // INTEGRATION: Create the object that will be passed to the backend
       let rowsForEachYear = this.state.rowsForEachYear.slice();
       //let acadPlanObj = {"1": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "2": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "3": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}, "4": {"Fall": [], "Winter": [], "Spring": [], "Summer": []}};
@@ -406,54 +358,15 @@ class EnterClasses extends React.Component {
           }
         }
       }
-
-      let acadPlanObjJSON = acadPlanObj;
-      console.log("acad plan", acadPlanObjJSON);
+      console.log("acadPlanObj", acadPlanObj);
 
       // IGNORE FOR NOW
-      //   FOR SPRINT 4: need to create another object that contains preferences
-      //   Then combine acadPlanObj with this new one
+      //   FOR SPRINT 4: When schedule generation is done, need to create another object that contains preferences
+      //   Ask algorithm how they want the data to be passed (in acadPlanObj, or a seperate post request?)
 
-      // INTEGRATION:  This is the format of the JSON that will be passed to the post/fetch request
-      /*  Format for acadPlanObj   Instead of first, second, etc.  it used to be 1, 2, etc.
-      {
-        "first": {
-          "Fall": ["CSE 101"],
-          "Winter": ["CSE 102", "CSE 103"],
-          "Spring": [],
-          "Summer": []
-        },
-        "second": {
-          "Fall": [],
-          "Winter": ["CSE 130", "CSE 120"],
-          "Spring": [],
-          "Summer": []
-        },
-        "third": {
-          "Fall": ["CSE 115A"],
-          "Winter": ["CSE 115B"],
-          "Spring": ["CSE 115C"],
-          "Summer": []
-        },
-        "fourth": {
-          "Fall": [],
-          "Winter": [],
-          "Spring": [],
-          "Summer": []
-        }
-      }
-      */
+      // See testDataforEnterClasses.js for format of acadPlanObj
 
-      // INTEGRATION:
-      // add post -- acadPlanObjJSON
-      // Christian: fetch/post request here (Same idea as in handleSubmit5)
-      //   This time acadPlanObjJSON is being passed in. See the format above.
-    
-
-      //let acadPlanObjJSON = JSON.stringify(acadPlanObj);
-      //console.log(acadPlanObjJSON);
-
-      const current = acadPlanObjJSON;
+      const current = acadPlanObj;
 
       const response = verify(current);
       response.then((res)=>{ //res = response.then -- promise, then
@@ -462,8 +375,8 @@ class EnterClasses extends React.Component {
       .then((json) => {
         let resultJSON = JSON.stringify(json);  // I added
         //let resultJSON = json;
-        console.log("returnedVERIFYData: " + JSON.stringify(resultJSON));  // works
-        //console.log("returnedDataJSON: ", resultJSON);  // doesn't work if returnedData not stringified
+        console.log("resultJSON: " + JSON.stringify(resultJSON));  // works
+        //console.log("resultJSON", resultJSON);  // doesn't work if returnedData not stringified
         
         let errorMessageList = [];
 
@@ -489,93 +402,18 @@ class EnterClasses extends React.Component {
         }
         
         //console.log(JSON.stringify(errorMessageList));  // TESTING
-        /*  CONSOLE SHOWS
-          [
-            "CSE 102: Missing a prerequisite CSE 101",
-            "CSE 130:  Error 1  |  Error 2",
-            "CSE 111:  Error A  |  Error B",
-            "CSE 114A:  Error C",
-            "CSE 110A:  Error D",
-            "CSE 183:  Error 1  |  Error 2",
-            "CSE 130:  Error A",
-            "CSE 111:  Error B",
-            "CSE 114A:  Error C",
-            "CSE 110A:  Error D",
-            "CSE 110B:  Error E",
-            "CSE 138:  Error 1  |  Error 2",
-            "CSE 130:  Error A",
-            "CSE 111:  Error B",
-            "CSE 114A:  Error C",
-            "CSE 110A:  Error D",
-            "CSE 110B:  Error E"
-          ]
-        */
-  
-        
+    
         // Works, but need to change formatting so it looks better
         const verificationResults = errorMessageList.map((string) =>
           <li>{string}</li>
         );
 
         this.setState({verificationResults: verificationResults});  
-           
 
       })
       .catch((err)=>{
         console.log(err, "ERROR");
       })
-
-      /* KEEP FOR ERROR REFERENCE
-      // https://stackoverflow.com/questions/805107/creating-multiline-strings-in-javascript 
-      let resultJSON = `
-      {
-      	"1": {
-      		"Fall": {
-      			"CSE 102": ["Missing a prerequisite CSE 101"],
-      			"CSE 130": ["Error 1", "Error 2"]
-      		},
-      		"Winter": {
-      			"CSE 111": ["Error A", "Error B"]
-      		},
-      		"Summer": {
-      			"CSE 114A": ["Error C"],
-      			"CSE 110A": ["Error D"]
-      		}
-      	},
-      	"2": {
-      		"Fall": {
-      			"CSE 183": ["Error 1", "Error 2"],
-      			"CSE 130": ["Error A"]
-      		},
-      		"Winter": {
-      			"CSE 111": ["Error B"]
-      		},
-      		"Spring": {
-      			"CSE 114A": ["Error C"],
-      			"CSE 110A": ["Error D"]
-      		},
-      		"Summer": {
-      			"CSE 110B": ["Error E"]
-      		}
-      	},
-      	"4": {
-      		"Fall": {
-      			"CSE 138": ["Error 1", "Error 2"],
-      			"CSE 130": ["Error A"]
-      		},
-      		"Winter": {
-      			"CSE 111": ["Error B"]
-      		},
-      		"Spring": {
-      			"CSE 114A": ["Error C"],
-      			"CSE 110A": ["Error D"]
-      		},
-      		"Summer": {
-      			"CSE 110B": ["Error E"]
-      		}
-      	}
-      }`;
-      */
 
       // IGNORE FOR NOW
       // INTEGRATION (FOR SPRINT4 GENERATING):
@@ -585,8 +423,23 @@ class EnterClasses extends React.Component {
       event.preventDefault(); // Without this, the page re-renders and all states are lost
     }
 
-    handleSubmit3(event) {  // For class removal from the list of entered classes
-      let toRemove = this.state.toRemove;
+    handleRemoveClass(event) {  // For class removal from the list of entered classes
+
+      /*  OLD  For now, keep for reference in case its needed
+      let toRemoveInnerHTML = event.target.innerHTML;
+      toRemoveInnerHTML = toRemoveInnerHTML.trim();
+      console.log("toRemove", toRemoveInnerHTML);
+
+      // Check with Wenhao to clarify if all classes have class name format:  CSE 101    where its   classname(space)number
+      let toRemoveSplit = toRemoveInnerHTML.split(" ");
+      let toRemove = toRemoveSplit[0] + " " + toRemoveSplit[1];
+      */
+
+      //let toRemove = event.target.value;
+      let toRemove = event.target.parentElement.value;
+
+      //https://stackoverflow.com/questions/18971210/get-inner-text-and-split-it-javascript-problems-using-innerhtml-and-split
+      //console.log("toRemove", toRemove);
 
       if (!(toRemove === "Select")) {  // If a class to be removed was selected
         console.log("toRemove: " + toRemove);  // TESTING
@@ -624,6 +477,13 @@ class EnterClasses extends React.Component {
                 for (let a = i + 1; a < rowsForEachYear[k].length; a++) {  // Start at the one after the deleted one
                   rowsForEachYear[k][a - 1][j] = rowsForEachYear[k][a][j];
                   rowsForEachYear[k][a][j] = "";
+
+                  // IF THIS GIVES ERRORS:
+                  // If removing classes before submitting to backend gives unexpected behavior regarding results
+                  //   Problem could be because there's an extra element in the array with "" as its value
+                  //   Solution: Pop the last element if length > 3
+                  // ALTERNATIVE: Just fix it in handleVerify
+                  //   Don't add values that are ""
                 }
 
                 let qtr = "";
@@ -649,10 +509,9 @@ class EnterClasses extends React.Component {
                 }
 
                 rowsFilledForQtr[k][qtr] -= 1; // Decrement rows occupied for current quarter
-                // Note: When adding another class (in handleSubmit1):
+                // Note: When adding another class (in handleAddClass):
                 //   rowsFilledForQtr is used as an index for the current row to fill when pushing into rowsForEachYear 
                 //   rowsFilled is used to determine if an extra row needs to be added
-                // So, everything should work properly as long as the shifting above is done properly
 
                 // Could edit rowsFilled if I want to shrink the table when appropriate, but not necessary
 
@@ -679,19 +538,19 @@ class EnterClasses extends React.Component {
 
       return (
         <div className="container1">
-          <form onSubmit={this.handleSubmit1}>
+          <form onSubmit={this.handleAddClass}>
             {
               // ADDED for integeration may 18
             }
             <label>Major:&nbsp;</label>
-            <select className="majorList" value={this.state.currentMajor} onChange={this.handleChange5}>
+            <select className="majorList" value={this.state.currentMajor} onChange={this.handleChangeMajor}>
               <option value="Select">Select</option>
               {this.state.major.map((theMajor) => <option value={theMajor.value}>{theMajor}</option>)}
             </select>
             &nbsp;
       
             <label>Enter Course:&nbsp;</label>
-            <input list="availableClasses" name="classstr" value={this.state.value} onChange={this.handleChange1} />
+            <input list="availableClasses" name="classstr" value={this.state.value} onChange={this.handleChangeClass} />
             <datalist id="availableClasses">
               <option value=""></option>
               {this.state.availableClasses.map((theClass) => <option value={theClass.value}>{theClass}</option>)}
@@ -701,7 +560,7 @@ class EnterClasses extends React.Component {
 
             &emsp;
             <label>Quarter:&nbsp;</label>
-            <select className="quarter" onChange={this.handleChange2}>
+            <select className="quarter" onChange={this.handleChangeQuarter}>
               <option value="Fall">Fall</option>
               <option value="Winter">Winter</option>
               <option value="Spring">Spring</option>
@@ -709,50 +568,55 @@ class EnterClasses extends React.Component {
             </select>
             &emsp;
             <label>Year:&nbsp;</label>
-            <select className="quarter" onChange={this.handleChange3}>
+            <select className="quarter" onChange={this.handleChangeYear}>
                 <option value="1">Year 1</option>
                 <option value="2">Year 2</option>
                 <option value="3">Year 3</option>
                 <option value="4">Year 4</option>
             </select>
           </form>
-
-          {
-            // For removing a class. "classes" is primarily used for this
-            // https://stackoverflow.com/questions/21733847/react-jsx-selecting-selected-on-selected-select-option
-          }
-          <form class = "m-0" onSubmit={this.handleSubmit3}>
-            <label>Remove Course:&nbsp;</label>
-            <select className="toRemove" value={this.state.toRemove} onChange={this.handleChange4}>
-              <option value="Select">Select</option>
-              {this.state.classes.map((theClass) => <option value={theClass.value}>{theClass}</option>)}
-            </select>
-            &nbsp;
-            <input type="submit" value="Remove" />
-          </form>
           <br></br>
 
           {
             // The academic plan table
+            // https://gridjs.io/docs/examples/react-cells
+            // https://stackoverflow.com/questions/37627712/how-to-use-if-else-condition-in-arrow-function-in-javascript
           }
           <Grid
             data={this.state.rows}
-            columns={["Year", "Fall", "Winter", "Spring", "Summer"]}
+            columns={
+              [
+                "Year",
+                { 
+                  name: "Fall",
+                  formatter: (cell) => (cell === "") ? "" : _(<button class="button is-info is-rounded" value={cell}> {cell} &nbsp;<img src="https://icongr.am/clarity/close.svg?size=20&color=E6E6E6" alt="X button" onClick={this.handleRemoveClass}></img></button>)
+                },
+                { 
+                  name: "Winter",
+                  formatter: (cell) => (cell === "") ? "" : _(<button class="button is-info is-rounded" value={cell}> {cell} &nbsp;<img src="https://icongr.am/clarity/close.svg?size=20&color=E6E6E6" alt="X button" onClick={this.handleRemoveClass}></img></button>)
+                },
+                { 
+                  name: "Spring",
+                  formatter: (cell) => (cell === "") ? "" : _(<button class="button is-info is-rounded" value={cell}> {cell} &nbsp;<img src="https://icongr.am/clarity/close.svg?size=20&color=E6E6E6" alt="X button" onClick={this.handleRemoveClass}></img></button>)
+                },
+                { 
+                  name: "Summer",
+                  formatter: (cell) => (cell === "") ? "" : _(<button class="button is-info is-rounded" value={cell}> {cell} &nbsp;<img src="https://icongr.am/clarity/close.svg?size=20&color=E6E6E6" alt="X button" onClick={this.handleRemoveClass}></img></button>)
+                }
+              ]
+            }
             width="100%"
           />
 
           {
             // Submit the academic plan table (As a JSON, with each class associated with a quarter and a year)
           }
-          <form onSubmit={this.handleSubmit2}>
+          <form onSubmit={this.handleVerify}>
               <input class="button is-info is-rounded" type="submit" value="Verify" />
           </form>
+
           {
-            // INTEGRATION: Edit this part later so it takes in data returned by the backend
-                // check in how to implement this! 
-                // post/get call? not sure! - same implementation as above but for data! 
-                //   Oh, this will be in handleSubmit2. Right after     let acadPlanObjJSON = JSON.stringify(acadPlanObj);
-                //   I'm responsible with this part. Just need the post/fetch call to return the data in the format me and Shing agreed on (See handleSubmit2 resultJSON)
+            // This is where the errors will be shown
           }      
           <br></br>
           <h2>Verification Results:</h2>
