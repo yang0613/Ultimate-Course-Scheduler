@@ -1,7 +1,6 @@
 #Algorithm referenced
 #https://etda.libraries.psu.edu/files/final_submissions/10828#:~:text=The%20Course%20Scheduling%20Algorithm%20returns,is%20kept%20to%20a%20minimum.
-#https://www.codeproject.com/Articles/23111/Making-a-Class-Schedule-Using-a-Genetic-Algorithm
-#Using DEAP
+
 from copy import deepcopy
 import AST
 import parse
