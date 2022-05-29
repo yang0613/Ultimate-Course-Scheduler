@@ -1,4 +1,5 @@
 import React from "react";
+import './Mystyles.css';
 
 class Dropdown extends React.Component {
   constructor(props) {
@@ -112,26 +113,27 @@ class Dropdown extends React.Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <label>Major:&nbsp;</label>
-          <br />
-          <select className="majorList" value={this.state.currentMajor} onChange={this.handleChange1}>
+        <br />
+          <select className="ListSidebar" value={this.state.currentMajor} onChange={this.handleChange1}>
             <option value="Select">Select</option>
             {this.state.major.map((theMajor) => <option value={theMajor.value}>{theMajor}</option>)}
           </select>
+        <br />
         <label>Total Units:&nbsp;</label>
           <br />
-          <select className="unitList" value={this.state.currentUnits} onChange={this.handleChange2}>
+          <select className="ListSidebar" value={this.state.currentUnits} onChange={this.handleChange2}>
             <option value="Select">Select</option>
             {this.state.units.map((theUnits) => <option value={theUnits.value}>{theUnits}</option>)}
           </select>
         <br />
         <label>Upper Divs per Quarter:&nbsp;</label>
         <br />
-        <select className="divList" value={this.state.currentDivs} onChange={this.handleChange3}>
+        <select className="ListSidebar" value={this.state.currentDivs} onChange={this.handleChange3}>
           <option value="Select">Select</option>
           {this.state.divs.map((theDivs) => <option value={theDivs.value}>{theDivs}</option>)}
         </select>
         <br />
-        <input className="button" type="submit" value="Submit" />
+        <input className="buttonSubmitSidebar" type="submit" value="Submit" />
       </form>
     );
   }
