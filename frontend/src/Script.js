@@ -20,12 +20,13 @@ export const verify = (data) => {
     return response
 }
 
-export const get = (data) => {
-    const response = fetch(`http://127.0.0.1:8000/searchclass?data=${data}`,{
-        method: 'GET',
+export const login = (data) => {
+    const response = fetch('http://127.0.0.1:8000/login', {
+        method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
+        body: data, 
     })
     return response
 }

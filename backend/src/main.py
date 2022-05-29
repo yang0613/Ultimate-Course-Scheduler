@@ -78,6 +78,9 @@ class enteredclasses(BaseModel):
     Third: Quarters
     Fourth: Quarters
 
+class credentials(BaseModel):
+    Username: str
+    Password: str
 
 @app.get("/")
 def root():
@@ -104,6 +107,12 @@ def verification(entered: enteredclasses):
     #result = req.validate(entered)
     #return(result)
     return (result)
+
+@app.post("/login") # verify pre-req quarter-quarter
+def login(entered: credentials):
+    #let result = "Success"
+    #function
+    return ("Success")
 
 @app.get("/recommendation")
 def verification(entered: enteredclasses):

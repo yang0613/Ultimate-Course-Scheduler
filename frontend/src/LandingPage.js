@@ -1,13 +1,14 @@
 // heading.js
 
+import React, { useState } from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+
 import Login from './Login';
 import Register from './Register';
 import EnterClasses from './EnterClasses';
-import React, { useState } from 'react';
 
 class LandingPage extends React.Component 
 {
-
   constructor(props) {
     super(props);
     this.state = {

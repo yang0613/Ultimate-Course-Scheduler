@@ -1,6 +1,62 @@
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import './Login.css';
+import {login} from './Script';
 
-import React from 'react';
+async function loginUser(credentials) {
 
+  console.log(credentials, "  CREDENTIALS");
+  const response = login(credentials);
+  console.log(response, " POST CREDENTIALS");
+
+  response.then((res)=>{
+    return res;
+    })
+    .then((info) => {
+      console.log("result: ", info);
+    })
+    .catch((err)=>{
+      console.log(err, "ERROR");
+    })
+}
+
+export default function Login({}) {
+  const [username, setUserName] = useState();
+  const [password, setPassword] = useState();
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const token = await loginUser({
+      username,
+      password
+    });
+    //setToken(token);
+  }
+
+  return(
+    <div className="login-wrapper">
+      <form onSubmit={handleSubmit}>
+        <label>
+          <p>Username</p>
+          <input type="text" onChange={e => setUserName(e.target.value)}/>
+        </label>
+        <br></br><br></br>
+        <label>
+          <p>Password</p>
+          <input type="password" onChange={e => setPassword(e.target.value)}/>
+        </label>
+        <br></br><br></br>
+        <div>
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+
+
+/*import React from 'react';
 //<a href="login.html">Login to Account</a>
 
 class Login extends React.Component 
@@ -49,4 +105,4 @@ class Login extends React.Component
 }
 
 export default Login;
-
+*/
