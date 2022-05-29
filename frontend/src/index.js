@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 //import ShowAcadPlanTbl from './ShowAcadPlanTbl';  // Most likely will remove later
 import LandingPage from './LandingPage';
+import Sidebar from './Sidebar';
 
 
 //removed for now - <ShowAcadPlanTbl/> -- add to LandingPage!
@@ -12,6 +13,7 @@ import LandingPage from './LandingPage';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    <Sidebar />
     <LandingPage />
   </React.StrictMode>
 );
