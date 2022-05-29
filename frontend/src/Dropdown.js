@@ -5,8 +5,8 @@ class Dropdown extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUnits: 5,
-      currentDivs: 1,
+      currentUnits: "Select",
+      currentDivs: "Select",
       currentMajor: "Select",
       units : [5, 7, 10, 12, 15, 17, 19],
       divs: [1, 2, 3],
