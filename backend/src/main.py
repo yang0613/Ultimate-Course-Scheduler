@@ -33,7 +33,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from reqs import requirement
 #from test import requirement
 app = FastAPI()
-ENV = 'dev'
+ENV = 'prod'
 
 
 origins = ["*"]
