@@ -28,7 +28,7 @@ DROP TABLE IF EXISTS Users;
 CREATE TABLE Users(
     username VARCHAR(20),
     password VARCHAR(20) NOT NULL,
-    academicPlan TEXT,
+    academicPlan jsonb,
     PRIMARY KEY (username)
 );
 

@@ -22,6 +22,7 @@ from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
+import json
 
 #sdfdsf
 
@@ -48,8 +49,10 @@ app.add_middleware(
 def connectToDB():
     if ENV == 'dev':
         conn = psycopg2.connect('dbname=postgres port=5432 user=postgres host=localhost', options='-c search_path=Majors')
+        conn.autocommit = True
     else:
         conn = psycopg2.connect('dbname=dckbguanuf8a45 port=5432 user=uxoitcpyfpqfvq host=ec2-44-196-223-128.compute-1.amazonaws.com password=f646a5b031a7b5f570ef097d77f987809613ca53ee77167d1430d246105a0a08', options='-c search_path=Majors')
+        conn.autocommit = True
     return conn.cursor()
 
 def allClassesByMajor(major):
@@ -67,7 +70,7 @@ def login(username, password):
     except:
         return("Incorrect username or password.")
 
-    return(cur.fetchone()[0])
+    return(cur.fetchone())
 
 #Register
 def register(username, password):
@@ -136,16 +139,26 @@ def verification(entered: enteredclasses):
     #test = Requirement(); test.validate(schedule)
     #print(entered)
     #<Shing's Verification functions>
-    req = requirement()
-    schedule = entered.dict()
-    result = req.validate(schedule)
-
-    #result = req.validate(entered)
-    #return(result)
-    return (result)
+    try: 
+        storeAcademicPlan(username, password, json.dumps(entered.dict()))
+        req = requirement()
+        schedule = entered.dict()
+        result = req.validate(schedule)
+        return (result)
+    except:
+        req = requirement()
+        schedule = entered.dict()
+        result = req.validate(schedule)
+        #result = req.validate(entered)
+        #return(result)
+        return (result)
 
 @app.post("/login") # verify pre-req quarter-quarter
 def logpost(entered: credentials):
+    global username
+    global password
+    username = entered.username
+    password = entered.password
     result = login(entered.username, entered.password)
     return (result)
 
@@ -156,7 +169,8 @@ def regpost(entered: credentials):
 
 @app.post("/academicplan") # verify pre-req quarter-quarter
 def academicplanpost(entered: academicplan):
-    result = storeAcademicPlan(entered.username, entered.password, str(entered.input))
+    print(entered.input.dict())
+    result = storeAcademicPlan(entered.username, entered.password, str(entered.input.dict()))
     return (result)
 
 @app.get("/recommendation")

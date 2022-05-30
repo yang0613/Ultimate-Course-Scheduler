@@ -367,6 +367,18 @@ class EnterClasses extends React.Component {
       // See testDataforEnterClasses.js for format of acadPlanObj
 
       const current = acadPlanObj;
+      
+      // const store = storePlan(current);
+
+      // store.then((res)=>{ //res = response.then -- promise, then
+      //   return res.json();
+      // })
+      // .then((json) => {
+      //   console.log(json);
+      // })
+      // .catch((err)=>{
+      //   console.log(err, "ERROR");
+      // })
 
       const response = verify(current);
       response.then((res)=>{ //res = response.then -- promise, then
