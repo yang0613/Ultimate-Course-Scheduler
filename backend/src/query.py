@@ -8,13 +8,15 @@ import psycopg2
 #Heroku password: f646a5b031a7b5f570ef097d77f987809613ca53ee77167d1430d246105a0a08
 #switch between local and remote database
 # dev for local testing, prod for production
-ENV = 'prod'
+ENV = 'dev'
 
 def connectToDB():
     if ENV == 'dev':
         conn = psycopg2.connect('dbname=postgres port=5432 user=postgres host=localhost', options='-c search_path=Majors')
+        conn.autocommit = True
     else:
         conn = psycopg2.connect('dbname=dckbguanuf8a45 port=5432 user=uxoitcpyfpqfvq host=ec2-44-196-223-128.compute-1.amazonaws.com password=f646a5b031a7b5f570ef097d77f987809613ca53ee77167d1430d246105a0a08', options='-c search_path=Majors')
+        conn.autocommit = True
     return conn.cursor()
 
 #Show all prereq of electives and required classes for this degree
@@ -27,7 +29,7 @@ def majorPrereq(degree):
 #Subject Example: CSE, MATH
 def allClassesInMajor(major):
     cur = connectToDB()
-    query = "SELECT * FROM Classes WHERE UPPER(classID) LIKE UPPER('%%' || %s || '%%')"
+    query = "SELECT * FROM Classes"
     cur.execute(query, (major,))
     return cur.fetchall()
 
@@ -74,6 +76,40 @@ def allClassesByMajor(major):
     cur.execute(query, (major,))
     return cur.fetchall()
 
+#Login
+def login(username, password):
+    try:
+        cur = connectToDB()
+        query = "SELECT academicPlan FROM Users WHERE username = %s AND password= %s"
+        cur.execute(query, (username, password))
+    except:
+        return("Incorrect username or password.")
+    if cur.fetchone()[0] is None:
+        return(tuple())
+    else:
+        return(cur.fetchone()[0])
+
+#Register
+def register(username, password):
+    try:
+        cur = connectToDB()
+        query = "INSERT INTO Users(username, password) VALUES (%s, %s)"
+        cur.execute(query, (username, password))
+    except:
+        return("Username is invalid or already taken")
+    return("Username is successfully created")
+
+def storeAcademicPlan(username, password, academicPlan):
+    try:
+        cur = connectToDB()
+        query = "UPDATE Users SET academicPlan = %s WHERE username = %s AND password = %s"
+        cur.execute(query, (academicPlan, username, password))
+    except:
+        return("Academic Plan is invalid")
+    return("Academic Plan is successfully created")
+
+
+
 def database_cache(classID):
     """Returns a dictionary of prerequisites and its avaliable quarters
 
@@ -98,3 +134,10 @@ def database_cache(classID):
 
 #print(allClassByID(('CSE 20', 'MATH 19A', 'CSE 12', 'CSE 16', 'CSE 30', 'CSE 13S', 'MATH 21', 'CSE 101', 'MATH 19B', 'CSE 130', 'CSE 103', 'ECE 30', 'CSE 102', 'CSE 120', 'BIOE 20C', 'ENVS 25', 'STAT 7L', 'STAT 7', 'STAT 131', 'ANTH 2', 'CHEM 1A', 'ENVS 130A', 'ENVS 130L', 'ENVS 100', 'ENVS 100L', 'PHYS 5A', 'PHYS 5B', 'AM 114', 'AM 147')))
 #print(allClassesByMajor('computer Science B.s.'))
+# print(storeAcademicPlan('ue', 'password', ''))
+# print(register('ue', 'password'))
+# print(login('ue', 'password'))
+
+
+
+

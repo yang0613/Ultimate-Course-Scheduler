@@ -24,4 +24,12 @@ CREATE TABLE Requirements(
     FOREIGN KEY (classID) REFERENCES Classes
 );
 
+DROP TABLE IF EXISTS Users;
+CREATE TABLE Users(
+    username VARCHAR(20),
+    password VARCHAR(20) NOT NULL,
+    academicPlan TEXT,
+    PRIMARY KEY (username)
+);
+
 
