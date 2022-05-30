@@ -112,7 +112,6 @@ class enteredclasses(BaseModel):
 class credentials(BaseModel):
     username: str
     password: str
-    
 
 class academicplan(BaseModel):
     username: str

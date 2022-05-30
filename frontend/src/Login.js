@@ -10,10 +10,11 @@ async function loginUser(credentials) {
   console.log(response, " POST CREDENTIALS");
 
   response.then((res)=>{
-    return res;
+    return res.json();
     })
-    .then((info) => {
-      console.log("result: ", info);
+    .then((json) => {
+      let returnedData = json;  // I added
+      console.log("returnedData: ", returnedData);
     })
     .catch((err)=>{
       console.log(err, "ERROR");
@@ -27,8 +28,8 @@ export default function Login({}) {
   const handleSubmit = async e => {
     e.preventDefault();
     const token = await loginUser({
-      username,
-      password
+      "username": username,
+      "password": password
     });
     //setToken(token);
   }
@@ -72,7 +73,7 @@ export default function Login({}) {
         </div>
 
         <br></br>
-        
+
       </form>
     </div>
   )

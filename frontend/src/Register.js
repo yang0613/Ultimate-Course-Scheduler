@@ -10,10 +10,11 @@ async function registerUser(credentials) {
   console.log(response, " POST CREDENTIALS");
 
   response.then((res)=>{
-    return res;
+    return res.json();
     })
-    .then((info) => {
-      console.log("result: ", info);
+    .then((json) => {
+      let returnedData = json;  // I added
+      console.log("returnedData: ", returnedData);
     })
     .catch((err)=>{
       console.log(err, "ERROR");
@@ -21,30 +22,20 @@ async function registerUser(credentials) {
 }
 
 export default function Login({}) {
-  const [username, setName] = useState();
-  const [email, setEmail] = useState();
+  const [username, setEmail] = useState();
   const [password, setPassword] = useState();
 
   const handleSubmit = async e => {
     e.preventDefault();
     const token = await registerUser({
-      username, 
-      email,
-      password
+      "username": username,
+      "password": password
     });
-    //setToken(token);
   }
 
   return(
     <div className="login-wrapper">
       <form onSubmit={handleSubmit}>
-
-        <div class="field">
-          <p class="control has-icons-right">
-            <input class="input" type="text" placeholder="Name"
-             onChange={e => setName(e.target.value)}></input>
-          </p>
-        </div>
 
         <div class="field">
           <p class="control has-icons-left has-icons-right">
