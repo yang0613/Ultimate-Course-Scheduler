@@ -14,6 +14,7 @@ import { Grid } from 'gridjs-react';
 import "gridjs/dist/theme/mermaid.css";
 import { _ } from "gridjs-react";
 import {post, get, verify} from './Script';
+import "./enterClassesStyles.css";
 
 class EnterClasses extends React.Component {
     constructor(props) {
@@ -559,7 +560,7 @@ class EnterClasses extends React.Component {
               <option value="Select">Select</option>
               {this.state.major.map((theMajor) => <option value={theMajor.value}>{theMajor}</option>)}
             </select>
-            &nbsp;
+            &emsp;
       
             <label>Enter Course:&nbsp;</label>
             <input list="availableClasses" name="classstr" value={this.state.value} onChange={this.handleChangeClass} />
@@ -568,7 +569,10 @@ class EnterClasses extends React.Component {
               {this.state.availableClasses.map((theClass) => <option value={theClass.value}>{theClass}</option>)}
             </datalist>
             &nbsp;
-            <input type="submit" value="Add" />
+            <button class="button is-info is-rounded is-small add-class-button"><img src="https://icongr.am/entypo/arrow-right.svg?size=20&color=ffffff" alt="X button" onClick={this.handleAddClass}></img></button>
+            {
+              //<input type="submit" value="Add" />  OLD Submit button  Use this if the button above causes errors
+            }
 
             &emsp;
             <label>Quarter:&nbsp;</label>
@@ -620,12 +624,23 @@ class EnterClasses extends React.Component {
             width="100%"
           />
 
-          {
-            // Submit the academic plan table (As a JSON, with each class associated with a quarter and a year)
-          }
-          <form onSubmit={this.handleVerify}>
-              <input class="button is-info is-rounded" type="submit" value="Verify" />
-          </form>
+          <div class="flex-container">
+            {
+              // Submit the academic plan table (As a JSON, with each class associated with a quarter and a year)
+            }
+            <form onSubmit={this.handleVerify}>
+                <input class="button is-info is-rounded" type="submit" value="Verify" />
+            </form>
+            &emsp;
+
+            {
+              // Not functional
+            }
+            <button class="button is-info is-rounded">Generate</button>
+
+          </div>
+
+          <br></br>
 
           {
             // This is where the errors will be shown
