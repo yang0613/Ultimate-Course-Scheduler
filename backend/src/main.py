@@ -58,6 +58,39 @@ def allClassesByMajor(major):
     cur.execute(query, (major,))
     return cur.fetchall()
 
+#Login
+def login(username, password):
+    try:
+        cur = connectToDB()
+        query = "SELECT academicPlan FROM Users WHERE username = %s AND password= %s"
+        cur.execute(query, (username, password))
+    except:
+        return("Incorrect username or password.")
+    if cur.fetchone()[0] is None:
+        return(tuple())
+    else:
+        return(cur.fetchone()[0])
+
+#Register
+def register(username, password):
+    try:
+        cur = connectToDB()
+        query = "INSERT INTO Users(username, password) VALUES (%s, %s)"
+        cur.execute(query, (username, password))
+    except:
+        return("Username is invalid or already taken")
+    return("Username is successfully created")
+
+#AcademicPlan
+def storeAcademicPlan(username, password, academicPlan):
+    try:
+        cur = connectToDB()
+        query = "UPDATE Users SET academicPlan = %s WHERE username = %s AND password = %s"
+        cur.execute(query, (academicPlan, username, password))
+    except:
+        return("Academic Plan is invalid")
+    return("Academic Plan is successfully created")
+
 #schema
 class Post(BaseModel):
     title: str
@@ -110,9 +143,18 @@ def verification(entered: enteredclasses):
 
 @app.post("/login") # verify pre-req quarter-quarter
 def login(entered: credentials):
-    #let result = "Success"
-    #function
-    return ("Success")
+    result = login(entered.Username, entered.Password)
+    return (result)
+
+@app.post("/Register") # verify pre-req quarter-quarter
+def login(entered: credentials):
+    result = register(entered.Username, entered.Password)
+    return (result)
+
+@app.post("/login") # verify pre-req quarter-quarter
+def login(entered: credentials):
+    result = login(entered.Username, entered.Password)
+    return (result)
 
 @app.get("/recommendation")
 def verification(entered: enteredclasses):
