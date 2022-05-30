@@ -112,8 +112,14 @@ class enteredclasses(BaseModel):
     Fourth: Quarters
 
 class credentials(BaseModel):
-    Username: str
-    Password: str
+    username: str
+    password: str
+    
+
+class academicplan(BaseModel):
+    username: str
+    password: str
+    input: enteredclasses
 
 @app.get("/")
 def root():
@@ -143,17 +149,17 @@ def verification(entered: enteredclasses):
 
 @app.post("/login") # verify pre-req quarter-quarter
 def login(entered: credentials):
-    result = login(entered.Username, entered.Password)
+    result = login(entered.username, entered.password)
     return (result)
 
 @app.post("/Register") # verify pre-req quarter-quarter
 def login(entered: credentials):
-    result = register(entered.Username, entered.Password)
+    result = register(entered.username, entered.password)
     return (result)
 
-@app.post("/login") # verify pre-req quarter-quarter
-def login(entered: credentials):
-    result = login(entered.Username, entered.Password)
+@app.post("/storeAcademicPlan") # verify pre-req quarter-quarter
+def login(entered: academicplan):
+    result = storeAcademicPlan(entered.username, entered.password, entered.input)
     return (result)
 
 @app.get("/recommendation")
