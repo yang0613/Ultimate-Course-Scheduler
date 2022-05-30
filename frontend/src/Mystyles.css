@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,700;1,500&display=swap');
+
+/* vars for main color and text weight */
+:root {
+    --clr-blue: #14A5DC;
+    --clr-grey: #f2f2f2;
+    --clr-black: #000000;
+    --clr-white: #FFFFFF;
+    --fw-normal: 400;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: var(--fw-normal);
+    color: var(--clr-black);
+    line-height: 1.6;
+}
+
+h1 {
+    font-size: 48px;
+    font-weight: var(--fw-bold);
+    color: var(--clr-blue);   
+}
+
+.button {
+  background-color: var(--clr-blue);
+  border-radius: 48px;
+  justify-content: center;
+  align-items: center;
+  font-weight: var(--fw-semibold);
+  color: var(--clr-white);
+}
+
+.buttonSubmitSidebar {
+  background-color: var(--clr-grey);
+  border-radius: 48px;
+  justify-content: center;
+  align-items: center;
+  font-weight: var(--fw-semibold);
+  color: var(--clr-blue);
+}
+
+.ListSidebar {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+width: 200px;
+left: 40px;
+top: 67px;
+}
+
+/*TODO: need to fit this around table */
+.table-border {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 793px;
+  height: 583px;
+  left: 323px;
+  top: 330px;
+  box-sizing: border-box;
+  background: #c4c4c42b;
+  border: 1.20106px dashed #000000;
+  border-radius: 8.40741px;
+}
+
+/* Position and sizing of burger button */
+.bm-burger-button {
+    position: fixed;
+    width: 36px;
+    height: 30px;
+    left: 36px;
+    top: 36px;
+  }
+  
+  /* Color/shape of burger icon bars */
+  .bm-burger-bars {
+    background: var(--clr-blue);
+  }
+  
+  /* Color/shape of burger icon bars on hover*/
+  .bm-burger-bars-hover {
+    background: var(--clr-grey);
+  }
+  
+  /* Position and sizing of clickable cross button */
+  .bm-cross-button {
+    height: 24px;
+    width: 24px;
+  }
+  
+  /* Color/shape of close button cross */
+  .bm-cross {
+    background: var(--clr-white);
+  }
+  
+  /*
+  Sidebar wrapper styles
+  Note: editing below could break animation
+  */
+  .bm-menu-wrap {
+    position: fixed;
+    height: 100%;
+  }
+  
+  /* General sidebar styles */
+  .bm-menu {
+    background: var(--clr-blue);
+    padding: 2.5em 1.5em 0;
+    font-size: 1.15em;
+  }
+  
+  /* Wrapper for item list */
+  .bm-item-list {
+    color: var(--clr-grey);
+    padding: 0.8em;
+  }
+  
+  /* Individual item */
+  .bm-item {
+    display: inline-block;
+  }
+  
+  /* Styling of overlay */
+  .bm-overlay {
+    background: #ffffff44;
+  }
+
+  /* Individual item */
+.bm-item {
+    display: inline-block;
+  
+    color: var(--clr-white);
+    margin-bottom: 10px;
+    font-family: 'Roboto', sans-serif;
+    text-align: left;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  
+  .bm-item:hover {
+    color: var(--clr-white);
+  }
+
+  ::-webkit-scrollbar {
+      display: none;
+  }

@@ -132,6 +132,22 @@ def database_cache(classID):
         database_cache[course] = properties
     return database_cache
 
+def allClassIDs():
+    """Gets a list of all the class IDs in the database
+
+    Returns:
+        (list): A list of every class ID
+    """
+    cur = connectToDB()
+    query = "SELECT Classes.classID FROM Classes"
+    cur.execute(query)
+    classIDs = []
+    for row in cur.fetchall():
+        course = row[0]
+        classIDs.append(course)
+    return classIDs
+
+#print(database_cache(tuple(allClassIDs())))
 #print(allClassByID(('CSE 20', 'MATH 19A', 'CSE 12', 'CSE 16', 'CSE 30', 'CSE 13S', 'MATH 21', 'CSE 101', 'MATH 19B', 'CSE 130', 'CSE 103', 'ECE 30', 'CSE 102', 'CSE 120', 'BIOE 20C', 'ENVS 25', 'STAT 7L', 'STAT 7', 'STAT 131', 'ANTH 2', 'CHEM 1A', 'ENVS 130A', 'ENVS 130L', 'ENVS 100', 'ENVS 100L', 'PHYS 5A', 'PHYS 5B', 'AM 114', 'AM 147')))
 #print(allClassesByMajor('computer Science B.s.'))
 # print(storeAcademicPlan('ue', 'password', ''))

@@ -1,5 +1,4 @@
-
-from parse import schedule_tokens
+import parse
 import cache
 
 
@@ -102,7 +101,7 @@ class Constraint:
         """
         schedule_errors = {}
         cache.update_cache(schedule)
-        for year, quarter, classes in schedule_tokens(schedule):
+        for year, quarter, classes in parse.schedule_tokens(schedule):
             error = {}
             if classes:
                 for func in self.constraints:

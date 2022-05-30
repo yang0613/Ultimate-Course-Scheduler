@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from reqs import requirement
+import reqs
 import json
 import query
 from pprint import pprint
@@ -544,7 +544,7 @@ expr17="""
 	}
 }
 """
-
+#Test for Economics BME
 expr18 = """
 {
     "First": {
@@ -554,15 +554,15 @@ expr18 = """
         "Summer": []
     },
     "Second": {
-        "Fall": [],
+        "Fall": ["ECON 1"],
         "Winter": [],
         "Spring": [],
         "Summer": []
     },
     "Third": {
-        "Fall": [],
-        "Winter": [],
-        "Spring": [],
+        "Fall": ["STAT 7"],
+        "Winter": ["ECON 101"],
+        "Spring": ["ECON 104"],
         "Summer": []
     },
     "Fourth": {
@@ -573,8 +573,8 @@ expr18 = """
     }
 }
 """
-req = requirement(major='Computer Science B.S.')
-test = expr18
+req = reqs.requirement(major='Business Management Economics B.A.')
+test = expr2
 schedule = json.loads(test)
 missing = req.validate(schedule)
 major = req.verify_major(schedule)

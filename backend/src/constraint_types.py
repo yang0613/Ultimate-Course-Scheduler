@@ -1,8 +1,6 @@
-from AST import PrereqAlgebra
-from AST import missing_requirements
-from req_types import ConcurrentEnrollment
+import AST
 import cache
-algebra = PrereqAlgebra()
+algebra = AST.algebra
 
 def generate_prereq_func():
     """To check for prerequisites, the function should remember
@@ -33,11 +31,11 @@ def generate_prereq_func():
                 #Adapt query.py format, first index is prereq string
                 has_prereqs = algebra.parse(prereq).simplify()
                 for req_type in has_prereqs.symbols:
-                    if isinstance(req_type, ConcurrentEnrollment):
+                    if isinstance(req_type, AST.ConcurrentEnrollment):
                         req_type.setQuarterClasses(classes)
                 has_prereqs = has_prereqs.subs(schedule).simplify()
                 if has_prereqs != algebra.TRUE:
-                    missing_prereqs[course] = missing_requirements(has_prereqs)
+                    missing_prereqs[course] = AST.missing_requirements(has_prereqs)
         subs = {course: algebra.TRUE for course in classes}
         schedule.update(subs)            
         if missing_prereqs:
