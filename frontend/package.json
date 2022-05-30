@@ -10,6 +10,7 @@
     "gridjs": "^5.0.2",
     "gridjs-react": "^5.0.2",
     "react": "^18.0.0",
+    "react-burger-menu": "^3.0.8",
     "react-dom": "^18.0.0",
     "react-scripts": "5.0.1",
     "reactjs-popup": "^2.0.5",

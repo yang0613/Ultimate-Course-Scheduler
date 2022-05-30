@@ -32,7 +32,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from reqs import requirement
 #from test import requirement
 app = FastAPI()
-ENV = 'prod'
+ENV = 'dev'
 
 
 origins = ["*"]
@@ -66,10 +66,8 @@ def login(username, password):
         cur.execute(query, (username, password))
     except:
         return("Incorrect username or password.")
-    if cur.fetchone()[0] is None:
-        return(tuple())
-    else:
-        return(cur.fetchone()[0])
+
+    return(cur.fetchone()[0])
 
 #Register
 def register(username, password):
@@ -148,18 +146,18 @@ def verification(entered: enteredclasses):
     return (result)
 
 @app.post("/login") # verify pre-req quarter-quarter
-def login(entered: credentials):
+def logpost(entered: credentials):
     result = login(entered.username, entered.password)
     return (result)
 
-@app.post("/Register") # verify pre-req quarter-quarter
-def login(entered: credentials):
+@app.post("/register") # verify pre-req quarter-quarter
+def regpost(entered: credentials):
     result = register(entered.username, entered.password)
     return (result)
 
-@app.post("/storeAcademicPlan") # verify pre-req quarter-quarter
-def login(entered: academicplan):
-    result = storeAcademicPlan(entered.username, entered.password, entered.input)
+@app.post("/academicplan") # verify pre-req quarter-quarter
+def academicplanpost(entered: academicplan):
+    result = storeAcademicPlan(entered.username, entered.password, str(entered.input))
     return (result)
 
 @app.get("/recommendation")

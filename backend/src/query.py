@@ -84,10 +84,7 @@ def login(username, password):
         cur.execute(query, (username, password))
     except:
         return("Incorrect username or password.")
-    if cur.fetchone()[0] is None:
-        return(tuple())
-    else:
-        return(cur.fetchone()[0])
+    return(cur.fetchone()[0])
 
 #Register
 def register(username, password):
@@ -150,9 +147,12 @@ def allClassIDs():
 #print(database_cache(tuple(allClassIDs())))
 #print(allClassByID(('CSE 20', 'MATH 19A', 'CSE 12', 'CSE 16', 'CSE 30', 'CSE 13S', 'MATH 21', 'CSE 101', 'MATH 19B', 'CSE 130', 'CSE 103', 'ECE 30', 'CSE 102', 'CSE 120', 'BIOE 20C', 'ENVS 25', 'STAT 7L', 'STAT 7', 'STAT 131', 'ANTH 2', 'CHEM 1A', 'ENVS 130A', 'ENVS 130L', 'ENVS 100', 'ENVS 100L', 'PHYS 5A', 'PHYS 5B', 'AM 114', 'AM 147')))
 #print(allClassesByMajor('computer Science B.s.'))
-# print(storeAcademicPlan('ue', 'password', ''))
+print(storeAcademicPlan('u', 'password', str({
+    "First":{"Fall":["AM 114","PHYS 139B"], "Winter":[],"Spring":[],"Summer":[]}, 
+    "Second":{"Fall":[],"Winter":[],"Spring":[],"Summer":[]},
+    "Third":{"Fall":[],"Winter":[],"Spring":[],"Summer":[]},
+    "Fourth":{"Fall":[],"Winter":[],"Spring":[],"Summer":[]}})))
 # print(register('ue', 'password'))
-# print(login('ue', 'password'))
 
 
 

@@ -10,6 +10,7 @@ export const post = (data) => {
 }
 
 export const verify = (data) => {
+    console.log(JSON.stringify(data));
     const response = fetch('http://127.0.0.1:8000/verification', {
         method: 'POST',
         headers: {
