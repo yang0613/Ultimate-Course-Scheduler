@@ -114,7 +114,6 @@ class enteredclasses(BaseModel):
 class credentials(BaseModel):
     username: str
     password: str
-    
 
 class academicplan(BaseModel):
     username: str
@@ -149,13 +148,15 @@ def verification(entered: enteredclasses):
 
 @app.post("/login") # verify pre-req quarter-quarter
 def login(entered: credentials):
-    result = login(entered.username, entered.password)
-    return (result)
+    #result = login(entered.username, entered.password)
+    #return (result)
+    return ("result")
 
-@app.post("/Register") # verify pre-req quarter-quarter
-def login(entered: credentials):
-    result = register(entered.username, entered.password)
-    return (result)
+@app.post("/register") # verify pre-req quarter-quarter
+def register(entered: credentials):
+    #result = register(entered.username, entered.password)
+    #return (result)
+    return ("result")
 
 @app.post("/storeAcademicPlan") # verify pre-req quarter-quarter
 def login(entered: academicplan):

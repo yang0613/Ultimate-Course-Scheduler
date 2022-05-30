@@ -26,18 +26,18 @@ export const login = (data) => {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: data, 
+        body: JSON.stringify(data),  
     })
     return response
 }
 
 export const register = (data) => {
-    const response = fetch('http://127.0.0.1:8000/login', {
+    const response = fetch('http://127.0.0.1:8000/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: data, 
+        body: JSON.stringify(data),   
     })
     return response
 }
