@@ -142,15 +142,101 @@ class EnterClasses extends React.Component {
     // Used to show initial table
     // https://stackoverflow.com/questions/65014512/how-to-initialize-data-before-rendering-in-react-js
     componentDidMount() {
-      const rows = Array(16).fill(0).map(row => new Array(5).fill(""));
-      // rows[0][0], rows[4][0], ... are the "year rows"
-      let plan = localStorage.getItem('plan');
-      console.log(plan);
-      rows[0][0] = "Year 1";  // First row, first column  
-      rows[4][0] = "Year 2";  // Fifth row, first column
-      rows[8][0] = "Year 3";  // Ninth row, first column
-      rows[12][0] = "Year 4";  // Thirteenth row, first column
-      this.setState({rows: rows});
+      let acadPlanObj = localStorage.getItem('plan');
+      acadPlanObj = acadPlanObj[0];
+      
+      if (!acadPlanObj) {
+        const rows = Array(16).fill(0).map(row => new Array(5).fill(""));
+        // rows[0][0], rows[4][0], ... are the "year rows"
+        rows[0][0] = "Year 1";  // First row, first column  
+        rows[4][0] = "Year 2";  // Fifth row, first column
+        rows[8][0] = "Year 3";  // Ninth row, first column
+        rows[12][0] = "Year 4";  // Thirteenth row, first column
+        this.setState({rows: rows});
+      } else {
+        // plan == acadPlanObj
+        let classes = [];
+        let rowsFilled = this.state.rowsFilled;
+        let rowsFilledForQtr = this.state.rowsFilledForQtr;
+        let rowsForEachYear = this.state.rowsForEachYear;
+        let rows = this.state.rows;
+      
+        // console.log("Start");
+        // Iterate through the resulting acadPlanObj
+        for (let yr of Object.keys(acadPlanObj)) {
+          //console.log("Iterate Year (Should show up 4 times total");
+          let yearObj = acadPlanObj[yr];
+          let yrNum = 1; // The year as a number
+          switch(yr) {
+            case "First":
+              yrNum = 1;
+              break;
+            case "Second":
+              yrNum = 2;
+              break;
+            case "Third":
+              yrNum = 3;
+              break;
+            case "Fourth":
+              yrNum = 4;
+              break;
+            default:
+              yrNum = 1;
+              break;
+          }
+      
+          for (let qtr of Object.keys(yearObj)) {
+            //console.log("Iterate Quarter (Should show up 16 times total)");
+            let quarterListOfClasses = yearObj[qtr];
+            for (let i = 0; i < quarterListOfClasses.length; i++) {
+              // Use handleAddClassForLogin to add everything
+              let value = quarterListOfClasses[i];
+              //this.handleAddClassForLogin(yrNum, qtr, value);
+              console.log("value", value);
+              //const classes = this.state.classes.slice();
+              classes.push(value);  // Add this class to list of all classes
+      
+              let yrIndex = yrNum - 1;  // yr - 1: Ex. Year 1, yrNum = 1, so correct index would be 0
+      
+              let column = 1;  // Which column of current row to add the class in
+              switch(qtr) {
+                case "Fall":
+                  column = 1;
+                  break;
+                case "Winter":
+                  column = 2;
+                  break;
+                case "Spring":
+                  column = 3;
+                  break;
+                case "Summer":
+                  column = 4;
+                  break;
+                default:
+                  column = 1;
+                  break;
+              }
+      
+              rowsFilledForQtr[yrIndex][qtr] += 1; // As mentioned above, increment before each use
+              let curRowForQtr = rowsFilledForQtr[yrIndex][qtr];  // The row in which to enter the class for the current year and quarter
+              if (curRowForQtr > rowsFilled[yrIndex]) {  // If another row is needed (See below for the add)
+                rowsFilled[yrIndex] += 1;  // As mentioned previously, increment at the appropriate time
+              }
+              let curRow = rowsFilled[yrIndex]; // Current row to be filled for current year
+              if (curRow >= rowsForEachYear[yrIndex].length) { // If another row is needed
+                rowsForEachYear[yrIndex].push(["","","","",""]); // Add a row with 5 columns
+              }
+      
+              // [year][row][column]
+              rowsForEachYear[yrIndex][curRowForQtr][column] = value;  // Add the class to the current row for the selected quarter for the selected year
+            }
+          }
+        }
+      
+        rows = this.buildRows(rowsForEachYear);
+      
+        this.setState({classes: classes, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr, rowsForEachYear: rowsForEachYear, rows: rows});        
+      }
     }
 
     // https://reactjs.org/docs/forms.html had this
