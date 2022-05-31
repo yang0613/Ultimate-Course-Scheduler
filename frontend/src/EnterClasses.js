@@ -27,8 +27,8 @@ class EnterClasses extends React.Component {
         classes: Array(0).fill(""),  // Array of all entered classes. Purpose is to make dealing with some parts easier.
 
         // Keep dummy availableClasses for testing
-        availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21", "dummy1", "dummy2", "dummy3", "dummy4"],
-        //availableClasses: [],  // List of available clases, after major has been selected
+        //availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21", "dummy1", "dummy2", "dummy3", "dummy4"],
+        availableClasses: [],  // List of available clases, after major has been selected
         arrOfArrOfClassData: [],  // The response from the major selection dropdown containing the class data
         verificationResults: [],
         currentMajor: "Select", 
@@ -142,10 +142,12 @@ class EnterClasses extends React.Component {
     // Used to show initial table
     // https://stackoverflow.com/questions/65014512/how-to-initialize-data-before-rendering-in-react-js
     componentDidMount() {
-      //let acadPlanObj = localStorage.getItem('plan');
-      //acadPlanObj = JSON.parse(acadPlanObj);
-      //acadPlanObj = acadPlanObj[0];
+      let acadPlanObj = localStorage.getItem('plan');
+      acadPlanObj = JSON.parse(acadPlanObj);
+      acadPlanObj = acadPlanObj[0];
 
+      // Dummy data for testing
+      /*
       let acadPlanObj = {
         "First": {
           "Fall": ["CSE 20", "MATH 19A"],
@@ -172,6 +174,7 @@ class EnterClasses extends React.Component {
           "Summer": []
         }
       };
+      */
 
       console.log(acadPlanObj);
       if (!acadPlanObj) {
