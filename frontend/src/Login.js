@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
+import {useNavigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './Login.css';
 import {login} from './Script';
 
 async function loginUser(credentials) {
-
   console.log(credentials, "  CREDENTIALS");
   const response = login(credentials);
   console.log(response, " POST CREDENTIALS");
@@ -15,6 +15,8 @@ async function loginUser(credentials) {
     .then((json) => {
       let returnedData = json;  // I added
       console.log("returnedData: ", returnedData);
+      localStorage.setItem('plan', JSON.stringify(json));
+      // navigate('/');
     })
     .catch((err)=>{
       console.log(err, "ERROR");
@@ -22,6 +24,7 @@ async function loginUser(credentials) {
 }
 
 export default function Login({}) {
+  // const navigate = useNavigate()
   const [username, setUserName] = useState();
   const [password, setPassword] = useState();
 

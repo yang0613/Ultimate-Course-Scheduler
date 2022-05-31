@@ -144,6 +144,8 @@ class EnterClasses extends React.Component {
     componentDidMount() {
       const rows = Array(16).fill(0).map(row => new Array(5).fill(""));
       // rows[0][0], rows[4][0], ... are the "year rows"
+      let plan = localStorage.getItem('plan');
+      console.log(plan);
       rows[0][0] = "Year 1";  // First row, first column  
       rows[4][0] = "Year 2";  // Fifth row, first column
       rows[8][0] = "Year 3";  // Ninth row, first column
