@@ -55,7 +55,7 @@ def not_avaliable_during(quarter, classes):
     for course in classes:
         avaliable_quarters = cache.quarters(course)   
         if avaliable_quarters and quarter not in avaliable_quarters:
-            wrong_quarter[course] = [f"{course} in {quarter} is not avaliable during {avaliable_quarters}"]
+            wrong_quarter[course] = [f"{course} scheduled for {quarter} is only avaliable during {avaliable_quarters}"]
     if wrong_quarter:
         return wrong_quarter        
     return True

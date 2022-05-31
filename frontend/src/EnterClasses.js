@@ -27,7 +27,7 @@ class EnterClasses extends React.Component {
         classes: Array(0).fill(""),  // Array of all entered classes. Purpose is to make dealing with some parts easier.
 
         // Keep dummy availableClasses for testing
-        //availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21"],
+        //availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21", "dummy1", "dummy2", "dummy3", "dummy4"],
         availableClasses: [],  // List of available clases, after major has been selected
         arrOfArrOfClassData: [],  // The response from the major selection dropdown containing the class data
         verificationResults: [],
@@ -145,6 +145,37 @@ class EnterClasses extends React.Component {
       let acadPlanObj = localStorage.getItem('plan');
       acadPlanObj = JSON.parse(acadPlanObj);
       acadPlanObj = acadPlanObj[0];
+
+      // Dummy data for testing
+      /*
+      let acadPlanObj = {
+        "First": {
+          "Fall": ["CSE 20", "MATH 19A"],
+          "Winter": ["CSE 12", "CSE 16", "CSE 30"],
+          "Spring": ["CSE 13S", "MATH 21"],
+          "Summer": []
+        },
+        "Second": {
+          "Fall": ["CSE 101", "MATH 19B"],
+          "Winter": ["CSE 130", "CSE 103", "ECE 30"],
+          "Spring": ["CSE 102", "CSE 120"],
+          "Summer": []
+        },
+        "Third": {
+          "Fall": ["CSE 115A", "CSE 116"],
+          "Winter": ["CSE 115B", "STAT 131"],
+          "Spring": ["CSE 115C", "CSE 111"],
+          "Summer": ["CSE 3"]
+        },
+        "Fourth": {
+          "Fall": ["CSE 144", "CSE 183"],
+          "Winter": ["CSE 180"],
+          "Spring": [],
+          "Summer": []
+        }
+      };
+      */
+
       console.log(acadPlanObj);
       if (!acadPlanObj) {
         const rows = Array(16).fill(0).map(row => new Array(5).fill(""));
@@ -155,12 +186,20 @@ class EnterClasses extends React.Component {
         rows[12][0] = "Year 4";  // Thirteenth row, first column
         this.setState({rows: rows});
       } else {
-        // plan == acadPlanObj
+
+        // This fixed the duplicate issue
+        let rowsForEachYear = Array(4).fill(0).map(rowsForOneYear => Array(4).fill(0).map(row => new Array(5).fill("")));
+        let rows = Array(1).fill(0).map(row => new Array(5).fill(""));
+        let rowsFilled = Array(4).fill(0);
+        let rowsFilledForQtr = Array(4).fill(0).map(() => ({"Fall": 0, "Winter": 0, "Spring": 0, "Summer": 0}));
+
         let classes = [];
-        let rowsFilled = this.state.rowsFilled;
-        let rowsFilledForQtr = this.state.rowsFilledForQtr;
-        let rowsForEachYear = this.state.rowsForEachYear;
-        let rows = this.state.rows;
+        
+        // Reason for the duplicate issue
+        //let rowsFilled = this.state.rowsFilled;
+        //let rowsFilledForQtr = this.state.rowsFilledForQtr;
+        //let rowsForEachYear = this.state.rowsForEachYear;
+        //let rows = this.state.rows;
       
         // console.log("Start");
         // Iterate through the resulting acadPlanObj
@@ -195,6 +234,14 @@ class EnterClasses extends React.Component {
               //this.handleAddClassForLogin(yrNum, qtr, value);
               console.log("value", value);
               //const classes = this.state.classes.slice();
+
+              if (value === "") {  // To fix duplicates, unsuccessful
+                continue; // Go to next class
+              }
+              if (classes.includes(value)) {  // To fix duplicates, unsuccessful
+                continue; // Class already in, so don't add
+              }   
+
               classes.push(value);  // Add this class to list of all classes
       
               let yrIndex = yrNum - 1;  // yr - 1: Ex. Year 1, yrNum = 1, so correct index would be 0
@@ -235,6 +282,18 @@ class EnterClasses extends React.Component {
         }
       
         rows = this.buildRows(rowsForEachYear);
+
+        /*
+        // To fix duplicate issue?  Doesn't work
+        let rows = Array(0).fill(0);
+        for(let i = 0; i < rowsForEachYear.length; i++) {  // Go through each year
+          let year = i + 1;
+          rowsForEachYear[i][0][0] = "Year " + year;  // Build the year row (Just build it every time, even if already there)
+          for(let j = 0; j < rowsForEachYear[i].length; j++) {  // Go through each row for this year
+            rows.push(rowsForEachYear[i][j]);  // Here, i is for year and j is for row. Push each row in the the complete array of rows
+          }
+        }
+        */
       
         this.setState({classes: classes, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr, rowsForEachYear: rowsForEachYear, rows: rows});        
       }
