@@ -195,6 +195,14 @@ class EnterClasses extends React.Component {
               //this.handleAddClassForLogin(yrNum, qtr, value);
               console.log("value", value);
               //const classes = this.state.classes.slice();
+
+              if (value === "") {
+                continue; // Go to next class
+              }
+              if (classes.includes(value)) {
+                continue; // Class already in, so don't add
+              }   
+
               classes.push(value);  // Add this class to list of all classes
       
               let yrIndex = yrNum - 1;  // yr - 1: Ex. Year 1, yrNum = 1, so correct index would be 0
