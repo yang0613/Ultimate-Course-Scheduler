@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-
+import { Link } from "react-router-dom";
 import Login from './Login';
 import Register from './Register';
 import EnterClasses from './EnterClasses';
@@ -35,6 +35,7 @@ class LandingPage extends React.Component
     this.setState({
       showComponentGuest: true,
     });
+    localStorage.removeItem('plan');
   }
 
   render() 
@@ -69,11 +70,13 @@ class LandingPage extends React.Component
         }
 
         <br></br>
-
-        <button text-align="center" class="button is-info is-rounded"
-          onClick={this._onGuestClick} >
-          Continue as Guest
-        </button> 
+        {/* <Link to="/plan"> */}
+          <button text-align="center" class="button is-info is-rounded"
+            onClick={this._onGuestClick} >
+            Continue as Guest
+          </button>
+        {/* </Link> */}
+         
         <br></br><br></br>
         {this.state.showComponentGuest ?
            <EnterClasses /> :
