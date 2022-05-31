@@ -1,8 +1,7 @@
 // heading.js
 
 import React, { useState } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { Link } from "react-router-dom";
+import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
 import EnterClasses from './EnterClasses';

@@ -1,39 +1,42 @@
 import React, { useState } from 'react';
+import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './Login.css';
 import {login} from './Script';
 
-async function loginUser(credentials) {
-  console.log(credentials, "  CREDENTIALS");
-  const response = login(credentials);
-  console.log(response, " POST CREDENTIALS");
 
-  response.then((res)=>{
-    return res.json();
-    })
-    .then((json) => {
-      let returnedData = json;  // I added
-      console.log("returnedData: ", returnedData);
-      localStorage.setItem('plan', JSON.stringify(json));
-      // navigate('/');
-    })
-    .catch((err)=>{
-      console.log(err, "ERROR");
-    })
-}
 
 export default function Login({}) {
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
   const [username, setUserName] = useState();
   const [password, setPassword] = useState();
 
+  async function loginUser(credentials) {
+    console.log(credentials, "  CREDENTIALS");
+    const response = login(credentials);
+    console.log(response, " POST CREDENTIALS");
+  
+    response.then((res)=>{
+      return res.json();
+      })
+      .then((json) => {
+        console.log("returnedData: ", json);
+        localStorage.setItem('plan', JSON.stringify(json));
+        navigate("/plan");
+      })
+      .catch((err)=>{
+        console.log(err, "ERROR");
+      })
+  }
+  
   const handleSubmit = async e => {
     e.preventDefault();
     const token = await loginUser({
       "username": username,
       "password": password
     });
+    
     //setToken(token);
   }
 
@@ -68,9 +71,9 @@ export default function Login({}) {
         <div class="field">
           <p class="control">
             <div>
-              <button type="submit" class="button is-info is-rounded ">
-                Submit
-              </button>
+                <button type="submit" class="button is-info is-rounded">
+                  Submit
+                </button>
             </div>
           </p>
         </div>
