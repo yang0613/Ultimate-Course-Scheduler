@@ -176,7 +176,7 @@ class EnterClasses extends React.Component {
       };
       */
 
-      if (!acadPlanObj) {
+      if (!acadPlanObj || !acadPlanObj[0]) {
         const rows = Array(16).fill(0).map(row => new Array(5).fill(""));
         // rows[0][0], rows[4][0], ... are the "year rows"
         rows[0][0] = "Year 1";  // First row, first column  
