@@ -143,8 +143,9 @@ class EnterClasses extends React.Component {
     // https://stackoverflow.com/questions/65014512/how-to-initialize-data-before-rendering-in-react-js
     componentDidMount() {
       let acadPlanObj = localStorage.getItem('plan');
+      acadPlanObj = JSON.parse(acadPlanObj);
       acadPlanObj = acadPlanObj[0];
-      
+      console.log(acadPlanObj);
       if (!acadPlanObj) {
         const rows = Array(16).fill(0).map(row => new Array(5).fill(""));
         // rows[0][0], rows[4][0], ... are the "year rows"
