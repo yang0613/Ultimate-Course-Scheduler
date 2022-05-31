@@ -144,7 +144,7 @@ class EnterClasses extends React.Component {
     componentDidMount() {
       let acadPlanObj = localStorage.getItem('plan');
       acadPlanObj = JSON.parse(acadPlanObj);
-      acadPlanObj = acadPlanObj[0];
+      
 
       // Dummy data for testing
       /*
@@ -176,7 +176,6 @@ class EnterClasses extends React.Component {
       };
       */
 
-      console.log(acadPlanObj);
       if (!acadPlanObj) {
         const rows = Array(16).fill(0).map(row => new Array(5).fill(""));
         // rows[0][0], rows[4][0], ... are the "year rows"
@@ -186,7 +185,7 @@ class EnterClasses extends React.Component {
         rows[12][0] = "Year 4";  // Thirteenth row, first column
         this.setState({rows: rows});
       } else {
-
+        acadPlanObj = acadPlanObj[0];
         // This fixed the duplicate issue
         let rowsForEachYear = Array(4).fill(0).map(rowsForOneYear => Array(4).fill(0).map(row => new Array(5).fill("")));
         let rows = Array(1).fill(0).map(row => new Array(5).fill(""));

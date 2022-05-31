@@ -70,18 +70,18 @@ class LandingPage extends React.Component
         }
 
         <br></br>
-        {/* <Link to="/plan"> */}
+        <Link to="/plan">
           <button text-align="center" class="button is-info is-rounded"
             onClick={this._onGuestClick} >
             Continue as Guest
           </button>
-        {/* </Link> */}
+        </Link>
          
         <br></br><br></br>
-        {this.state.showComponentGuest ?
+        {/* {this.state.showComponentGuest ?
            <EnterClasses /> :
            null
-        }
+        } */}
 
         <br></br><br></br>
       </div>
