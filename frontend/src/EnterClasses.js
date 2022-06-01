@@ -23,14 +23,17 @@ class EnterClasses extends React.Component {
         year: 1, // Current year in which to add classes to (Initially 1)
         quarter: "Fall", // Current quarter in which to add classes to (Initially Fall)
         value: "",  // Current value of input form for classes
-        toRemove: "Select",  // Value to be removed (Select when nothing selected)
-        classes: Array(0).fill(""),  // Array of all entered classes. Purpose is to make dealing with some parts easier.
+        toRemove: "Select",  // Value to be removed (Select when nothing is selected)
+        classes: Array(0).fill(""),  // Array of all entered classes.
 
-        // Keep dummy availableClasses for testing
+        // Keep dummy availableClasses for quick serverless testing
         //availableClasses: ["CSE 101", "CSE 102", "CSE 103", "CSE 201", "STAT 131", "MATH 19A", "MATH 19B", "MATH 21", "dummy1", "dummy2", "dummy3", "dummy4"],
         availableClasses: [],  // List of available clases, after major has been selected
         arrOfArrOfClassData: [],  // The response from the major selection dropdown containing the class data
-        verificationResults: [],
+        verificationResults: [],  // List of verification results after the error messages have been parsed through
+
+        // currentMajor is the currently selected major from the dropdown
+        // major is the list of all majors available to be selected from the dropdown (could have been named availableMajors)
         currentMajor: "Select", 
         major:[
           'Agroecology B.A.',
@@ -144,38 +147,11 @@ class EnterClasses extends React.Component {
     componentDidMount() {
       let acadPlanObj = localStorage.getItem('plan');
       acadPlanObj = JSON.parse(acadPlanObj);
-      
 
-      // Dummy data for testing
-      /*
-      let acadPlanObj = {
-        "First": {
-          "Fall": ["CSE 20", "MATH 19A"],
-          "Winter": ["CSE 12", "CSE 16", "CSE 30"],
-          "Spring": ["CSE 13S", "MATH 21"],
-          "Summer": []
-        },
-        "Second": {
-          "Fall": ["CSE 101", "MATH 19B"],
-          "Winter": ["CSE 130", "CSE 103", "ECE 30"],
-          "Spring": ["CSE 102", "CSE 120"],
-          "Summer": []
-        },
-        "Third": {
-          "Fall": ["CSE 115A", "CSE 116"],
-          "Winter": ["CSE 115B", "STAT 131"],
-          "Spring": ["CSE 115C", "CSE 111"],
-          "Summer": ["CSE 3"]
-        },
-        "Fourth": {
-          "Fall": ["CSE 144", "CSE 183"],
-          "Winter": ["CSE 180"],
-          "Spring": [],
-          "Summer": []
-        }
-      };
-      */
+      // NOTE: Can replace acadPlanObj with #2 from testDataForEnterClasses.js in Testing folder
+      //   Need to remove the second condition in the if statement below if using the dummy data
 
+      // If no saved classes
       if (!acadPlanObj || !acadPlanObj[0]) {
         const rows = Array(16).fill(0).map(row => new Array(5).fill(""));
         // rows[0][0], rows[4][0], ... are the "year rows"
@@ -184,26 +160,18 @@ class EnterClasses extends React.Component {
         rows[8][0] = "Year 3";  // Ninth row, first column
         rows[12][0] = "Year 4";  // Thirteenth row, first column
         this.setState({rows: rows});
-      } else {
+      } else {  // If there are saved classes
         acadPlanObj = acadPlanObj[0];
-        // This fixed the duplicate issue
+        // Use this instead of this.state to avoid duplicates of classes being shown
         let rowsForEachYear = Array(4).fill(0).map(rowsForOneYear => Array(4).fill(0).map(row => new Array(5).fill("")));
         let rows = Array(1).fill(0).map(row => new Array(5).fill(""));
         let rowsFilled = Array(4).fill(0);
         let rowsFilledForQtr = Array(4).fill(0).map(() => ({"Fall": 0, "Winter": 0, "Spring": 0, "Summer": 0}));
 
-        let classes = [];
-        
-        // Reason for the duplicate issue
-        //let rowsFilled = this.state.rowsFilled;
-        //let rowsFilledForQtr = this.state.rowsFilledForQtr;
-        //let rowsForEachYear = this.state.rowsForEachYear;
-        //let rows = this.state.rows;
+        let classes = [];  // Container for list of classes that will be added
       
-        // console.log("Start");
-        // Iterate through the resulting acadPlanObj
+        // Iterate through the resulting saved schedule
         for (let yr of Object.keys(acadPlanObj)) {
-          //console.log("Iterate Year (Should show up 4 times total");
           let yearObj = acadPlanObj[yr];
           let yrNum = 1; // The year as a number
           switch(yr) {
@@ -224,20 +192,17 @@ class EnterClasses extends React.Component {
               break;
           }
       
+          // View format of in testDataForEnterClasses.js in testing folder
           for (let qtr of Object.keys(yearObj)) {
-            //console.log("Iterate Quarter (Should show up 16 times total)");
             let quarterListOfClasses = yearObj[qtr];
             for (let i = 0; i < quarterListOfClasses.length; i++) {
-              // Use handleAddClassForLogin to add everything
               let value = quarterListOfClasses[i];
-              //this.handleAddClassForLogin(yrNum, qtr, value);
               console.log("value", value);
-              //const classes = this.state.classes.slice();
 
-              if (value === "") {  // To fix duplicates, unsuccessful
+              if (value === "") {  // If no class
                 continue; // Go to next class
               }
-              if (classes.includes(value)) {  // To fix duplicates, unsuccessful
+              if (classes.includes(value)) { 
                 continue; // Class already in, so don't add
               }   
 
@@ -280,19 +245,7 @@ class EnterClasses extends React.Component {
           }
         }
       
-        rows = this.buildRows(rowsForEachYear);
-
-        /*
-        // To fix duplicate issue?  Doesn't work
-        let rows = Array(0).fill(0);
-        for(let i = 0; i < rowsForEachYear.length; i++) {  // Go through each year
-          let year = i + 1;
-          rowsForEachYear[i][0][0] = "Year " + year;  // Build the year row (Just build it every time, even if already there)
-          for(let j = 0; j < rowsForEachYear[i].length; j++) {  // Go through each row for this year
-            rows.push(rowsForEachYear[i][j]);  // Here, i is for year and j is for row. Push each row in the the complete array of rows
-          }
-        }
-        */
+        rows = this.buildRows(rowsForEachYear);  // Build the rows for the complete table
       
         this.setState({classes: classes, rowsFilled: rowsFilled, rowsFilledForQtr: rowsFilledForQtr, rowsForEachYear: rowsForEachYear, rows: rows});        
       }
@@ -324,7 +277,7 @@ class EnterClasses extends React.Component {
         return res.json();
       })
       .then((json) => {
-        let returnedData = json;  // I added
+        let returnedData = json;
         console.log("returnedData: ", returnedData);
 
         // returnedData is an array of array of arrays
@@ -515,18 +468,6 @@ class EnterClasses extends React.Component {
       // See testDataforEnterClasses.js for format of acadPlanObj
 
       const current = acadPlanObj;
-      
-      // const store = storePlan(current);
-
-      // store.then((res)=>{ //res = response.then -- promise, then
-      //   return res.json();
-      // })
-      // .then((json) => {
-      //   console.log(json);
-      // })
-      // .catch((err)=>{
-      //   console.log(err, "ERROR");
-      // })
 
       const response = verify(current);
       response.then((res)=>{ //res = response.then -- promise, then
@@ -585,22 +526,10 @@ class EnterClasses extends React.Component {
 
     handleRemoveClass(event) {  // For class removal from the list of entered classes
 
-      /*  OLD  For now, keep for reference in case its needed
-      let toRemoveInnerHTML = event.target.innerHTML;
-      toRemoveInnerHTML = toRemoveInnerHTML.trim();
-      console.log("toRemove", toRemoveInnerHTML);
-
-      // Check with Wenhao to clarify if all classes have class name format:  CSE 101    where its   classname(space)number
-      let toRemoveSplit = toRemoveInnerHTML.split(" ");
-      let toRemove = toRemoveSplit[0] + " " + toRemoveSplit[1];
-      */
-
-      //let toRemove = event.target.value;
+      //let toRemove = event.target.value;  Use this if clicking the button instead of the X image
       let toRemove = event.target.parentElement.value;
 
       //https://stackoverflow.com/questions/18971210/get-inner-text-and-split-it-javascript-problems-using-innerhtml-and-split
-      //console.log("toRemove", toRemove);
-
       if (!(toRemove === "Select")) {  // If a class to be removed was selected
         console.log("toRemove: " + toRemove);  // TESTING
         let classes = this.state.classes.slice();
@@ -691,7 +620,7 @@ class EnterClasses extends React.Component {
         alert("Please select a class to remove.");
       }
 
-      event.preventDefault(); // Important
+      event.preventDefault(); // Important to prevent form submission, causing components to re-render and reset states
     }
 
     render() {
@@ -699,9 +628,7 @@ class EnterClasses extends React.Component {
       return (
         <div className="container1">
           <form onSubmit={this.handleAddClass}>
-            {
-              // ADDED for integeration may 18
-            }
+
             <label>Major:&nbsp;</label>
             <select className="majorList" value={this.state.currentMajor} onChange={this.handleChangeMajor}>
               <option value="Select">Select</option>
@@ -784,7 +711,6 @@ class EnterClasses extends React.Component {
               // Not functional
             }
             <button class="button is-info is-rounded">Generate</button>
-
           </div>
 
           <br></br>
