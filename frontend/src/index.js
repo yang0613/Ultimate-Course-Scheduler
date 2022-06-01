@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App'; 
 import reportWebVitals from './reportWebVitals';
-//import ShowAcadPlanTbl from './ShowAcadPlanTbl';  // Most likely will remove later
 import LandingPage from './LandingPage';
 import Sidebar from './Sidebar';
 import EnterClasses from './EnterClasses';
