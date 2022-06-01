@@ -7,9 +7,11 @@ import psycopg2
 #Heroku remote login: psql --dbname=dckbguanuf8a45 port=5432 --user=uxoitcpyfpqfvq --host=ec2-44-196-223-128.compute-1.amazonaws.com
 #Heroku password: f646a5b031a7b5f570ef097d77f987809613ca53ee77167d1430d246105a0a08
 #switch between local and remote database
+
 # dev for local testing, prod for production
 ENV = 'prod'
 
+#Connects to the database using the psycopg2 library
 def connectToDB():
     if ENV == 'dev':
         conn = psycopg2.connect('dbname=postgres port=5432 user=postgres host=localhost', options='-c search_path=Majors')
@@ -147,11 +149,11 @@ def allClassIDs():
 #print(database_cache(tuple(allClassIDs())))
 #print(allClassByID(('CSE 20', 'MATH 19A', 'CSE 12', 'CSE 16', 'CSE 30', 'CSE 13S', 'MATH 21', 'CSE 101', 'MATH 19B', 'CSE 130', 'CSE 103', 'ECE 30', 'CSE 102', 'CSE 120', 'BIOE 20C', 'ENVS 25', 'STAT 7L', 'STAT 7', 'STAT 131', 'ANTH 2', 'CHEM 1A', 'ENVS 130A', 'ENVS 130L', 'ENVS 100', 'ENVS 100L', 'PHYS 5A', 'PHYS 5B', 'AM 114', 'AM 147')))
 #print(allClassesByMajor('computer Science B.s.'))
-print(storeAcademicPlan('u', 'password', str({
-    "First":{"Fall":["AM 114","PHYS 139B"], "Winter":[],"Spring":[],"Summer":[]}, 
-    "Second":{"Fall":[],"Winter":[],"Spring":[],"Summer":[]},
-    "Third":{"Fall":[],"Winter":[],"Spring":[],"Summer":[]},
-    "Fourth":{"Fall":[],"Winter":[],"Spring":[],"Summer":[]}})))
+# print(storeAcademicPlan('u', 'password', {
+#     "First":{"Fall":["AM 114","PHYS 139B"], "Winter":[],"Spring":[],"Summer":[]}, 
+#     "Second":{"Fall":[],"Winter":[],"Spring":[],"Summer":[]},
+#     "Third":{"Fall":[],"Winter":[],"Spring":[],"Summer":[]},
+#     "Fourth":{"Fall":[],"Winter":[],"Spring":[],"Summer":[]}}))
 # print(register('ue', 'password'))
 
 
